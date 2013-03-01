@@ -56,9 +56,9 @@ GType biorhythmus_file_view_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythmus_file_view_new ();
 
-int biorhythmus_file_view_load_from_file (BiorhythmusFileView *self, gchar *filename);
-int biorhythmus_file_view_save_to_file (BiorhythmusFileView *self);
-int biorhythmus_file_view_save_to_new_file (BiorhythmusFileView *self, gchar *filename);
+gboolean biorhythmus_file_view_load_from_file (BiorhythmusFileView *file_view, gchar *filename);
+gboolean biorhythmus_file_view_save_to_file (BiorhythmusFileView *file_view);
+gboolean biorhythmus_file_view_save_to_new_file (BiorhythmusFileView *file_view, gchar *filename);
 
 G_END_DECLS
 
