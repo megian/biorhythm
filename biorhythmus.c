@@ -1,9 +1,27 @@
 /* -*-coding: utf-8;-*- */
-/* 2003 by Gabriel Mainberger, Licenced under the GPL */
+/* Biorhythmus
+   Copyright (C) 2003 by Gabriel Mainberger
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published
+   by the Free Software Foundation; either version 2 of the License,
+   or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but
+   WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+   General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+   USA
+
+*/
 
 #include <gtk/gtk.h>
 #include <math.h>
-#include <libgnomeui/libgnomeui.h>
+/* #include <libgnomeui/libgnomeui.h> */
 
 guint bio_birthday_d=1;
 guint bio_birthday_m=1;
@@ -238,7 +256,7 @@ void birthday(GtkCalendar *calendar, gpointer user_data)
 
 void showbiodialog(GtkMenuItem *eintrag, gpointer user_data)
 {
-  dialog = g_object_new(GTK_TYPE_WINDOW, "title", "Geburtstag", "default-width", 100, "default-height", 100, NULL);
+  dialog = g_object_new(GTK_TYPE_WINDOW, "title", "Geburtstag", "default-width", 100, "default-height", 100, "destroy-with-parent", TRUE, NULL);
   biodates = gtk_calendar_new();
   gtk_calendar_display_options((GtkCalendar*)biodates, GTK_CALENDAR_WEEK_START_MONDAY|GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
   gtk_calendar_select_day((GtkCalendar*)biodates, bio_birthday_d);
@@ -261,7 +279,7 @@ int main(int argc, char **argv)
 
   gtk_init(&argc, &argv);
 
-  fenster = g_object_new(GTK_TYPE_WINDOW, "title", "Biorhythmus", "default-width", 300, "default-height", 300, NULL);
+  fenster = g_object_new(GTK_TYPE_WINDOW, "title", "Biorhythmus", "default-width", 400, "default-height", 400, NULL);
   g_signal_connect(fenster, "delete-event", G_CALLBACK(delete_event), NULL);
   g_signal_connect(fenster, "destroy", G_CALLBACK(ende), NULL);
 
