@@ -5,18 +5,16 @@
 #include <math.h>
 #include <libgnomeui/libgnomeui.h>
 
-struct tm *tm1;
+guint bio_birthday_d=1;
+guint bio_birthday_m=1;
+guint bio_birthday_y=2000;
+guint bio_viewdata_d;
+guint bio_viewdata_m;
+guint bio_viewdata_y;
 
-int bio_birthday_d = 1;
-int bio_birthday_m = 1;
-int bio_birthday_y = 1980;
-int bio_viewdata_d = 1;
-int bio_viewdata_m = 1;
-int bio_viewdata_y = 2003;
-
-GtkLabel *label1, *label2, *label3, *label4, *label5;
-GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *about, *dates2;
+GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *about, *biodates, *map;
 GtkStatusbar *status;
+GtkWindow *dialog;
 
 gint delete_event(GtkWindow *widget, GdkEvent event, gpointer daten)
 {
@@ -28,7 +26,7 @@ void ende(GtkWidget *widget, gpointer daten)
   gtk_main_quit();
 }
 
-int bio_daysinmonth(int m, int y)
+gint bio_daysinmonth(gint m, gint y)
 {
   if(m==1||m==3||m==5||m==7||m==8||m==10||m==12) return(31);
   if(m==4||m==6||m==9||m==11) return(30);
@@ -39,28 +37,28 @@ int bio_daysinmonth(int m, int y)
       return(28);
 }
 
-int bio_bioday(int daysoflife, int biodays)
+gint bio_bioday(gint daysoflife, gint biodays)
 {
-  int rd;
-  double pi2, result;
+  gint rd;
+  gdouble pi2, result;
 
-  rd = (int)(daysoflife - biodays * floor(daysoflife / biodays));
-  pi2 = (float)(6.2831853); // 2 * 3.141592654 6.2831853
-  result = (float)(sin(rd * pi2 / biodays)); // calculate
-  return((int)floor(100*result+0.5));
+  rd = (gint)(daysoflife - biodays * floor(daysoflife / biodays));
+  pi2 = (gfloat)(6.2831853); // 2 * 3.141592654 6.2831853
+  result = (gfloat)(sin(rd * pi2 / biodays)); // calculate
+  return((gint)floor(100*result+0.5));
 }
 
-int bio_biodaygraphic(int x, int daysoflife, int biodays, int halfheight, int daypix, int startx, int graphicheight)
+gint bio_biodaygraphic(gint x, gint daysoflife, gint biodays, gint halfheight, gint daypix, gint startx, gint graphicheight)
 {
-  double pi2, calcsin, ri;
+  gdouble pi2, calcsin, ri;
 
-  pi2 = (float)(6.2831853); // 2 * 3.141592654 6.2831853
+  pi2 = (gfloat)(6.2831853); // 2 * 3.141592654 6.2831853
   ri = (daysoflife - biodays * floor(daysoflife / biodays));
   calcsin = sin((x - startx + daypix * ri) * pi2 / (daypix * biodays));
-  return((int)(floor((halfheight - graphicheight * calcsin)+0.5)));
+  return((gint)(floor((halfheight - graphicheight * calcsin)+0.5)));
 }
 
-int bio_setpositiv(int i)
+gint bio_setpositiv(gint i)
 {
   if(i<0)
     i *= -1;
@@ -68,27 +66,27 @@ int bio_setpositiv(int i)
   return(i);
 }
 
-int bio_setpositivgraphic(int i, int halfheight)
+gint bio_setpositivgraphic(gint i, gint halfheight)
 {
   if(i>halfheight)
-    return(halfheight-(i- halfheight));
+    return(halfheight-(i-halfheight));
   else
     return(i);
 }
 
-int bio_biodaytotal(int daysoflife)
+gint bio_biodaytotal(gint daysoflife)
 {
-  return((int)((bio_setpositiv(bio_bioday(daysoflife, 23))+bio_setpositiv(bio_bioday(daysoflife, 28))+bio_setpositiv(bio_bioday(daysoflife, 33)))/3));
+  return((gint)((bio_setpositiv(bio_bioday(daysoflife, 23))+bio_setpositiv(bio_bioday(daysoflife, 28))+bio_setpositiv(bio_bioday(daysoflife, 33)))/3));
 }
 
-int bio_biodaygraphictotal(int x, int daysoflife, int halfheight, int daypix, int startx, int graphicheight)
+gint bio_biodaygraphictotal(gint x, gint daysoflife, gint halfheight, gint daypix, gint startx, gint graphicheight)
 {
-  return((int)((bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 23, halfheight, daypix, startx, graphicheight),halfheight)+bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 28, halfheight, daypix, startx, graphicheight),halfheight)+bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 33, halfheight, daypix, startx, graphicheight),halfheight))/3));
+  return((gint)((bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 23, halfheight, daypix, startx, graphicheight),halfheight)+bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 28, halfheight, daypix, startx, graphicheight),halfheight)+bio_setpositivgraphic(bio_biodaygraphic(x, daysoflife, 33, halfheight, daypix, startx, graphicheight),halfheight))/3));
 }
 
-long bio_daysto(int d, int m, int y)
+glong bio_daysto(gint d, gint m, gint y)
 {
-  long l=d;
+  glong l=d;
 
   m--;
 
@@ -116,9 +114,9 @@ long bio_daysto(int d, int m, int y)
 
 void consolebio(GtkMenuItem *eintrag, gpointer foo)
 {
-  int daysoflife;
+  gint daysoflife;
 
-  daysoflife = (int)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
+  daysoflife = (gint)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
   printf("Ihr Alter:   %d\n\n", daysoflife);
 
   printf("Koerperlich: %d\n", bio_bioday(daysoflife, 23));
@@ -133,46 +131,45 @@ void refreshbiodraw(GtkMenuItem *eintrag, gpointer user_data)
   gtk_widget_queue_resize(user_data);
 }
 
-void jaja(GtkMenuItem *eintrag, gpointer user_data)
+void showabout(GtkMenuItem *eintrag, gpointer user_data)
 {
   gtk_widget_show_all(GTK_WIDGET(about));
 }
 
 gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-  int i1, i2, daysoflife, daysinmonth, daypix, halfheight, startx, graphicheight, h100;
-  char s[32];
-  gchar buf[512];
+  gint i1, i2, daysoflife, daysinmonth, daypix, halfheight, startx, graphicheight, h100;
+  gchar *s;
   GdkColor color;
   GdkGC *gc;
-  time_t d;
 
-  d = gnome_date_edit_get_time((GnomeDateEdit*)dates);
-  tm1 = localtime(&d);
-
-  bio_viewdata_d = tm1->tm_mday;
-  bio_viewdata_m = tm1->tm_mon+1;
-  bio_viewdata_y = tm1->tm_year+1900;
+  bio_viewdata_m--;
+  gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata_y, &bio_viewdata_m, &bio_viewdata_d);
+  bio_viewdata_m++;
 
   gc = gdk_gc_new(widget->window);
 
   // Set Parameter
   daysinmonth = bio_daysinmonth(bio_viewdata_m, bio_viewdata_y);
-  daysoflife = (int)(bio_daysto(1, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
-  daypix = (widget->allocation.width - 15) / daysinmonth;
+  daysoflife = (gint)(bio_daysto(1, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
+  daypix = (widget->allocation.width-10) / daysinmonth;
   halfheight = widget->allocation.height/2;
-  startx = 15; // + (daypix/2)+(daypix/4);
-  graphicheight = ((widget->allocation.height-100)/2);
-  h100 = (int)(floor(widget->allocation.height/100)+1);
+  startx = 15;
+  graphicheight = ((widget->allocation.height-20)/2);
+  h100 = (gint)(floor(widget->allocation.height/100)+1);
 
   // Diagram
   gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx, halfheight, startx+((daysinmonth-1)*daypix), widget->allocation.height/2);
 
+  // Day Linie
+  gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(daypix*(bio_viewdata_d-1)), 0, startx+(daypix*(bio_viewdata_d-1)), widget->allocation.height);
+
   for(i1=0;i1<daysinmonth;i1++)
   {
-    sprintf(s, "%d", i1+1);
+    s = g_strdup_printf("%d", i1+1);
     gdk_draw_string(widget->window, gdk_font_load("-*-helvetica-*-r-normal--*-100-*-*-*-*-iso8859-1"), widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(i1*daypix)-4, halfheight+h100+10, s);
     gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(i1*daypix), halfheight-h100, startx+(i1*daypix), halfheight+h100);
+    g_free(s);
   }
 
   // Draw curves
@@ -218,21 +215,38 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
       gdk_draw_point(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], i2, bio_biodaygraphictotal(i2, daysoflife, halfheight, daypix, startx, graphicheight));
   }
 
-  daysoflife = (int)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
-  g_sprintf(buf, "Datum: %d.%d.%d / Birthday: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata_d, bio_viewdata_m, bio_viewdata_y, bio_birthday_d, bio_birthday_m, bio_birthday_y, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
-  gtk_statusbar_push(status, 0, buf);
+  daysoflife = (gint)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
+  s = g_strdup_printf("Datum: %d.%d.%d / Geburtstag: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata_d, bio_viewdata_m, bio_viewdata_y, bio_birthday_d, bio_birthday_m, bio_birthday_y, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
+  gtk_statusbar_push(status, 0, s);
+  g_free(s);
 
   return TRUE;
 }
 
-void datechange(GnomeDateEdit *dateedit, gpointer user_data)
+void datechange(GtkCalendar *calendar, gpointer user_data)
 {
-  gtk_widget_queue_resize(user_data);
+  gtk_widget_queue_resize(map);
 }
 
-void opencal(GtkButton *button, gpointer user_data)
+void birthday(GtkCalendar *calendar, gpointer user_data)
 {
-  gtk_widget_show_all(GTK_WIDGET(dates2));
+  bio_birthday_m--;
+  gtk_calendar_get_date((GtkCalendar*)biodates, &bio_birthday_y, &bio_birthday_m, &bio_birthday_d);
+  bio_birthday_m++;
+  gtk_widget_queue_resize(map);
+}
+
+void showbiodialog(GtkMenuItem *eintrag, gpointer user_data)
+{
+  dialog = g_object_new(GTK_TYPE_WINDOW, "title", "Geburtstag", "default-width", 100, "default-height", 100, NULL);
+  biodates = gtk_calendar_new();
+  gtk_calendar_display_options((GtkCalendar*)biodates, GTK_CALENDAR_WEEK_START_MONDAY|GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
+  gtk_calendar_select_day((GtkCalendar*)biodates, bio_birthday_d);
+  gtk_calendar_select_month((GtkCalendar*)biodates, bio_birthday_m-1, bio_birthday_y);
+  g_signal_connect(biodates, "day-selected", G_CALLBACK(birthday), NULL);
+  g_signal_connect(biodates, "month-changed", G_CALLBACK(birthday), NULL);
+  gtk_container_add(GTK_CONTAINER(dialog), GTK_WIDGET(biodates));
+  gtk_widget_show_all(GTK_WIDGET(dialog));
 }
 
 int main(int argc, char **argv)
@@ -240,13 +254,9 @@ int main(int argc, char **argv)
   GtkWindow *fenster;
   GtkAccelGroup *kuerzel;
   GtkMenuBar *menues;
-  GtkWidget *datei, *options, *hilfe, *datei_schliessen, *console, *hilfe_inhalt, *hilfe_info;
+  GtkWidget *datei, *options, *hilfe, *datei_schliessen, *datei_bio, *console, *hilfe_info;
   GtkMenu *dateimenue, *optionmenu, *hilfemenue;
-  GtkToolbar *werkzeug;
-  GtkWidget *map, *button;
-  GtkVBox *vbox, *vbox2;
-  GtkHBox *hbox;
-  GtkWidget *edit;
+  GtkVBox *vbox;
   const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
 
   gtk_init(&argc, &argv);
@@ -255,31 +265,37 @@ int main(int argc, char **argv)
   g_signal_connect(fenster, "delete-event", G_CALLBACK(delete_event), NULL);
   g_signal_connect(fenster, "destroy", G_CALLBACK(ende), NULL);
 
+  /* VBOX */
   vbox = g_object_new(GTK_TYPE_VBOX, NULL);
 
+  /* MAP */
   map = gtk_drawing_area_new();
 
+  /* AccelGroup */
   kuerzel = g_object_new(GTK_TYPE_ACCEL_GROUP, NULL);
   gtk_window_add_accel_group(GTK_WINDOW(fenster), kuerzel);
 
   menues = g_object_new(GTK_TYPE_MENU_BAR, NULL);
-//  werkzeug = g_object_new(GTK_TYPE_TOOLBAR, NULL);
   status = g_object_new(GTK_TYPE_STATUSBAR, NULL);
   gtk_statusbar_push(status, 0, "Herzlich Willkommen!");
 
-  /* Menu -> Datei -> Datei schliessen */
+  /* menu -> datei -> datei schliessen */
+  datei_bio = gtk_menu_item_new_with_mnemonic("_Geburtstag");
+  g_signal_connect(datei_bio, "activate", G_CALLBACK(showbiodialog), NULL);
   datei_schliessen = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, kuerzel);
   g_signal_connect(datei_schliessen, "activate", G_CALLBACK(ende), NULL);
 
-  /* Menu -> Datei */
+  /* menu -> datei */
   dateimenue = g_object_new(GTK_TYPE_MENU, NULL);
+  gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), datei_bio);
+  gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), gtk_separator_menu_item_new());
   gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), datei_schliessen);
 
   datei = gtk_menu_item_new_with_mnemonic("_Datei");
   gtk_menu_shell_append(GTK_MENU_SHELL(menues), datei);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(datei), GTK_WIDGET(dateimenue));
 
-  /* Menu -> Optionen -> ... */
+  /* menu -> optionen -> ... */
   option_bio23 = gtk_check_menu_item_new_with_mnemonic("_Koerper");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_bio23, TRUE);
   g_signal_connect(option_bio23, "activate", G_CALLBACK(refreshbiodraw), map);
@@ -299,7 +315,7 @@ int main(int argc, char **argv)
   console = gtk_menu_item_new_with_mnemonic("_Konsole");
   g_signal_connect(console, "activate", G_CALLBACK(consolebio), NULL);
 
-  /* Menu -> Optionen */
+  /* menu -> optionen */
   optionmenu = g_object_new(GTK_TYPE_MENU, NULL);
   gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_bio23);
   gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_bio28);
@@ -312,59 +328,35 @@ int main(int argc, char **argv)
   gtk_menu_shell_append(GTK_MENU_SHELL(menues), options);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(options), GTK_WIDGET(optionmenu));
 
-  /* Menu -> Hilfe -> .. */
-  hilfe_inhalt = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, kuerzel);
+  /* menu -> hilfe -> .. */
   hilfe_info = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, kuerzel);
-
   hilfemenue = g_object_new(GTK_TYPE_MENU, NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(hilfemenue), hilfe_inhalt);
   gtk_menu_shell_append(GTK_MENU_SHELL(hilfemenue), hilfe_info);
 
+  /* hilfe -> about */
   about = gnome_about_new("Biorhythmus", "0.0.1", "Copyright (c) 2003 Gabriel Mainberger", "Funny but useless ;-)", authors, NULL, NULL, NULL);
-  g_signal_connect(hilfe_info, "activate", G_CALLBACK(jaja), NULL);
+  g_signal_connect(hilfe_info, "activate", G_CALLBACK(showabout), NULL);
 
+  /* hilfe */
   hilfe = gtk_menu_item_new_with_mnemonic("_Hilfe");
   gtk_menu_shell_append(GTK_MENU_SHELL(menues), hilfe);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(hilfe), GTK_WIDGET(hilfemenue));
 
+  /* Add Menubar to vbox */
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menues), FALSE, TRUE, 0);
 
-  /*gtk_toolbar_insert_stock(werkzeug, GTK_STOCK_CUT, "Ausschneiden", "...", G_CALLBACK(ausschneiden), status, -1);
-  gtk_toolbar_insert_stock(werkzeug, GTK_STOCK_COPY, "Kopieren", "...-", G_CALLBACK(kopieren), NULL, -1);
-  gtk_toolbar_insert_stock(werkzeug, GTK_STOCK_PASTE, "Einfuegen", "", G_CALLBACK(einfuegen), NULL, -1);
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(werkzeug), FALSE, TRUE, 0);*/
-
+  /* Add MAP */
   g_signal_connect(G_OBJECT(map), "expose_event", G_CALLBACK(drawbio), NULL);
+  gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(map));
 
-  dates2 = gtk_calendar_new();
-
-  button = gtk_button_new_with_label("Datum");
-  g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(opencal), NULL);
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(button), FALSE, TRUE, 0);
-
-  dates = gnome_date_edit_new_flags((time_t)0, 1);
+  /* Calendar */
+  dates = gtk_calendar_new();
+  gtk_calendar_display_options((GtkCalendar*)dates, GTK_CALENDAR_WEEK_START_MONDAY|GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dates), FALSE, TRUE, 0);
-  g_signal_connect(G_OBJECT(dates), "date-changed", G_CALLBACK(datechange), map);
+  g_signal_connect(G_OBJECT(dates), "day-selected", G_CALLBACK(datechange), NULL);
+  g_signal_connect(G_OBJECT(dates), "month-changed", G_CALLBACK(datechange), NULL);
 
-  hbox = g_object_new(GTK_TYPE_HBOX, NULL);
-  vbox2 = g_object_new(GTK_TYPE_VBOX, NULL);
-
-  label1 = g_object_new(GTK_TYPE_LABEL, "label", "Biorhythmus fuer Gabriel", NULL);
-  label2 = g_object_new(GTK_TYPE_LABEL, "label", "Koerper: 100", NULL);
-  label3 = g_object_new(GTK_TYPE_LABEL, "label", "Seele:   100", NULL);
-  label4 = g_object_new(GTK_TYPE_LABEL, "label", "Geist:   100", NULL);
-  label5 = g_object_new(GTK_TYPE_LABEL, "label", "Total:   100", NULL);
-
-  gtk_box_pack_start(GTK_BOX(vbox2), GTK_WIDGET(label1), FALSE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), GTK_WIDGET(label2), FALSE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), GTK_WIDGET(label3), FALSE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), GTK_WIDGET(label4), FALSE, TRUE, 0);
-  gtk_box_pack_start(GTK_BOX(vbox2), GTK_WIDGET(label5), FALSE, TRUE, 0);
-
-  gtk_container_add(GTK_CONTAINER(hbox), GTK_WIDGET(map));
-  //gtk_box_pack_start(GTK_BOX(hbox), GTK_WIDGET(vbox2), FALSE, TRUE, 0);
-
-  gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(hbox));
+  /* Statusbar */
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(status), FALSE, TRUE, 0);
 
   gtk_container_add(GTK_CONTAINER(fenster), GTK_WIDGET(vbox));
