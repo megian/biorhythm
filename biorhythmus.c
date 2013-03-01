@@ -24,12 +24,8 @@
 #include <json-glib/json-glib.h>
 #include <math.h>
 
-struct bio_date
-{
-	guint day;
-	guint month;
-	guint year;
-};
+#include "biorhythmus-math.h"
+#include "biorhythmus-chart.h"
 
 struct bio_date bio_birthday;
 struct bio_date bio_viewdata;
@@ -46,105 +42,7 @@ enum
 
 GtkWidget *option_physical, *option_emotional, *option_intellectual, *option_total, *dates, *map;
 GtkStatusbar *status;
-
-gint
-bio_bioday (gint days_of_life, gint bio_cycle_days)
-{
-	gint rd;
-	gdouble pi2, result;
-
-	pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
-	rd = (gint)(days_of_life - (bio_cycle_days * floor(days_of_life / bio_cycle_days)));
-	result = (gfloat)(sin(rd * pi2 / bio_cycle_days)); // calculate
-	return((gint)floor(100 * result + 0.5));
-}
-
-gint
-bio_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin)
-{
-	gdouble pi2, calcsin, ri;
-
-	pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
-	ri = (days_of_life - (bio_cycle_days * floor(days_of_life / bio_cycle_days)));
-	calcsin = sin((x - margin + (day_pix * ri)) * pi2 / (day_pix * bio_cycle_days));
-	return((gint)(floor(half_height - ((half_height-margin) * calcsin)) + 0.5));
-}
-
-gint
-bio_setpositiv (gint i)
-{
-	if (i < 0)
-		return(i * -1);
-	else
-		return(i);
-}
-
-gint
-bio_setpositivgraphic (gint i, gint half_height)
-{
-	if (i > half_height)
-		return (half_height - (i - half_height));
-	else
-		return (i);
-}
-
-gint
-bio_biodaytotal (gint days_of_life)
-{
-	gint result_physical, result_emotional, result_intellectual;
-
-	result_physical = bio_setpositiv (bio_bioday (days_of_life, 23));
-	result_emotional = bio_setpositiv (bio_bioday (days_of_life, 28));
-	result_intellectual = bio_setpositiv (bio_bioday (days_of_life, 33));
-
-	return((gint)((result_physical + result_emotional + result_intellectual) / 3));
-}
-
-gint
-bio_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin)
-{
-	gint result_physical, result_emotional, result_intellectual;
-	
-	result_physical = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 23, half_height, day_pix, margin), half_height);
-	result_emotional = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 28, half_height, day_pix, margin), half_height);
-	result_intellectual = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 33, half_height, day_pix, margin), half_height);
-
-	return((gint)((result_physical + result_emotional + result_intellectual) / 3));
-}
-
-glong
-bio_daysto (gint day, gint month, gint year)
-{
-	gint result=day;
-
-	month--;
-	// Month
-	while (month)
-	{
- 		result += g_date_get_days_in_month(month, year);
-		month--;
-	}
-
-	year--;
-	// Years
-	while (year)
-	{
-		if(year%4 == 0 && ( year%100 != 0 || year%400 == 0))
-			result += 366;
-		else
-			result += 365;
-
-		year--;
-	}
-
-	return(result);
-}
-
-gint
-bio_daysoflife (struct bio_date date_selection, struct bio_date date_birthday)
-{
-	return (gint)(bio_daysto(date_selection.day, date_selection.month, date_selection.year)-bio_daysto(date_birthday.day, date_birthday.month, date_birthday.year));
-}
+BiorhythmusChart *chart;
 
 void
 bio_cli_output (GtkMenuItem *eintrag, gpointer foo)
@@ -169,76 +67,6 @@ bio_gui_help_info_dialog (GtkMenuItem *eintrag, gpointer user_data)
 }
 
 void
-bio_gui_draw_chart_curves (cairo_t *cr, double red, double green, double blue, gint margin, gint days_in_month, gint day_pix, gint days_of_life, gint cycle_day, gint half_height)
-{
-	gint i = margin;
-
-	if ((bio_birthday.month == bio_viewdata.month) && (bio_birthday.year == bio_viewdata.year))
-		i = margin + ((bio_birthday.day - 1) * day_pix);
-	else if (days_of_life < 0)
-		return;
-
-	cairo_set_source_rgb (cr, red, green, blue);
-
-	// Draw curves
-	while (i <= margin + ((days_in_month - 1) * day_pix))
-	{
-		if (cycle_day == 0)
-			cairo_line_to (cr, i, bio_bioday_graphic_total (i, days_of_life, half_height, day_pix, margin));
-		else
-			cairo_line_to (cr, i, bio_bioday_graphic (i, days_of_life, cycle_day, half_height, day_pix, margin));
-
-		i++;
-	}
-
-	cairo_stroke (cr);
-}
-
-void
-bio_gui_draw_chart_lines (cairo_t *cr, gint margin, gint half_height, gint days_in_month, gint day_pix)
-{
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_set_line_width (cr, 0.5);
-	cairo_move_to (cr, margin, half_height);
-	cairo_line_to (cr, margin + ((days_in_month - 1) * day_pix), half_height);
-	cairo_stroke (cr);
-}
-
-void
-bio_gui_draw_chart_current_day_line(cairo_t *cr, gint margin, gint full_height, gint days_in_month, gint day_pix, gint current_day)
-{
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_set_line_width (cr, 0.5);
-	cairo_move_to (cr, margin + (day_pix * (current_day - 1)), 0);
-	cairo_line_to (cr, margin + (day_pix * (current_day - 1)), full_height);
-	cairo_stroke (cr);
-}
-
-void
-bio_gui_draw_chart_day_lines(cairo_t *cr, gint margin, gint half_height, gint full_height, gint days_in_month, gint day_pix)
-{
-	gint i, h100;
-	gchar *s;
-
-	h100 = (gint)(floor (full_height / 100) + 1);
-	for (i = 0;i < days_in_month;i++)
-	{
-		s = g_strdup_printf ("%d", i + 1);
-		cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
-		cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-		cairo_set_font_size (cr, 10);
-		cairo_move_to (cr, margin + (i * day_pix) - 4, half_height + h100 + 10);
-		cairo_show_text (cr, s);
-		g_free (s);
-
-		cairo_set_source_rgb (cr, 0, 0, 0);
-		cairo_move_to (cr, margin + (i * day_pix), half_height - h100);
-		cairo_line_to (cr, margin + (i * day_pix), half_height + h100);
-	}
-	cairo_stroke (cr);
-}
-
-void
 bio_gui_update_statusbar (gint days_of_life)
 {
 	gchar *s;
@@ -251,74 +79,49 @@ bio_gui_update_statusbar (gint days_of_life)
 	g_free (s);
 }
 
+
 gboolean
 bio_gui_draw_chart (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	gint i, days_of_life, days_in_month, day_pix, full_height, half_height, full_width, h100, margin;
-	cairo_t *cr;
-	GdkWindow *mywindow;
-
-	mywindow = gtk_widget_get_window (widget);
-	cr = gdk_cairo_create (mywindow);
-
-	// Inizialize
-	margin = 15;
-
-#ifdef GTK2
-	full_height = widget->allocation.height;
-	full_width = widget->allocation.width;
-#else
-	full_height = gtk_widget_get_allocated_height (widget);
-	full_width = gtk_widget_get_allocated_width (widget);
-#endif
-
-	gtk_calendar_get_date ((GtkCalendar*)dates, &bio_viewdata.year, &bio_viewdata.month, &bio_viewdata.day);
-	//g_date_set_dmy(new_viewdata, bio_viewdata.day, bio_viewdata.month+1, bio_viewdata.year);
-	bio_viewdata.month++;
-
-	// Set Parameter
-	days_in_month = g_date_get_days_in_month (bio_viewdata.month, bio_viewdata.year);
-	days_of_life = bio_daysoflife (bio_viewdata, bio_birthday);
-	//g_print("Daysoflife: %i %i (daysinmonth) %i\n", daysoflife, g_date_days_between(new_birthday, new_viewdata));
-	day_pix = full_width / days_in_month;
-	half_height = full_height / 2;
-
-	bio_gui_draw_chart_lines (cr, margin, half_height, days_in_month, day_pix);
-	bio_gui_draw_chart_current_day_line (cr, margin, full_height, days_in_month, day_pix, bio_viewdata.day);
-	bio_gui_draw_chart_day_lines (cr, margin, half_height, full_height, days_in_month, day_pix);
-
-	// Physical
-	if (gtk_check_menu_item_get_active ((GtkCheckMenuItem*)option_physical))
-		bio_gui_draw_chart_curves (cr, 1, 0, 0, margin, days_in_month, day_pix, days_of_life, 23, half_height);
-
-	// Emotional
-	if (gtk_check_menu_item_get_active ((GtkCheckMenuItem*)option_emotional))
-		bio_gui_draw_chart_curves (cr, 0, 1, 0, margin, days_in_month, day_pix, days_of_life, 28, half_height);
-
-	// Intellectual
-	if (gtk_check_menu_item_get_active ((GtkCheckMenuItem*)option_intellectual))
-		bio_gui_draw_chart_curves (cr, 0, 0, 1, margin, days_in_month, day_pix, days_of_life, 33, half_height);
-
-	if (gtk_check_menu_item_get_active ((GtkCheckMenuItem*)option_total))
-		bio_gui_draw_chart_curves (cr, 0, 0, 0, margin, days_in_month, day_pix, days_of_life, 0, half_height);
-
-	cairo_stroke (cr);
-	cairo_destroy (cr);
-
-	bio_gui_update_statusbar (days_of_life);
-
-	return TRUE;
+	biorhythmus_chart_draw (chart);
 }
 
 void
-bio_gui_refresh_chart (GtkMenuItem *entry, gpointer user_data)
+bio_gui_option_physical (GtkMenuItem *entry, gpointer user_data)
 {
+	biorhythmus_chart_set_option_physical (chart, gtk_check_menu_item_get_active ((GtkCheckMenuItem *)entry));
+	gtk_widget_queue_resize (user_data);
+	biorhythmus_chart_get_private_variables (chart);
+}
+
+void
+bio_gui_option_emotional (GtkMenuItem *entry, gpointer user_data)
+{
+	biorhythmus_chart_set_option_emotional (chart, gtk_check_menu_item_get_active ((GtkCheckMenuItem *)entry));
+	gtk_widget_queue_resize (user_data);
+}
+
+void
+bio_gui_option_intellectual (GtkMenuItem *entry, gpointer user_data)
+{
+	biorhythmus_chart_set_option_intellectual (chart, gtk_check_menu_item_get_active ((GtkCheckMenuItem *)entry));
+	gtk_widget_queue_resize (user_data);
+}
+
+void
+bio_gui_option_total (GtkMenuItem *entry, gpointer user_data)
+{
+	biorhythmus_chart_set_option_total (chart, gtk_check_menu_item_get_active ((GtkCheckMenuItem *)entry));
 	gtk_widget_queue_resize (user_data);
 }
 
 void
 bio_gui_calendar_change (GtkCalendar *calendar, gpointer user_data)
 {
+	gint year, month, day;
+
+	gtk_calendar_get_date (calendar, &year, &month, &day);
+	biorhythmus_chart_set_active_date (chart, day, month+1, year);
 	gtk_widget_queue_resize (map);
 }
 
@@ -496,7 +299,7 @@ bio_gui_persons_date_changed(GtkTreeView *tree_view, gpointer user_data)
 			bio_birthday.month = g_date_get_month (date);
 			bio_birthday.year = g_date_get_year (date);
 
-			//g_date_set_parse (new_birthday, str);
+		    biorhythmus_chart_set_birthday (chart, g_date_get_day (date), g_date_get_month (date), g_date_get_year (date));
 		}
 
 		g_free (str);
@@ -756,19 +559,19 @@ bio_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, GtkListStore *list)
 	/* menu -> option -> ... */
 	option_physical = gtk_check_menu_item_new_with_mnemonic ("_Physical");
 	gtk_check_menu_item_set_active ((GtkCheckMenuItem*)option_physical, TRUE);
-	g_signal_connect (option_physical, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
+	g_signal_connect (option_physical, "activate", G_CALLBACK(bio_gui_option_physical), map);
 
 	option_emotional = gtk_check_menu_item_new_with_mnemonic ("_Emotional");
 	gtk_check_menu_item_set_active ((GtkCheckMenuItem*)option_emotional, TRUE);
-	g_signal_connect (option_emotional, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
+	g_signal_connect (option_emotional, "activate", G_CALLBACK(bio_gui_option_emotional), map);
 
 	option_intellectual = gtk_check_menu_item_new_with_mnemonic ("_Intellectual");
 	gtk_check_menu_item_set_active ((GtkCheckMenuItem*)option_intellectual, TRUE);
- 	g_signal_connect (option_intellectual, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
+ 	g_signal_connect (option_intellectual, "activate", G_CALLBACK(bio_gui_option_intellectual), map);
 
 	option_total = gtk_check_menu_item_new_with_mnemonic("_Total");
 	gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_total, TRUE);
-	g_signal_connect(option_total, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
+	g_signal_connect(option_total, "activate", G_CALLBACK(bio_gui_option_total), map);
 
 	console = gtk_menu_item_new_with_mnemonic("_Console");
 	g_signal_connect(console, "activate", G_CALLBACK(bio_cli_output), NULL);
@@ -840,6 +643,10 @@ main (int argc, char **argv)
 
 	/* MAP */
 	map = gtk_drawing_area_new();
+	chart = biorhythmus_chart_new (map);
+
+	biorhythmus_chart_set_birthday (chart, 1, 11, 2012);
+	biorhythmus_chart_set_active_date (chart, 4, 2, 2012);
 
 	bio_gui_menubar_init(window, menu, list);
 	
@@ -886,6 +693,9 @@ main (int argc, char **argv)
 
 	gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(vbox));
 	gtk_widget_show_all(GTK_WIDGET(window));
+
+	biorhythmus_chart_draw (chart);
+
 	gtk_main();
 
 	return (0);
