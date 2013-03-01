@@ -24,6 +24,10 @@
 #ifndef __BIORHYTHMUS_MATH_H__
 #define __BIORHYTHMUS_MATH_H__
 
+#define BIORHYTHMUS_DAYS_PHYSICAL		23
+#define BIORHYTHMUS_DAYS_EMOTIONAL		28
+#define BIORHYTHMUS_DAYS_INTELLECTUAL	33
+
 struct bio_date
 {
 	guint day;
@@ -31,14 +35,14 @@ struct bio_date
 	guint year;
 };
 
-gint bio_bioday (gint days_of_life, gint bio_cycle_days);
-gint bio_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin);
-gint bio_setpositiv (gint i);
-gint bio_setpositivgraphic (gint i, gint half_height);
-gint bio_biodaytotal (gint days_of_life);
-gint bio_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin);
-glong bio_daysto (gint day, gint month, gint year);
-gint bio_daysoflife (struct bio_date date_selection, struct bio_date date_birthday);
+gint biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days);
+gint biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin);
+gint biorhythmus_math_setpositiv (gint i);
+gint biorhythmus_math_setpositivgraphic (gint i, gint half_height);
+gint biorhythmus_math_bioday_total (gint days_of_life);
+gint biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin);
+glong biorhythmus_math_daysto (gint day, gint month, gint year);
+gint biorhythmus_math_daysoflife (struct bio_date date_active, struct bio_date date_birthday);
 
 #endif /* __BIORHYTHMUS_MATH_H__ */
 

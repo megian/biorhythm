@@ -1,32 +1,29 @@
 /* -*-coding: utf-8;-*- */
+
 /* biorhythmus-math.c
-   This file is part of biorhythmus
-
-   Copyright (C) 2003-2013 by Gabriel Mainberger
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published
-   by the Free Software Foundation; either version 2 of the License,
-   or (at your option) any later version.
-
-   This program is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-   General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
-   USA
-
-*/
+ * This file is part of Biorhythmus
+ * Copyright (C) 2003-2013, Gabriel Mainberger
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <glib.h>
 #include <math.h>
 #include "biorhythmus-math.h"
 
 gint
-bio_bioday (gint days_of_life, gint bio_cycle_days)
+biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days)
 {
 	gint rd;
 	gdouble pi2, result;
@@ -38,7 +35,7 @@ bio_bioday (gint days_of_life, gint bio_cycle_days)
 }
 
 gint
-bio_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin)
+biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin)
 {
 	gdouble pi2, calcsin, ri;
 
@@ -49,7 +46,7 @@ bio_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_he
 }
 
 gint
-bio_setpositiv (gint i)
+biorhythmus_math_setpositiv (gint i)
 {
 	if (i < 0)
 		return(i * -1);
@@ -58,7 +55,7 @@ bio_setpositiv (gint i)
 }
 
 gint
-bio_setpositivgraphic (gint i, gint half_height)
+biorhythmus_math_setpositivgraphic (gint i, gint half_height)
 {
 	if (i > half_height)
 		return (half_height - (i - half_height));
@@ -67,33 +64,33 @@ bio_setpositivgraphic (gint i, gint half_height)
 }
 
 gint
-bio_biodaytotal (gint days_of_life)
+biorhythmus_math_bioday_total (gint days_of_life)
 {
 	gint result_physical, result_emotional, result_intellectual;
 
-	result_physical = bio_setpositiv (bio_bioday (days_of_life, 23));
-	result_emotional = bio_setpositiv (bio_bioday (days_of_life, 28));
-	result_intellectual = bio_setpositiv (bio_bioday (days_of_life, 33));
+	result_physical = biorhythmus_math_setpositiv (biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
+	result_emotional = biorhythmus_math_setpositiv (biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
+	result_intellectual = biorhythmus_math_setpositiv (biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
 
 	return((gint)((result_physical + result_emotional + result_intellectual) / 3));
 }
 
 gint
-bio_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin)
+biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin)
 {
 	gint result_physical, result_emotional, result_intellectual;
 	
-	result_physical = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 23, half_height, day_pix, margin), half_height);
-	result_emotional = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 28, half_height, day_pix, margin), half_height);
-	result_intellectual = bio_setpositivgraphic(bio_bioday_graphic (x, days_of_life, 33, half_height, day_pix, margin), half_height);
+	result_physical = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_PHYSICAL, half_height, day_pix, margin), half_height);
+	result_emotional = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL, half_height, day_pix, margin), half_height);
+	result_intellectual = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL, half_height, day_pix, margin), half_height);
 
 	return((gint)((result_physical + result_emotional + result_intellectual) / 3));
 }
 
 glong
-bio_daysto (gint day, gint month, gint year)
+biorhythmus_math_daysto (gint day, gint month, gint year)
 {
-	gint result=day;
+	gint result = day;
 
 	month--;
 	// Month
@@ -119,9 +116,9 @@ bio_daysto (gint day, gint month, gint year)
 }
 
 gint
-bio_daysoflife (struct bio_date date_selection, struct bio_date date_birthday)
+biorhythmus_math_daysoflife (struct bio_date date_active, struct bio_date date_birthday)
 {
-	return (gint)(bio_daysto(date_selection.day, date_selection.month, date_selection.year)-bio_daysto(date_birthday.day, date_birthday.month, date_birthday.year));
+	return (gint)(biorhythmus_math_daysto (date_active.day, date_active.month, date_active.year) - biorhythmus_math_daysto (date_birthday.day, date_birthday.month, date_birthday.year));
 }
 
 
