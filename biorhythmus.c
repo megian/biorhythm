@@ -1,6 +1,6 @@
 /* -*-coding: utf-8;-*- */
 /* Biorhythmus
-   Copyright (C) 2003 by Gabriel Mainberger
+   Copyright (C) 2003-2013 by Gabriel Mainberger
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -44,13 +44,17 @@ enum
 GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *map;
 GtkStatusbar *status;
 
-gint delete_event(GtkWindow *widget, GdkEvent event, gpointer daten)
+gint bio_gui_delete_event(GtkWindow *widget, GdkEvent event, gpointer daten)
 {
   return FALSE;
 }
 
-void bio_gui_close(GtkWidget *widget, gpointer daten)
+void bio_gui_close(GtkWidget *widget, gpointer user_data)
 {
+  GtkListStore *list_store=(GtkListStore*)user_data;
+
+  bio_write_file_person(list_store);
+
   gtk_main_quit();
 }
 
@@ -71,7 +75,7 @@ gint bio_bioday(gint daysoflife, gint biodays)
   gdouble pi2, result;
 
   rd = (gint)(daysoflife - biodays * floor(daysoflife / biodays));
-  pi2 = (gfloat)(6.2831853); // 2 * 3.141592654 6.2831853
+  pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 6.2831853
   result = (gfloat)(sin(rd * pi2 / biodays)); // calculate
   return((gint)floor(100*result+0.5));
 }
@@ -80,7 +84,7 @@ gint bio_biodaygraphic(gint x, gint daysoflife, gint biodays, gint halfheight, g
 {
   gdouble pi2, calcsin, ri;
 
-  pi2 = (gfloat)(6.2831853); // 2 * 3.141592654 6.2831853
+  pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 6.2831853
   ri = (daysoflife - biodays * floor(daysoflife / biodays));
   calcsin = sin((x - startx + daypix * ri) * pi2 / (daypix * biodays));
   return((gint)(floor((halfheight - graphicheight * calcsin)+0.5)));
@@ -145,23 +149,18 @@ gint bio_daysoflife(struct bio_date date_selection, struct bio_date date_birthda
   return (gint)(bio_daysto(date_selection.day, date_selection.month, date_selection.year)-bio_daysto(date_birthday.day, date_birthday.month, date_birthday.year));
 }
 
-void consolebio(GtkMenuItem *eintrag, gpointer foo)
+void bio_cli_output(GtkMenuItem *eintrag, gpointer foo)
 {
   gint daysoflife;
 
   daysoflife = bio_daysoflife(bio_viewdata, bio_birthday);
-  printf("Ihr Alter:   %d\n\n", daysoflife);
+  printf("Age in days: %d\n\n", daysoflife);
 
-  printf("Koerperlich: %d\n", bio_bioday(daysoflife, 23));
-  printf("Seelich:     %d\n", bio_bioday(daysoflife, 28));
-  printf("Geistig:     %d\n", bio_bioday(daysoflife, 33));
+  printf("Physical: %d\n", bio_bioday(daysoflife, 23));
+  printf("Emotional: %d\n", bio_bioday(daysoflife, 28));
+  printf("Intellectual: %d\n", bio_bioday(daysoflife, 33));
 
-  printf("\nTotal:       %d\n", bio_biodaytotal(daysoflife));
-}
-
-void refreshbiodraw(GtkMenuItem *eintrag, gpointer user_data)
-{
-  gtk_widget_queue_resize(user_data);
+  printf("\nTotal: %d\n", bio_biodaytotal(daysoflife));
 }
 
 void bio_gui_help_info_dialog(GtkMenuItem *eintrag, gpointer user_data)
@@ -195,16 +194,12 @@ void drawbio_curves(cairo_t *cr, double red, double green, double blue, gint off
   cairo_stroke(cr);
 }
 
-gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+gboolean bio_gui_draw_chart(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   gint i1, i2, daysoflife, daysinmonth, daypix, fullheight, halfheight, fullwidth, offsetx, graphicheight, h100;
   gchar *s;
   cairo_t *cr;
   GdkWindow *mywindow;
-
-  bio_viewdata.month--;
-  gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata.year, &bio_viewdata.month, &bio_viewdata.day);
-  bio_viewdata.month++;
 
   mywindow = gtk_widget_get_window(widget);
   cr = gdk_cairo_create(mywindow);
@@ -216,6 +211,10 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   fullheight = gtk_widget_get_allocated_height(widget);
   fullwidth = gtk_widget_get_allocated_width(widget);
 #endif
+
+  gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata.year, &bio_viewdata.month, &bio_viewdata.day);
+  bio_viewdata.month++;
+  g_print("%i\n", bio_viewdata.month);
 
   // Set Parameter
   daysinmonth = bio_daysinmonth(bio_viewdata.month, bio_viewdata.year);
@@ -255,15 +254,15 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   }
   cairo_stroke(cr);
 
-  // Körper
+  // Physical
   if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio23))
     drawbio_curves(cr, 1, 0, 0, offsetx, daysinmonth, daypix, daysoflife, 23, halfheight, graphicheight);
 
-  // Seele
+  // Emotional
   if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio28))
     drawbio_curves(cr, 0, 1, 0, offsetx, daysinmonth, daypix, daysoflife, 28, halfheight, graphicheight);
 
-  // Geist
+  // Intellectual
   if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio33))
     drawbio_curves(cr, 0, 0, 1, offsetx, daysinmonth, daypix, daysoflife, 33, halfheight, graphicheight);
 
@@ -273,7 +272,7 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   cairo_stroke(cr);
   cairo_destroy(cr);
 
-  s = g_strdup_printf("Datum: %d.%d.%d / Geburtstag: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata.day, bio_viewdata.month,
+  s = g_strdup_printf("Date: %d.%d.%d / Birthday: %d.%d.%d / Days: %d / Physical: %d / Emotional: %d / Intellectual: %d / Total: %d", bio_viewdata.day, bio_viewdata.month,
   bio_viewdata.year,
   bio_birthday.day, bio_birthday.month, bio_birthday.year, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
   gtk_statusbar_push(status, 0, s);
@@ -282,28 +281,32 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   return TRUE;
 }
 
-void datechange(GtkCalendar *calendar, gpointer user_data)
+void bio_gui_refresh_chart(GtkMenuItem *entry, gpointer user_data)
+{
+  gtk_widget_queue_resize(user_data);
+}
+
+void bio_gui_calendar_change(GtkCalendar *calendar, gpointer user_data)
 {
   gtk_widget_queue_resize(map);
 }
 
-void bio_read_each_person(JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data)
+void bio_read_file_each_person(JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data)
 {
   JsonObject *element;
   JsonNode *name, *birthday;
-  GList *list = NULL;
-  GList **list_ptr = (GList**)user_data;
+  GtkTreeIter iter;
+  GtkListStore *list_store = (GtkListStore*)user_data;
 
   element = json_node_get_object(element_node);
   name = json_object_get_member(element, "Name");
   birthday = json_object_get_member(element, "Birthday");
 
-  list = g_list_append(list, json_node_dup_string(name));
-  list = g_list_append(list, json_node_dup_string(birthday));
-  *list_ptr = g_list_append(*list_ptr, list);
+  gtk_list_store_append(list_store, &iter);
+  gtk_list_store_set(list_store, &iter, PERSON_VIEW_COLUMN_NAME, json_node_dup_string(name), PERSON_VIEW_COLUMN_BIRTHDAY, json_node_dup_string(birthday), -1);
 }
 
-int bio_read_file(GList **list)
+int bio_read_file_person(GtkListStore *list_store)
 {
   JsonParser *parser;
   JsonNode *root, *result;
@@ -326,23 +329,72 @@ int bio_read_file(GList **list)
   element = json_node_get_object(root);
   result = json_object_get_member(element, "Persons");
   array = json_node_get_array(result);
-  json_array_foreach_element(array, bio_read_each_person, list);
+  json_array_foreach_element(array, bio_read_file_each_person, list_store);
 
   g_object_unref(parser);
 
   return 0;
 }
 
-void bio_gui_foreach_person(gpointer data, gpointer user_data)
+void bio_write_file_each_person(JsonBuilder *builder, GtkListStore *list_store)
 {
+  gboolean valid;
   GtkTreeIter iter;
-  gchar *name, *birthday;
+  gchar *cell_text_name, *cell_text_birthday;
 
-  name = g_list_nth_data((GList*)data, PERSON_VIEW_COLUMN_NAME);
-  birthday = g_list_nth_data((GList*)data, PERSON_VIEW_COLUMN_BIRTHDAY);
-  g_print("%s %s\n", name, birthday);
-  gtk_list_store_append((GtkListStore*)user_data, &iter);
-  gtk_list_store_set((GtkListStore*)user_data, &iter, PERSON_VIEW_COLUMN_NAME, name, PERSON_VIEW_COLUMN_BIRTHDAY, birthday, -1);
+  valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
+  while(valid)
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, PERSON_VIEW_COLUMN_NAME, &cell_text_name, PERSON_VIEW_COLUMN_BIRTHDAY, &cell_text_birthday, -1);
+
+    if((g_strcmp0(cell_text_name, "")!=0) && (g_strcmp0(cell_text_birthday, "")!=0))
+    {
+      json_builder_begin_object(builder);
+      json_builder_set_member_name(builder, "Name");
+      json_builder_add_string_value(builder, cell_text_name);
+      json_builder_set_member_name(builder, "Birthday");
+      json_builder_add_string_value(builder, cell_text_birthday);
+      json_builder_end_object(builder);
+    }
+
+    valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(list_store), &iter);
+  }
+}
+
+int bio_write_file_person(GtkListStore *list_store)
+{
+  GError *error;
+
+  JsonBuilder *builder = json_builder_new();
+  json_builder_begin_object(builder);
+
+  json_builder_set_member_name(builder, "Persons");
+
+  json_builder_begin_array(builder);
+  bio_write_file_each_person(builder, list_store);
+  json_builder_end_array(builder);
+
+  json_builder_end_object(builder);
+
+  JsonGenerator *gen = json_generator_new();
+  JsonNode *root = json_builder_get_root(builder);
+  json_generator_set_root(gen, root);
+
+  error = NULL;
+  json_generator_to_file(gen, "default.bio", &error);
+
+  json_node_free(root);
+  g_object_unref(gen);
+  g_object_unref(builder);
+
+  if(error)
+  {
+    g_print("Unable to write `%s': %s\n", "default.bio", error->message);
+    g_error_free(error);
+    return 1;
+  }
+
+  return 0;
 }
 
 void bio_gui_persons_add_empty_row(GtkListStore *list_store)
@@ -565,7 +617,6 @@ int main(int argc, char **argv)
   GtkWidget *file_menu_item, *file_close_menu_item, *option_menu_item, *console, *help_menu_item, *help_info_menu_item;
   GtkMenu *file_menu, *option_menu, *help_menu;
   GtkVBox *vbox;
-  GList *person = NULL;
   GtkListStore *list;
   GtkTreeIter iter;
   GtkTreeView *view;
@@ -574,10 +625,8 @@ int main(int argc, char **argv)
   /* Init type system as soon as possible */
   g_type_init();
 
-  bio_read_file(&person);
-
   list = gtk_list_store_new(PERSON_VIEW_COLUMN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
-  g_list_foreach(person, bio_gui_foreach_person, list);
+  bio_read_file_person(list);
   bio_gui_persons_add_empty_row(list);
 
   view = bio_gui_persons(list);
@@ -589,8 +638,8 @@ int main(int argc, char **argv)
   gtk_init(&argc, &argv);
 
   window = g_object_new(GTK_TYPE_WINDOW, "title", "Biorhythmus", "default-width", 400, "default-height", 400, NULL);
-  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), NULL);
-  g_signal_connect(window, "destroy", G_CALLBACK(bio_gui_close), NULL);
+  g_signal_connect(window, "delete-event", G_CALLBACK(bio_gui_delete_event), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(bio_gui_close), list);
 
   /* VBOX */
   vbox = g_object_new(GTK_TYPE_VBOX, NULL);
@@ -607,7 +656,7 @@ int main(int argc, char **argv)
 
   /* menu -> file -> file close */
   file_close_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, accel);
-  g_signal_connect(file_close_menu_item, "activate", G_CALLBACK(bio_gui_close), NULL);
+  g_signal_connect(file_close_menu_item, "activate", G_CALLBACK(bio_gui_close), list);
 
   /* menu -> file */
   file_menu = g_object_new(GTK_TYPE_MENU, NULL);
@@ -618,24 +667,24 @@ int main(int argc, char **argv)
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(file_menu_item), GTK_WIDGET(file_menu));
 
   /* menu -> option -> ... */
-  option_bio23 = gtk_check_menu_item_new_with_mnemonic("_Koerper");
+  option_bio23 = gtk_check_menu_item_new_with_mnemonic("_Physical");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_bio23, TRUE);
-  g_signal_connect(option_bio23, "activate", G_CALLBACK(refreshbiodraw), map);
+  g_signal_connect(option_bio23, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
 
-  option_bio28 = gtk_check_menu_item_new_with_mnemonic("_Seele");
+  option_bio28 = gtk_check_menu_item_new_with_mnemonic("_Emotional");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_bio28, TRUE);
-  g_signal_connect(option_bio28, "activate", G_CALLBACK(refreshbiodraw), map);
+  g_signal_connect(option_bio28, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
 
-  option_bio33 = gtk_check_menu_item_new_with_mnemonic("_Geist");
+  option_bio33 = gtk_check_menu_item_new_with_mnemonic("_Intellectual");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_bio33, TRUE);
-  g_signal_connect(option_bio33, "activate", G_CALLBACK(refreshbiodraw), map);
+  g_signal_connect(option_bio33, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
 
   option_total = gtk_check_menu_item_new_with_mnemonic("_Total");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_total, TRUE);
-  g_signal_connect(option_total, "activate", G_CALLBACK(refreshbiodraw), map);
+  g_signal_connect(option_total, "activate", G_CALLBACK(bio_gui_refresh_chart), map);
 
   console = gtk_menu_item_new_with_mnemonic("_Console");
-  g_signal_connect(console, "activate", G_CALLBACK(consolebio), NULL);
+  g_signal_connect(console, "activate", G_CALLBACK(bio_cli_output), NULL);
 
   /* menu -> option */
   option_menu = g_object_new(GTK_TYPE_MENU, NULL);
@@ -666,9 +715,9 @@ int main(int argc, char **argv)
 
   /* Add MAP */
 #ifdef GTK2
-  g_signal_connect(G_OBJECT(map), "expose_event", G_CALLBACK(drawbio), NULL);
+  g_signal_connect(G_OBJECT(map), "expose_event", G_CALLBACK(bio_gui_draw_chart), NULL);
 #else
-  g_signal_connect(G_OBJECT(map), "draw", G_CALLBACK(drawbio), NULL);
+  g_signal_connect(G_OBJECT(map), "draw", G_CALLBACK(bio_gui_draw_chart), NULL);
 #endif
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(map), TRUE, TRUE, 0);
 
@@ -676,8 +725,8 @@ int main(int argc, char **argv)
   dates = gtk_calendar_new();
   gtk_calendar_set_display_options((GtkCalendar*)dates, GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dates), FALSE, TRUE, 0);
-  g_signal_connect(G_OBJECT(dates), "day-selected", G_CALLBACK(datechange), NULL);
-  g_signal_connect(G_OBJECT(dates), "month-changed", G_CALLBACK(datechange), NULL);
+  g_signal_connect(G_OBJECT(dates), "day-selected", G_CALLBACK(bio_gui_calendar_change), NULL);
+//  g_signal_connect(G_OBJECT(dates), "month-changed", G_CALLBACK(bio_gui_calendar_change), NULL);
 
   /* View */
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(view), FALSE, FALSE, 0);
