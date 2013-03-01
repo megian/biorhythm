@@ -22,7 +22,7 @@
 #define __BIORHYTHMUS_CLI_H__
 
 #include <math.h>
-#include <gtk/gtk.h>
+#include <glib-object.h>
 #include "biorhythmus-math.h"
 
 G_BEGIN_DECLS
@@ -55,17 +55,8 @@ GType biorhythmus_cli_get_type (void) G_GNUC_CONST;
 
 BiorhythmusCli* biorhythmus_cli_new ();
 
-void biorhythmus_cli_set_birthday (BiorhythmusCli *self, gint day, gint month, gint year);
-void biorhythmus_cli_set_active_date (BiorhythmusCli *self, gint day, gint month, gint year);
-
-void biorhythmus_cli_set_option_physical (BiorhythmusCli *self, gboolean state);
-gboolean biorhythmus_cli_get_option_physical (BiorhythmusCli *self);
-void biorhythmus_cli_set_option_emotional (BiorhythmusCli *self, gboolean state);
-gboolean biorhythmus_cli_get_option_emotional (BiorhythmusCli *self);
-void biorhythmus_cli_set_option_intellectual (BiorhythmusCli *self, gboolean state);
-gboolean biorhythmus_cli_get_option_intellectual (BiorhythmusCli *self);
-void biorhythmus_cli_set_option_total (BiorhythmusCli *self, gboolean state);
-gboolean biorhythmus_cli_get_option_total (BiorhythmusCli *self);
+gboolean biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint year);
+gboolean biorhythmus_cli_set_active_date (BiorhythmusCli *cli, gint day, gint month, gint year);
 
 G_END_DECLS
 

@@ -24,95 +24,15 @@ struct _BiorhythmusCliPrivate
 {
 	struct bio_date birthday;
 	struct bio_date active_date;
-
-	gboolean option_physical;
-	gboolean option_emotional;
-	gboolean option_intellectual;
-	gboolean option_total;
 };
 
 #define BIORHYTHMUS_CLI_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHMUS_TYPE_CLI, BiorhythmusCliPrivate));
 
 G_DEFINE_TYPE (BiorhythmusCli, biorhythmus_cli, G_TYPE_OBJECT)
 
-void
-biorhythmus_cli_output (BiorhythmusCli *self)
-{
-	gint daysoflife=5;
-
-	daysoflife = biorhythmus_math_daysoflife (self->priv->active_date, self->priv->birthday);
-	g_print ("Age in days: %i\n\n", daysoflife);
-
-	g_print ("Physical: %d\n", biorhythmus_math_bioday (daysoflife, BIORHYTHMUS_DAYS_PHYSICAL));
-	g_print ("Emotional: %d\n", biorhythmus_math_bioday (daysoflife, BIORHYTHMUS_DAYS_EMOTIONAL));
-	g_print ("Intellectual: %d\n", biorhythmus_math_bioday (daysoflife, BIORHYTHMUS_DAYS_INTELLECTUAL));
-
-	g_print ("\nTotal: %d\n", biorhythmus_math_bioday_total (daysoflife));
-}
-
-void
-biorhythmus_cli_set_birthday (BiorhythmusCli *self, gint day, gint month, gint year)
-{
-	self->priv->birthday.day = day;
-	self->priv->birthday.month = month;
-	self->priv->birthday.year = year;
-}
-
-void
-biorhythmus_cli_set_active_date (BiorhythmusCli *self, gint day, gint month, gint year)
-{
-    self->priv->active_date.day = day;
-	self->priv->active_date.month = month;
-	self->priv->active_date.year = year;
-}
-
-void
-biorhythmus_cli_set_option_physical (BiorhythmusCli *self, gboolean state)
-{
-	self->priv->option_physical = state;
-}
-
-gboolean
-biorhythmus_cli_get_option_physical (BiorhythmusCli *self)
-{
-	return self->priv->option_physical;
-}
-
-void
-biorhythmus_cli_set_option_emotional (BiorhythmusCli *self, gboolean state)
-{
-	self->priv->option_emotional = state;
-}
-
-gboolean
-biorhythmus_cli_get_option_emotional (BiorhythmusCli *self)
-{
-	return self->priv->option_emotional;
-}
-
-void
-biorhythmus_cli_set_option_intellectual (BiorhythmusCli *self, gboolean state)
-{
-	self->priv->option_intellectual = state;
-}
-
-gboolean
-biorhythmus_cli_get_option_intellectual (BiorhythmusCli *self)
-{
-	return self->priv->option_intellectual;
-}
-
-void
-biorhythmus_cli_set_option_total (BiorhythmusCli *self, gboolean state)
-{
-	self->priv->option_total = state;
-}
-
-gboolean
-biorhythmus_cli_get_option_total (BiorhythmusCli *self)
-{
-	return self->priv->option_total;
-}
+/****************************************
+ *                 Class                *
+ ****************************************/
 
 static void
 biorhythmus_cli_class_init (BiorhythmusCliClass *klass)
@@ -137,16 +57,11 @@ biorhythmus_cli_set_current_date(struct bio_date *date)
 }
 
 static void
-biorhythmus_cli_init (BiorhythmusCli *self)
+biorhythmus_cli_init (BiorhythmusCli *cli)
 {
 	BiorhythmusCliPrivate *priv;
 
-	self->priv = priv = BIORHYTHMUS_CLI_GET_PRIVATE (self);
-
-	priv->option_physical = TRUE;
-	priv->option_emotional = TRUE;
-	priv->option_intellectual = TRUE;
-	priv->option_total = TRUE;
+	cli->priv = priv = BIORHYTHMUS_CLI_GET_PRIVATE (cli);
 
 	biorhythmus_cli_set_current_date (&priv->active_date);
 	biorhythmus_cli_set_current_date (&priv->birthday);
@@ -156,6 +71,52 @@ BiorhythmusCli*
 biorhythmus_cli_new ()
 {
 	return g_object_new (BIORHYTHMUS_TYPE_CLI, NULL);
+}
+
+/****************************************
+ *           Private Functions          *
+ ****************************************/
+
+void
+biorhythmus_cli_output (BiorhythmusCli *cli)
+{
+	gint days_of_life = biorhythmus_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
+
+	g_print ("Age in days: %i\n\n", days_of_life);
+
+	g_print ("Physical: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
+	g_print ("Emotional: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
+	g_print ("Intellectual: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
+
+	g_print ("\nTotal: %d\n", biorhythmus_math_bioday_total (days_of_life));
+}
+
+/****************************************
+ *             Private API              *
+ ****************************************/
+
+gboolean
+biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint year)
+{
+	g_return_val_if_fail (BIORHYTHMUS_IS_CLI (cli), FALSE);
+
+	cli->priv->birthday.day = day;
+	cli->priv->birthday.month = month;
+	cli->priv->birthday.year = year;
+
+	return TRUE;
+}
+
+gboolean
+biorhythmus_cli_set_active_date (BiorhythmusCli *cli, gint day, gint month, gint year)
+{
+	g_return_val_if_fail (BIORHYTHMUS_IS_CLI (cli), FALSE);
+
+	cli->priv->active_date.day = day;
+	cli->priv->active_date.month = month;
+	cli->priv->active_date.year = year;
+
+	return TRUE;
 }
 
 /* ex:set ts=4 noet: */

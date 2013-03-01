@@ -20,6 +20,14 @@
 
 #include "biorhythmus-chart.h"
 
+#ifdef GTK2
+static gboolean
+biorhythmus_chart_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data);
+#else
+void
+biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr);
+#endif
+
 struct _BiorhythmusChartPrivate
 {
 	GtkWidget *parent_widget;
@@ -36,6 +44,69 @@ struct _BiorhythmusChartPrivate
 #define BIORHYTHMUS_CHART_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHMUS_TYPE_CHART, BiorhythmusChartPrivate));
 
 G_DEFINE_TYPE (BiorhythmusChart, biorhythmus_chart, GTK_TYPE_DRAWING_AREA)
+
+/****************************************
+ *                 Class                *
+ ****************************************/
+
+static void
+biorhythmus_chart_class_init (BiorhythmusChartClass *klass)
+{
+	GtkWidgetClass *widget_class;
+
+	g_type_class_add_private (klass, sizeof (BiorhythmusChartPrivate));
+	
+	widget_class = GTK_WIDGET_CLASS (klass);
+
+#ifdef GTK2
+	widget_class->expose_event = (void*)biorhythmus_chart_draw;
+#else
+	widget_class->draw = (void*)biorhythmus_chart_draw;
+#endif
+}
+
+void
+biorhythmus_chart_set_current_date (struct bio_date *date)
+{
+	GTimeVal time_val;
+	GDate *current_date;
+
+	g_get_current_time (&time_val);
+	current_date = g_date_new ();
+	g_date_set_time_val (current_date, &time_val);
+
+	date->day = g_date_get_day (current_date);
+	date->month = g_date_get_month (current_date);
+	date->year = g_date_get_year (current_date);
+
+	g_date_free (current_date);
+}
+
+static void
+biorhythmus_chart_init (BiorhythmusChart *self)
+{
+	BiorhythmusChartPrivate *priv;
+
+	self->priv = priv = BIORHYTHMUS_CHART_GET_PRIVATE (self);
+
+	priv->option_physical = TRUE;
+	priv->option_emotional = TRUE;
+	priv->option_intellectual = TRUE;
+	priv->option_total = TRUE;
+
+	biorhythmus_chart_set_current_date (&priv->active_date);
+	biorhythmus_chart_set_current_date (&priv->birthday);
+}
+
+GtkWidget*
+biorhythmus_chart_new ()
+{
+	return GTK_WIDGET (g_object_new (BIORHYTHMUS_TYPE_CHART, NULL));
+}
+
+/****************************************
+ *           Private Functions          *
+ ****************************************/
 
 void
 biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, double red, double green, double blue, gint margin, gint days_in_month, gint day_pix, gint days_of_life, gint cycle_day, gint half_height)
@@ -211,133 +282,112 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 #endif
 }
 
-void
-biorhythmus_chart_set_birthday (BiorhythmusChart *self, gint day, gint month, gint year)
+/****************************************
+ *              Public API              *
+ ****************************************/
+
+gboolean
+biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year)
 {
-	self->priv->birthday.day = day;
-	self->priv->birthday.month = month;
-	self->priv->birthday.year = year;
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-	gtk_widget_queue_resize (GTK_WIDGET (self));
-}
+	chart->priv->birthday.day = day;
+	chart->priv->birthday.month = month;
+	chart->priv->birthday.year = year;
 
-void
-biorhythmus_chart_set_active_date (BiorhythmusChart *self, gint day, gint month, gint year)
-{
-    self->priv->active_date.day = day;
-	self->priv->active_date.month = month;
-	self->priv->active_date.year = year;
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
 
-	gtk_widget_queue_resize (GTK_WIDGET (self));
-}
-
-void
-biorhythmus_chart_set_option_physical (BiorhythmusChart *self, gboolean state)
-{
-	self->priv->option_physical = state;
-	gtk_widget_queue_resize (GTK_WIDGET (self));
+	return TRUE;
 }
 
 gboolean
-biorhythmus_chart_get_option_physical (BiorhythmusChart *self)
+biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year)
 {
-	return self->priv->option_physical;
-}
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-void
-biorhythmus_chart_set_option_emotional (BiorhythmusChart *self, gboolean state)
-{
-	self->priv->option_emotional = state;
-	gtk_widget_queue_resize (GTK_WIDGET (self));
-}
+	chart->priv->active_date.day = day;
+	chart->priv->active_date.month = month;
+	chart->priv->active_date.year = year;
 
-gboolean
-biorhythmus_chart_get_option_emotional (BiorhythmusChart *self)
-{
-	return self->priv->option_emotional;
-}
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
 
-void
-biorhythmus_chart_set_option_intellectual (BiorhythmusChart *self, gboolean state)
-{
-	self->priv->option_intellectual = state;
-	gtk_widget_queue_resize (GTK_WIDGET (self));
+	return TRUE;
 }
 
 gboolean
-biorhythmus_chart_get_option_intellectual (BiorhythmusChart *self)
+biorhythmus_chart_set_option_physical (BiorhythmusChart *chart, gboolean state)
 {
-	return self->priv->option_intellectual;
-}
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-void
-biorhythmus_chart_set_option_total (BiorhythmusChart *self, gboolean state)
-{
-	self->priv->option_total = state;
-	gtk_widget_queue_resize (GTK_WIDGET (self));
+	chart->priv->option_physical = state;
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
+
+	return TRUE;
 }
 
 gboolean
-biorhythmus_chart_get_option_total (BiorhythmusChart *self)
+biorhythmus_chart_get_option_physical (BiorhythmusChart *chart)
 {
-	return self->priv->option_total;
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+
+	return chart->priv->option_physical;
 }
 
-static void
-biorhythmus_chart_class_init (BiorhythmusChartClass *klass)
+gboolean
+biorhythmus_chart_set_option_emotional (BiorhythmusChart *chart, gboolean state)
 {
-	GtkWidgetClass *widget_class;
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-	g_type_class_add_private (klass, sizeof (BiorhythmusChartPrivate));
-	
-	widget_class = GTK_WIDGET_CLASS (klass);
+	chart->priv->option_emotional = state;
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
 
-#ifdef GTK2
-	widget_class->expose_event = (void*)biorhythmus_chart_draw;
-#else
-	widget_class->draw = (void*)biorhythmus_chart_draw;
-#endif
+	return TRUE;
 }
 
-void
-biorhythmus_chart_set_current_date (struct bio_date *date)
+gboolean
+biorhythmus_chart_get_option_emotional (BiorhythmusChart *chart)
 {
-	GTimeVal time_val;
-	GDate *current_date;
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-	g_get_current_time (&time_val);
-	current_date = g_date_new ();
-	g_date_set_time_val (current_date, &time_val);
-
-	date->day = g_date_get_day (current_date);
-	date->month = g_date_get_month (current_date);
-	date->year = g_date_get_year (current_date);
-
-	g_date_free (current_date);
+	return chart->priv->option_emotional;
 }
 
-static void
-biorhythmus_chart_init (BiorhythmusChart *self)
+gboolean
+biorhythmus_chart_set_option_intellectual (BiorhythmusChart *chart, gboolean state)
 {
-	BiorhythmusChartPrivate *priv;
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-	self->priv = priv = BIORHYTHMUS_CHART_GET_PRIVATE (self);
+	chart->priv->option_intellectual = state;
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
 
-	priv->option_physical = TRUE;
-	priv->option_emotional = TRUE;
-	priv->option_intellectual = TRUE;
-	priv->option_total = TRUE;
-
-	biorhythmus_chart_set_current_date (&priv->active_date);
-	biorhythmus_chart_set_current_date (&priv->birthday);
+	return TRUE;
 }
 
-GtkWidget*
-biorhythmus_chart_new ()
+gboolean
+biorhythmus_chart_get_option_intellectual (BiorhythmusChart *chart)
 {
-	//g_return_val_if_fail (GTK_IS_WIDGET (parent_widget), NULL);
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
 
-	return GTK_WIDGET (g_object_new (BIORHYTHMUS_TYPE_CHART, NULL));
+	return chart->priv->option_intellectual;
+}
+
+gboolean
+biorhythmus_chart_set_option_total (BiorhythmusChart *chart, gboolean state)
+{
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+
+	chart->priv->option_total = state;
+	gtk_widget_queue_resize (GTK_WIDGET (chart));
+
+	return TRUE;
+}
+
+gboolean
+biorhythmus_chart_get_option_total (BiorhythmusChart *chart)
+{
+	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+
+	return chart->priv->option_total;
 }
 
 /* ex:set ts=4 noet: */
