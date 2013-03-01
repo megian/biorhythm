@@ -1,11 +1,12 @@
-DESTDIR =
+
+#DESTDIR =
 BIN=$(DESTDIR)/usr/bin
 
 all:
-	gcc -o biorhythmus biorhythmus.c `pkg-config --cflags --libs gtk+-2.0 libgnomeui-2.0`
+	gcc `pkg-config --cflags gtk+-2.0` -o biorhythmus biorhythmus.c `pkg-config --libs gtk+-2.0`
 
 install:
-	gcc -o biorhythmus biorhythmus.c `pkg-config --cflags --libs gtk+-2.0 libgnomeui-2.0`
+	gcc `pkg-config --cflags gtk+-3.0` -o biorhythmus biorhythmus.c `pkg-config --libs gtk+-3.0`
 	install -d $(BIN) $(DESTDIR)/usr/lib/menu/
 	install ./biorhythmus $(BIN)
 	install -m644 debian/menu $(DESTDIR)/usr/lib/menu/biorhythmus
