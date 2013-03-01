@@ -1,6 +1,6 @@
 /* -*-coding: utf-8;-*- */
 /* Biorhythmus
-   Copyright (C) 2003 by Gabriel Mianberger
+   Copyright (C) 2003 by Gabriel Mainberger
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -201,14 +201,17 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   mywindow = gtk_widget_get_window(widget);
   cr = gdk_cairo_create(mywindow);
 
-  //fullheight = gtk_widget_get_allocated_height(widget);
+#ifdef GTK2
   fullheight = widget->allocation.height;
   fullwidth = widget->allocation.width;
+#else
+  fullheight = gtk_widget_get_allocated_height(widget);
+  fullwidth = gtk_widget_get_allocated_width(widget);
+#endif
 
   // Set Parameter
   daysinmonth = bio_daysinmonth(bio_viewdata.month, bio_viewdata.year);
   daysoflife = bio_daysoflife(bio_viewdata, bio_birthday);
-  daysoflife = (gint)(bio_daysto(1, bio_viewdata.month, bio_viewdata.year)-bio_daysto(bio_birthday.day, bio_birthday.month, bio_birthday.year));
   daypix = (fullwidth-15) / daysinmonth;
   halfheight = fullheight/2;
   offsetx = 15;
@@ -396,7 +399,11 @@ int main(int argc, char **argv)
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menues), FALSE, TRUE, 0);
 
   /* Add MAP */
+#ifdef GTK2
   g_signal_connect(G_OBJECT(map), "expose_event", G_CALLBACK(drawbio), NULL);
+#else
+  g_signal_connect(G_OBJECT(map), "draw", G_CALLBACK(drawbio), NULL);
+#endif
   gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(map));
 
   /* Calendar */
