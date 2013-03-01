@@ -20,6 +20,8 @@
 */
 
 #include <gtk/gtk.h>
+#include <glib/gi18n.h>
+#include <json-glib/json-glib.h>
 #include <math.h>
 
 struct bio_date
@@ -32,16 +34,22 @@ struct bio_date
 struct bio_date bio_birthday;
 struct bio_date bio_viewdata;
 
-GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *biodates, *map;
+enum
+{
+  PERSON_VIEW_COLUMN_NAME = 0,
+  PERSON_VIEW_COLUMN_BIRTHDAY,
+  PERSON_VIEW_COLUMN_NUM_COLS
+};
+
+GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *map;
 GtkStatusbar *status;
-GtkWindow *dialog;
 
 gint delete_event(GtkWindow *widget, GdkEvent event, gpointer daten)
 {
   return FALSE;
 }
 
-void ende(GtkWidget *widget, gpointer daten)
+void bio_gui_close(GtkWidget *widget, gpointer daten)
 {
   gtk_main_quit();
 }
@@ -156,7 +164,7 @@ void refreshbiodraw(GtkMenuItem *eintrag, gpointer user_data)
   gtk_widget_queue_resize(user_data);
 }
 
-void showabout(GtkMenuItem *eintrag, gpointer user_data)
+void bio_gui_help_info_dialog(GtkMenuItem *eintrag, gpointer user_data)
 {
   static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
   gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythmus", "title", "Funny but useless :)", "version", "0.0.1", "copyright", "Copyright (c) 2003-2012 Gabriel Mainberger", NULL);
@@ -279,35 +287,300 @@ void datechange(GtkCalendar *calendar, gpointer user_data)
   gtk_widget_queue_resize(map);
 }
 
-void birthday(GtkCalendar *calendar, gpointer user_data)
+void bio_read_each_person(JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data)
 {
-  bio_birthday.month--;
-  gtk_calendar_get_date((GtkCalendar*)biodates, &bio_birthday.year, &bio_birthday.month, &bio_birthday.day);
-  bio_birthday.month++;
+  JsonObject *element;
+  JsonNode *name, *birthday;
+  GList *list = NULL;
+  GList **list_ptr = (GList**)user_data;
+
+  element = json_node_get_object(element_node);
+  name = json_object_get_member(element, "Name");
+  birthday = json_object_get_member(element, "Birthday");
+
+  list = g_list_append(list, json_node_dup_string(name));
+  list = g_list_append(list, json_node_dup_string(birthday));
+  *list_ptr = g_list_append(*list_ptr, list);
+}
+
+int bio_read_file(GList **list)
+{
+  JsonParser *parser;
+  JsonNode *root, *result;
+  JsonObject *element;
+  GError *error;
+  JsonArray *array;
+
+  parser = json_parser_new();
+  error = NULL;
+  json_parser_load_from_file(parser, "default.bio", &error);
+  if(error)
+  {
+    g_print("Unable to parse `%s': %s\n", "default.bio", error->message);
+    g_error_free(error);
+    g_object_unref(parser);
+    return 1;
+  }
+
+  root = json_parser_get_root(parser);
+  element = json_node_get_object(root);
+  result = json_object_get_member(element, "Persons");
+  array = json_node_get_array(result);
+  json_array_foreach_element(array, bio_read_each_person, list);
+
+  g_object_unref(parser);
+
+  return 0;
+}
+
+void bio_gui_foreach_person(gpointer data, gpointer user_data)
+{
+  GtkTreeIter iter;
+  gchar *name, *birthday;
+
+  name = g_list_nth_data((GList*)data, PERSON_VIEW_COLUMN_NAME);
+  birthday = g_list_nth_data((GList*)data, PERSON_VIEW_COLUMN_BIRTHDAY);
+  g_print("%s %s\n", name, birthday);
+  gtk_list_store_append((GtkListStore*)user_data, &iter);
+  gtk_list_store_set((GtkListStore*)user_data, &iter, PERSON_VIEW_COLUMN_NAME, name, PERSON_VIEW_COLUMN_BIRTHDAY, birthday, -1);
+}
+
+void bio_gui_persons_add_empty_row(GtkListStore *list_store)
+{
+  GtkTreeIter iter;
+
+  gtk_list_store_append(list_store, &iter);
+  gtk_list_store_set(list_store, &iter, PERSON_VIEW_COLUMN_NAME, "", PERSON_VIEW_COLUMN_BIRTHDAY, "", -1);
+}
+
+void bio_gui_persons_date_changed(GtkTreeView *tree_view, gpointer user_data)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel *model;
+  GtkTreeIter iter;
+  gchar *str;
+  GDate *date;
+
+  selection = gtk_tree_view_get_selection(tree_view);
+  if(gtk_tree_selection_get_selected(selection, &model, &iter))
+  {
+     gtk_tree_model_get(model, &iter, PERSON_VIEW_COLUMN_BIRTHDAY, &str, -1);
+
+     date = g_date_new();
+     g_date_set_parse(date, str);
+     if(g_date_valid(date))
+     {
+       bio_birthday.day = g_date_get_day(date);
+       bio_birthday.month = g_date_get_month(date);
+       bio_birthday.year = g_date_get_year(date);
+     }
+
+     g_free(str);
+     g_date_free(date);
+  }
+
   gtk_widget_queue_resize(map);
 }
 
-void showbiodialog(GtkMenuItem *eintrag, gpointer user_data)
+gboolean bio_gui_persons_check_other_cells_empty(GtkListStore *list_store, GtkTreeIter *iter, gint except_column)
 {
-  dialog = g_object_new(GTK_TYPE_WINDOW, "title", "Geburtstag", "default-width", 100, "default-height", 100, "destroy-with-parent", TRUE, NULL);
-  biodates = gtk_calendar_new();
-  gtk_calendar_set_display_options((GtkCalendar*)biodates, GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
-  gtk_calendar_select_day((GtkCalendar*)biodates, bio_birthday.day);
-  gtk_calendar_select_month((GtkCalendar*)biodates, bio_birthday.month-1, bio_birthday.year);
-  g_signal_connect(biodates, "day-selected", G_CALLBACK(birthday), NULL);
-  g_signal_connect(biodates, "month-changed", G_CALLBACK(birthday), NULL);
-  gtk_container_add(GTK_CONTAINER(dialog), GTK_WIDGET(biodates));
-  gtk_widget_show_all(GTK_WIDGET(dialog));
+  gint i;
+  gchar *cell_text;
+  gboolean status=FALSE;
+
+  for(i=0;i<PERSON_VIEW_COLUMN_NUM_COLS;i++)
+  {
+    if(i!=except_column)
+    {
+      gtk_tree_model_get(GTK_TREE_MODEL(list_store), iter, i, &cell_text, -1);
+      if(cell_text!=NULL)
+      {
+        if(g_strcmp0(cell_text, "")==0)
+        {
+           status = status || TRUE;
+        }
+      }
+    }
+  }
+  return(status);
+}
+
+void bio_gui_persons_add_row_if_needed(GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
+{
+  GtkTreeIter iter;
+  gchar *cell_text;
+
+  if(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(list_store), &iter, path_string))
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, list_store_column, &cell_text, -1);
+
+    if(cell_text!=NULL)
+    {
+      // Check if the new text is not "" and the old was empty
+      if((g_strcmp0(new_text, "")!=0) && (g_strcmp0(cell_text, "")==0))
+      {
+        if(bio_gui_persons_check_other_cells_empty(list_store, &iter, list_store_column))
+        {
+          bio_gui_persons_add_empty_row(list_store);
+        }
+      }
+    }
+  }
+}
+
+gboolean bio_gui_persons_delete_row_if_needed(GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
+{
+  GtkTreeIter iter;
+  gchar *cell_text;
+
+  if(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(list_store), &iter, path_string))
+  {
+    gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, list_store_column, &cell_text, -1);
+
+    if(cell_text!=NULL)
+    {
+      // Check if the new text is "" and the old was not empty
+      if((g_strcmp0(new_text, "")==0) && (g_strcmp0(cell_text, "")!=0))
+      {
+         if(bio_gui_persons_check_other_cells_empty(list_store, &iter, list_store_column))
+         {
+           gtk_list_store_remove(GTK_LIST_STORE(list_store), &iter);
+           return TRUE;
+         }
+      }
+    }
+  }
+  return FALSE;
+}
+
+void bio_gui_persons_change_cell_text(GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
+{
+  GtkTreeIter iter;
+
+  if(gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(list_store), &iter, path_string))
+  {
+        gtk_list_store_set(GTK_LIST_STORE(list_store), &iter, list_store_column, new_text, -1);
+  }
+}
+
+void bio_gui_persons_textrenderer_callback_name_edited(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+  bio_gui_persons_add_row_if_needed(user_data, path_string, PERSON_VIEW_COLUMN_NAME, new_text);
+  if(bio_gui_persons_delete_row_if_needed(user_data, path_string, PERSON_VIEW_COLUMN_NAME, new_text)==FALSE)
+    bio_gui_persons_change_cell_text(user_data, path_string, PERSON_VIEW_COLUMN_NAME, new_text);
+}
+
+void bio_gui_persons_textrenderer_callback_birthday_edited_list(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+  bio_gui_persons_add_row_if_needed(user_data, path_string, PERSON_VIEW_COLUMN_NAME, new_text);
+  if(bio_gui_persons_delete_row_if_needed(user_data, path_string, PERSON_VIEW_COLUMN_BIRTHDAY, new_text)==FALSE)
+    bio_gui_persons_change_cell_text(user_data, path_string, PERSON_VIEW_COLUMN_BIRTHDAY, new_text);
+}
+
+void bio_gui_persons_textrenderer_callback_birthday_edited_view(GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+{
+  g_signal_emit_by_name(G_OBJECT(user_data), "cursor-changed");
+}
+
+void bio_gui_persons_textrenderer_mark_empty_cell_green(GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter)
+{
+  gchar *str;
+
+  gtk_tree_model_get(tree_model, iter, PERSON_VIEW_COLUMN_NAME, &str, -1);
+
+  // Is cell empty? Mark it light green!
+  if(g_strcmp0(str, "")==0)
+    g_object_set(cell, "background", "lightgreen", "background-set", TRUE, NULL);
+  else
+    g_object_set(cell, "background-set", FALSE, NULL); /* print this normal */
+
+  g_free(str);
+}
+
+void bio_gui_persons_textrenderer_mark_date_cell_if_invalid_date(GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter)
+{
+  gchar *str;
+  GDate *date;
+
+  gtk_tree_model_get(tree_model, iter, PERSON_VIEW_COLUMN_BIRTHDAY, &str, -1);
+
+  // Is the date valid?
+  date = g_date_new();
+  g_date_set_parse(date, str);
+  if(g_date_valid(date))
+    g_object_set(cell, "foreground-set", FALSE, NULL); /* print this normal */
+  else
+    g_object_set(cell, "foreground", "red", "foreground-set", TRUE, NULL);
+
+  g_free(str);
+  g_date_free(date);
+}
+
+void bio_gui_persons_textrenderer_callback_name(GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
+{
+  bio_gui_persons_textrenderer_mark_empty_cell_green (cell, tree_model, iter);
+}
+
+void bio_gui_persons_textrenderer_callback_date(GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
+{
+  bio_gui_persons_textrenderer_mark_empty_cell_green (cell, tree_model, iter);
+  bio_gui_persons_textrenderer_mark_date_cell_if_invalid_date (cell, tree_model, iter);
+}
+
+GtkTreeView* bio_gui_persons(GtkListStore *list)
+{
+  GtkCellRenderer *TextRendererName, *textrenderer_birthday;
+  GtkTreeViewColumn *column0, *column1;
+  GtkTreeView *view;
+
+  view = g_object_new(GTK_TYPE_TREE_VIEW, "model", list, "rules-hint", TRUE, "headers-clickable", TRUE, "reorderable", TRUE, "enable-search", TRUE, "search-column", 0,
+  "enable-grid-lines", GTK_TREE_VIEW_GRID_LINES_BOTH, "rubber-banding", FALSE, NULL);
+  TextRendererName = gtk_cell_renderer_text_new();
+  g_object_set(TextRendererName, "editable", TRUE, NULL);
+  g_signal_connect(TextRendererName, "edited", (GCallback) bio_gui_persons_textrenderer_callback_name_edited, list);
+  column0 = gtk_tree_view_column_new_with_attributes("Name", TextRendererName, "text", PERSON_VIEW_COLUMN_NAME, NULL);
+  g_object_set(column0, "resizable", TRUE, "clickable", TRUE, "reorderable", TRUE, NULL);
+  gtk_tree_view_column_set_cell_data_func(column0, TextRendererName, bio_gui_persons_textrenderer_callback_name, NULL, NULL);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(view), column0);
+
+  textrenderer_birthday = gtk_cell_renderer_text_new();
+  g_object_set(textrenderer_birthday, "editable", TRUE, NULL);
+  g_signal_connect(textrenderer_birthday, "edited", (GCallback) bio_gui_persons_textrenderer_callback_birthday_edited_list, list);
+  g_signal_connect(textrenderer_birthday, "edited", (GCallback) bio_gui_persons_textrenderer_callback_birthday_edited_view, view);
+  column1 = gtk_tree_view_column_new_with_attributes("Birthday", textrenderer_birthday, "text", PERSON_VIEW_COLUMN_BIRTHDAY, NULL);
+  g_object_set(column1, "resizable", TRUE, "clickable", TRUE, "reorderable", TRUE, NULL);
+  gtk_tree_view_column_set_cell_data_func(column1, textrenderer_birthday, bio_gui_persons_textrenderer_callback_date, NULL, NULL);
+  gtk_tree_view_append_column(view, column1);
+
+  g_signal_connect(view, "cursor-changed", G_CALLBACK(bio_gui_persons_date_changed), NULL);
+
+  return(view);
 }
 
 int main(int argc, char **argv)
 {
-  GtkWindow *fenster;
-  GtkAccelGroup *kuerzel;
-  GtkMenuBar *menues;
-  GtkWidget *datei, *options, *hilfe, *datei_schliessen, *datei_bio, *console, *hilfe_info;
-  GtkMenu *dateimenue, *optionmenu, *hilfemenue;
+  GtkWindow *window;
+  GtkAccelGroup *accel;
+  GtkMenuBar *menu;
+  GtkWidget *file_menu_item, *file_close_menu_item, *option_menu_item, *console, *help_menu_item, *help_info_menu_item;
+  GtkMenu *file_menu, *option_menu, *help_menu;
   GtkVBox *vbox;
+  GList *person = NULL;
+  GtkListStore *list;
+  GtkTreeIter iter;
+  GtkTreeView *view;
+  GtkTreeViewColumn *column0, *column1;
+
+  /* Init type system as soon as possible */
+  g_type_init();
+
+  bio_read_file(&person);
+
+  list = gtk_list_store_new(PERSON_VIEW_COLUMN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
+  g_list_foreach(person, bio_gui_foreach_person, list);
+  bio_gui_persons_add_empty_row(list);
+
+  view = bio_gui_persons(list);
 
   bio_birthday.day=1;
   bio_birthday.month=11;
@@ -315,9 +588,9 @@ int main(int argc, char **argv)
 
   gtk_init(&argc, &argv);
 
-  fenster = g_object_new(GTK_TYPE_WINDOW, "title", "Biorhythmus", "default-width", 400, "default-height", 400, NULL);
-  g_signal_connect(fenster, "delete-event", G_CALLBACK(delete_event), NULL);
-  g_signal_connect(fenster, "destroy", G_CALLBACK(ende), NULL);
+  window = g_object_new(GTK_TYPE_WINDOW, "title", "Biorhythmus", "default-width", 400, "default-height", 400, NULL);
+  g_signal_connect(window, "delete-event", G_CALLBACK(delete_event), NULL);
+  g_signal_connect(window, "destroy", G_CALLBACK(bio_gui_close), NULL);
 
   /* VBOX */
   vbox = g_object_new(GTK_TYPE_VBOX, NULL);
@@ -326,30 +599,25 @@ int main(int argc, char **argv)
   map = gtk_drawing_area_new();
 
   /* AccelGroup */
-  kuerzel = g_object_new(GTK_TYPE_ACCEL_GROUP, NULL);
-  gtk_window_add_accel_group(GTK_WINDOW(fenster), kuerzel);
+  accel = g_object_new(GTK_TYPE_ACCEL_GROUP, NULL);
+  gtk_window_add_accel_group(GTK_WINDOW(window), accel);
 
-  menues = g_object_new(GTK_TYPE_MENU_BAR, NULL);
+  menu = g_object_new(GTK_TYPE_MENU_BAR, NULL);
   status = g_object_new(GTK_TYPE_STATUSBAR, NULL);
-  gtk_statusbar_push(status, 0, "Herzlich Willkommen!");
 
-  /* menu -> datei -> datei schliessen */
-  datei_bio = gtk_menu_item_new_with_mnemonic("_Geburtstag");
-  g_signal_connect(datei_bio, "activate", G_CALLBACK(showbiodialog), NULL);
-  datei_schliessen = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, kuerzel);
-  g_signal_connect(datei_schliessen, "activate", G_CALLBACK(ende), NULL);
+  /* menu -> file -> file close */
+  file_close_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_CLOSE, accel);
+  g_signal_connect(file_close_menu_item, "activate", G_CALLBACK(bio_gui_close), NULL);
 
-  /* menu -> datei */
-  dateimenue = g_object_new(GTK_TYPE_MENU, NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), datei_bio);
-  gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), gtk_separator_menu_item_new());
-  gtk_menu_shell_append(GTK_MENU_SHELL(dateimenue), datei_schliessen);
+  /* menu -> file */
+  file_menu = g_object_new(GTK_TYPE_MENU, NULL);
+  gtk_menu_shell_append(GTK_MENU_SHELL(file_menu), file_close_menu_item);
 
-  datei = gtk_menu_item_new_with_mnemonic("_Datei");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menues), datei);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(datei), GTK_WIDGET(dateimenue));
+  file_menu_item = gtk_menu_item_new_with_mnemonic("_File");
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), file_menu_item);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(file_menu_item), GTK_WIDGET(file_menu));
 
-  /* menu -> optionen -> ... */
+  /* menu -> option -> ... */
   option_bio23 = gtk_check_menu_item_new_with_mnemonic("_Koerper");
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_bio23, TRUE);
   g_signal_connect(option_bio23, "activate", G_CALLBACK(refreshbiodraw), map);
@@ -366,37 +634,35 @@ int main(int argc, char **argv)
   gtk_check_menu_item_set_active((GtkCheckMenuItem*)option_total, TRUE);
   g_signal_connect(option_total, "activate", G_CALLBACK(refreshbiodraw), map);
 
-  console = gtk_menu_item_new_with_mnemonic("_Konsole");
+  console = gtk_menu_item_new_with_mnemonic("_Console");
   g_signal_connect(console, "activate", G_CALLBACK(consolebio), NULL);
 
-  /* menu -> optionen */
-  optionmenu = g_object_new(GTK_TYPE_MENU, NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_bio23);
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_bio28);
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_bio33);
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), option_total);
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), gtk_separator_menu_item_new());
-  gtk_menu_shell_append(GTK_MENU_SHELL(optionmenu), console);
+  /* menu -> option */
+  option_menu = g_object_new(GTK_TYPE_MENU, NULL);
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), option_bio23);
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), option_bio28);
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), option_bio33);
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), option_total);
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), gtk_separator_menu_item_new());
+  gtk_menu_shell_append(GTK_MENU_SHELL(option_menu), console);
 
-  options = gtk_menu_item_new_with_mnemonic("_Optionen");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menues), options);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(options), GTK_WIDGET(optionmenu));
+  option_menu_item = gtk_menu_item_new_with_mnemonic("_Options");
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), option_menu_item);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(option_menu_item), GTK_WIDGET(option_menu));
 
-  /* menu -> hilfe -> .. */
-  hilfe_info = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, kuerzel);
-  hilfemenue = g_object_new(GTK_TYPE_MENU, NULL);
-  gtk_menu_shell_append(GTK_MENU_SHELL(hilfemenue), hilfe_info);
+  /* menu -> help -> .. */
+  help_info_menu_item = gtk_image_menu_item_new_from_stock(GTK_STOCK_HELP, accel);
+  g_signal_connect(help_info_menu_item, "activate", G_CALLBACK(bio_gui_help_info_dialog), NULL);
 
-  /* hilfe -> about */
-  g_signal_connect(hilfe_info, "activate", G_CALLBACK(showabout), NULL);
-
-  /* hilfe */
-  hilfe = gtk_menu_item_new_with_mnemonic("_Hilfe");
-  gtk_menu_shell_append(GTK_MENU_SHELL(menues), hilfe);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(hilfe), GTK_WIDGET(hilfemenue));
+  /* menu -> help */
+  help_menu = g_object_new(GTK_TYPE_MENU, NULL);
+  gtk_menu_shell_append(GTK_MENU_SHELL(help_menu), help_info_menu_item);
+  help_menu_item = gtk_menu_item_new_with_mnemonic(_("_Help"));
+  gtk_menu_shell_append(GTK_MENU_SHELL(menu), help_menu_item);
+  gtk_menu_item_set_submenu(GTK_MENU_ITEM(help_menu_item), GTK_WIDGET(help_menu));
 
   /* Add Menubar to vbox */
-  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menues), FALSE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(menu), FALSE, TRUE, 0);
 
   /* Add MAP */
 #ifdef GTK2
@@ -404,7 +670,7 @@ int main(int argc, char **argv)
 #else
   g_signal_connect(G_OBJECT(map), "draw", G_CALLBACK(drawbio), NULL);
 #endif
-  gtk_container_add(GTK_CONTAINER(vbox), GTK_WIDGET(map));
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(map), TRUE, TRUE, 0);
 
   /* Calendar */
   dates = gtk_calendar_new();
@@ -413,11 +679,14 @@ int main(int argc, char **argv)
   g_signal_connect(G_OBJECT(dates), "day-selected", G_CALLBACK(datechange), NULL);
   g_signal_connect(G_OBJECT(dates), "month-changed", G_CALLBACK(datechange), NULL);
 
+  /* View */
+  gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(view), FALSE, FALSE, 0);
+
   /* Statusbar */
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(status), FALSE, TRUE, 0);
 
-  gtk_container_add(GTK_CONTAINER(fenster), GTK_WIDGET(vbox));
-  gtk_widget_show_all(GTK_WIDGET(fenster));
+  gtk_container_add(GTK_CONTAINER(window), GTK_WIDGET(vbox));
+  gtk_widget_show_all(GTK_WIDGET(window));
   gtk_main();
   return(0);
 }
