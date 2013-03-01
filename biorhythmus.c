@@ -1,6 +1,6 @@
 /* -*-coding: utf-8;-*- */
 /* Biorhythmus
-   Copyright (C) 2003 by Gabriel Mainberger
+   Copyright (C) 2003 by Gabriel Mianberger
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published
@@ -22,12 +22,15 @@
 #include <gtk/gtk.h>
 #include <math.h>
 
-guint bio_birthday_d=1;
-guint bio_birthday_m=11;
-guint bio_birthday_y=2012;
-guint bio_viewdata_d;
-guint bio_viewdata_m;
-guint bio_viewdata_y;
+struct bio_date
+{
+  guint day;
+  guint month;
+  guint year;
+};
+
+struct bio_date bio_birthday;
+struct bio_date bio_viewdata;
 
 GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *biodates, *map;
 GtkStatusbar *status;
@@ -129,11 +132,16 @@ glong bio_daysto(gint d, gint m, gint y)
   return(l);
 }
 
+gint bio_daysoflife(struct bio_date date_selection, struct bio_date date_birthday)
+{
+  return (gint)(bio_daysto(date_selection.day, date_selection.month, date_selection.year)-bio_daysto(date_birthday.day, date_birthday.month, date_birthday.year));
+}
+
 void consolebio(GtkMenuItem *eintrag, gpointer foo)
 {
   gint daysoflife;
 
-  daysoflife = (gint)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
+  daysoflife = bio_daysoflife(bio_viewdata, bio_birthday);
   printf("Ihr Alter:   %d\n\n", daysoflife);
 
   printf("Koerperlich: %d\n", bio_bioday(daysoflife, 23));
@@ -158,8 +166,8 @@ void drawbio_curves(cairo_t *cr, double red, double green, double blue, gint off
 {
   gint i=offsetx;
 
-  if((bio_birthday_m==bio_viewdata_m) && (bio_birthday_y==bio_viewdata_y))
-    i = offsetx + ((bio_birthday_d-1)*daypix);
+  if((bio_birthday.month==bio_viewdata.month) && (bio_birthday.year==bio_viewdata.year))
+    i = offsetx + ((bio_birthday.day-1)*daypix);
   else if(daysoflife<0)
     return;
 
@@ -181,35 +189,42 @@ void drawbio_curves(cairo_t *cr, double red, double green, double blue, gint off
 
 gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-  gint i1, i2, daysoflife, daysinmonth, daypix, halfheight, offsetx, graphicheight, h100;
+  gint i1, i2, daysoflife, daysinmonth, daypix, fullheight, halfheight, fullwidth, offsetx, graphicheight, h100;
   gchar *s;
   cairo_t *cr;
+  GdkWindow *mywindow;
 
-  bio_viewdata_m--;
-  gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata_y, &bio_viewdata_m, &bio_viewdata_d);
-  bio_viewdata_m++;
+  bio_viewdata.month--;
+  gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata.year, &bio_viewdata.month, &bio_viewdata.day);
+  bio_viewdata.month++;
 
-  cr = gdk_cairo_create(widget->window);
+  mywindow = gtk_widget_get_window(widget);
+  cr = gdk_cairo_create(mywindow);
+
+  //fullheight = gtk_widget_get_allocated_height(widget);
+  fullheight = widget->allocation.height;
+  fullwidth = widget->allocation.width;
 
   // Set Parameter
-  daysinmonth = bio_daysinmonth(bio_viewdata_m, bio_viewdata_y);
-  daysoflife = (gint)(bio_daysto(1, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
-  daypix = (widget->allocation.width-15) / daysinmonth;
-  halfheight = widget->allocation.height/2;
+  daysinmonth = bio_daysinmonth(bio_viewdata.month, bio_viewdata.year);
+  daysoflife = bio_daysoflife(bio_viewdata, bio_birthday);
+  daysoflife = (gint)(bio_daysto(1, bio_viewdata.month, bio_viewdata.year)-bio_daysto(bio_birthday.day, bio_birthday.month, bio_birthday.year));
+  daypix = (fullwidth-15) / daysinmonth;
+  halfheight = fullheight/2;
   offsetx = 15;
-  graphicheight = ((widget->allocation.height-20)/2);
-  h100 = (gint)(floor(widget->allocation.height/100)+1);
+  graphicheight = (fullheight-20)/2;
+  h100 = (gint)(floor(fullheight/100)+1);
 
   // Diagram
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width(cr, 0.5);
   cairo_move_to(cr, offsetx, halfheight);
-  cairo_line_to(cr, offsetx+((daysinmonth-1)*daypix), widget->allocation.height/2);
+  cairo_line_to(cr, offsetx+((daysinmonth-1)*daypix), fullheight/2);
 
   cairo_set_source_rgb(cr, 0, 0, 0);
   cairo_set_line_width (cr, 0.5);
-  cairo_move_to(cr, offsetx+(daypix*(bio_viewdata_d-1)), 0);
-  cairo_line_to(cr, offsetx+(daypix*(bio_viewdata_d-1)), widget->allocation.height);
+  cairo_move_to(cr, offsetx+(daypix*(bio_viewdata.day-1)), 0);
+  cairo_line_to(cr, offsetx+(daypix*(bio_viewdata.day-1)), fullheight);
   cairo_stroke(cr);
 
   // Day Linie
@@ -247,8 +262,9 @@ gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
   cairo_stroke(cr);
   cairo_destroy(cr);
 
-  daysoflife = (gint)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
-  s = g_strdup_printf("Datum: %d.%d.%d / Geburtstag: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata_d, bio_viewdata_m, bio_viewdata_y, bio_birthday_d, bio_birthday_m, bio_birthday_y, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
+  s = g_strdup_printf("Datum: %d.%d.%d / Geburtstag: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata.day, bio_viewdata.month,
+  bio_viewdata.year,
+  bio_birthday.day, bio_birthday.month, bio_birthday.year, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
   gtk_statusbar_push(status, 0, s);
   g_free(s);
 
@@ -262,9 +278,9 @@ void datechange(GtkCalendar *calendar, gpointer user_data)
 
 void birthday(GtkCalendar *calendar, gpointer user_data)
 {
-  bio_birthday_m--;
-  gtk_calendar_get_date((GtkCalendar*)biodates, &bio_birthday_y, &bio_birthday_m, &bio_birthday_d);
-  bio_birthday_m++;
+  bio_birthday.month--;
+  gtk_calendar_get_date((GtkCalendar*)biodates, &bio_birthday.year, &bio_birthday.month, &bio_birthday.day);
+  bio_birthday.month++;
   gtk_widget_queue_resize(map);
 }
 
@@ -272,9 +288,9 @@ void showbiodialog(GtkMenuItem *eintrag, gpointer user_data)
 {
   dialog = g_object_new(GTK_TYPE_WINDOW, "title", "Geburtstag", "default-width", 100, "default-height", 100, "destroy-with-parent", TRUE, NULL);
   biodates = gtk_calendar_new();
-  gtk_calendar_display_options((GtkCalendar*)biodates, GTK_CALENDAR_WEEK_START_MONDAY|GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
-  gtk_calendar_select_day((GtkCalendar*)biodates, bio_birthday_d);
-  gtk_calendar_select_month((GtkCalendar*)biodates, bio_birthday_m-1, bio_birthday_y);
+  gtk_calendar_set_display_options((GtkCalendar*)biodates, GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
+  gtk_calendar_select_day((GtkCalendar*)biodates, bio_birthday.day);
+  gtk_calendar_select_month((GtkCalendar*)biodates, bio_birthday.month-1, bio_birthday.year);
   g_signal_connect(biodates, "day-selected", G_CALLBACK(birthday), NULL);
   g_signal_connect(biodates, "month-changed", G_CALLBACK(birthday), NULL);
   gtk_container_add(GTK_CONTAINER(dialog), GTK_WIDGET(biodates));
@@ -289,6 +305,10 @@ int main(int argc, char **argv)
   GtkWidget *datei, *options, *hilfe, *datei_schliessen, *datei_bio, *console, *hilfe_info;
   GtkMenu *dateimenue, *optionmenu, *hilfemenue;
   GtkVBox *vbox;
+
+  bio_birthday.day=1;
+  bio_birthday.month=11;
+  bio_birthday.year=2012;
 
   gtk_init(&argc, &argv);
 
@@ -381,7 +401,7 @@ int main(int argc, char **argv)
 
   /* Calendar */
   dates = gtk_calendar_new();
-  gtk_calendar_display_options((GtkCalendar*)dates, GTK_CALENDAR_WEEK_START_MONDAY|GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
+  gtk_calendar_set_display_options((GtkCalendar*)dates, GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
   gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dates), FALSE, TRUE, 0);
   g_signal_connect(G_OBJECT(dates), "day-selected", G_CALLBACK(datechange), NULL);
   g_signal_connect(G_OBJECT(dates), "month-changed", G_CALLBACK(datechange), NULL);
