@@ -21,16 +21,15 @@
 
 #include <gtk/gtk.h>
 #include <math.h>
-/* #include <libgnomeui/libgnomeui.h> */
 
 guint bio_birthday_d=1;
-guint bio_birthday_m=1;
-guint bio_birthday_y=2000;
+guint bio_birthday_m=11;
+guint bio_birthday_y=2012;
 guint bio_viewdata_d;
 guint bio_viewdata_m;
 guint bio_viewdata_y;
 
-GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *about, *biodates, *map;
+GtkWidget *option_bio23, *option_bio28, *option_bio33, *option_total, *dates, *biodates, *map;
 GtkStatusbar *status;
 GtkWindow *dialog;
 
@@ -151,87 +150,102 @@ void refreshbiodraw(GtkMenuItem *eintrag, gpointer user_data)
 
 void showabout(GtkMenuItem *eintrag, gpointer user_data)
 {
-  gtk_widget_show_all(GTK_WIDGET(about));
+  static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
+  gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythmus", "title", "Funny but useless :)", "version", "0.0.1", "copyright", "Copyright (c) 2003-2012 Gabriel Mainberger", NULL);
+}
+
+void drawbio_curves(cairo_t *cr, double red, double green, double blue, gint offsetx, gint daysinmonth, gint daypix, gint daysoflife, gint cycleday, gint halfheight, gint graphicheight)
+{
+  gint i=offsetx;
+
+  if((bio_birthday_m==bio_viewdata_m) && (bio_birthday_y==bio_viewdata_y))
+    i = offsetx + ((bio_birthday_d-1)*daypix);
+  else if(daysoflife<0)
+    return;
+
+  cairo_set_source_rgb(cr, red, green, blue);
+
+  // Draw curves
+  while(i<=offsetx+((daysinmonth-1)*daypix))
+  {
+    if(cycleday==1)
+      cairo_line_to(cr, i, bio_biodaygraphictotal(i, daysoflife, halfheight, daypix, offsetx, graphicheight));
+    else
+      cairo_line_to(cr, i, bio_biodaygraphic(i, daysoflife, cycleday, halfheight, daypix, offsetx, graphicheight));
+
+    i++;
+  }
+
+  cairo_stroke(cr);
 }
 
 gboolean drawbio(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-  gint i1, i2, daysoflife, daysinmonth, daypix, halfheight, startx, graphicheight, h100;
+  gint i1, i2, daysoflife, daysinmonth, daypix, halfheight, offsetx, graphicheight, h100;
   gchar *s;
-  GdkColor color;
-  GdkGC *gc;
+  cairo_t *cr;
 
   bio_viewdata_m--;
   gtk_calendar_get_date((GtkCalendar*)dates, &bio_viewdata_y, &bio_viewdata_m, &bio_viewdata_d);
   bio_viewdata_m++;
 
-  gc = gdk_gc_new(widget->window);
+  cr = gdk_cairo_create(widget->window);
 
   // Set Parameter
   daysinmonth = bio_daysinmonth(bio_viewdata_m, bio_viewdata_y);
   daysoflife = (gint)(bio_daysto(1, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
-  daypix = (widget->allocation.width-10) / daysinmonth;
+  daypix = (widget->allocation.width-15) / daysinmonth;
   halfheight = widget->allocation.height/2;
-  startx = 15;
+  offsetx = 15;
   graphicheight = ((widget->allocation.height-20)/2);
   h100 = (gint)(floor(widget->allocation.height/100)+1);
 
   // Diagram
-  gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx, halfheight, startx+((daysinmonth-1)*daypix), widget->allocation.height/2);
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_set_line_width(cr, 0.5);
+  cairo_move_to(cr, offsetx, halfheight);
+  cairo_line_to(cr, offsetx+((daysinmonth-1)*daypix), widget->allocation.height/2);
+
+  cairo_set_source_rgb(cr, 0, 0, 0);
+  cairo_set_line_width (cr, 0.5);
+  cairo_move_to(cr, offsetx+(daypix*(bio_viewdata_d-1)), 0);
+  cairo_line_to(cr, offsetx+(daypix*(bio_viewdata_d-1)), widget->allocation.height);
+  cairo_stroke(cr);
 
   // Day Linie
-  gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(daypix*(bio_viewdata_d-1)), 0, startx+(daypix*(bio_viewdata_d-1)), widget->allocation.height);
-
   for(i1=0;i1<daysinmonth;i1++)
   {
     s = g_strdup_printf("%d", i1+1);
-    gdk_draw_string(widget->window, gdk_font_load("-*-helvetica-*-r-normal--*-100-*-*-*-*-iso8859-1"), widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(i1*daypix)-4, halfheight+h100+10, s);
-    gdk_draw_line(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], startx+(i1*daypix), halfheight-h100, startx+(i1*daypix), halfheight+h100);
+    cairo_set_source_rgb(cr, 0.0, 0.0, 0.0);
+    cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+    cairo_set_font_size(cr, 10);
+    cairo_move_to(cr, offsetx+(i1*daypix)-4, halfheight+h100+10);
+    cairo_show_text(cr, s);
     g_free(s);
+
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    cairo_move_to(cr, offsetx+(i1*daypix), halfheight-h100);
+    cairo_line_to(cr, offsetx+(i1*daypix), halfheight+h100);
   }
+  cairo_stroke(cr);
 
-  // Draw curves
-  for(i2=startx;i2<=startx+((daysinmonth-1)*daypix);i2++)
-  {
-    if(daysoflife<0)
-    {
-      if((bio_birthday_m==bio_viewdata_m) && (bio_birthday_y==bio_viewdata_y))
-      {
-        if(bio_birthday_d>((i2+startx)/daypix))
-          continue;
-      }
-      else
-        break;
-    }
+  // Körper
+  if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio23))
+    drawbio_curves(cr, 1, 0, 0, offsetx, daysinmonth, daypix, daysoflife, 23, halfheight, graphicheight);
 
-    // koerper
-    if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio23))
-    {
-      gdk_color_parse("red", &color);
-      gdk_gc_set_rgb_fg_color(gc, &color);
-      gdk_draw_point(widget->window, gc, i2, bio_biodaygraphic(i2, daysoflife, 23, halfheight, daypix, startx, graphicheight));
-    }
+  // Seele
+  if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio28))
+    drawbio_curves(cr, 0, 1, 0, offsetx, daysinmonth, daypix, daysoflife, 28, halfheight, graphicheight);
 
-    // seele
-    if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio28))
-    {
-      gdk_color_parse("green", &color);
-      gdk_gc_set_rgb_fg_color(gc, &color);
-      gdk_draw_point(widget->window, gc, i2, bio_biodaygraphic(i2, daysoflife, 28, halfheight, daypix, startx, graphicheight));
-    }
+  // Geist
+  if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio33))
+    drawbio_curves(cr, 0, 0, 1, offsetx, daysinmonth, daypix, daysoflife, 33, halfheight, graphicheight);
 
-    // seele
-    if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_bio33))
-    {
-      gdk_color_parse("blue", &color);
-      gdk_gc_set_rgb_fg_color(gc, &color);
-      gdk_draw_point(widget->window, gc, i2, bio_biodaygraphic(i2, daysoflife, 33, halfheight, daypix, startx, graphicheight));
-    }
+  if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_total))
+    drawbio_curves(cr, 0, 0, 0, offsetx, daysinmonth, daypix, daysoflife, 1, halfheight, graphicheight);
 
-    // total
-    if(gtk_check_menu_item_get_active((GtkCheckMenuItem*)option_total))
-      gdk_draw_point(widget->window, widget->style->fg_gc[GTK_WIDGET_STATE(widget)], i2, bio_biodaygraphictotal(i2, daysoflife, halfheight, daypix, startx, graphicheight));
-  }
+  cairo_stroke(cr);
+  cairo_destroy(cr);
 
   daysoflife = (gint)(bio_daysto(bio_viewdata_d, bio_viewdata_m, bio_viewdata_y)-bio_daysto(bio_birthday_d, bio_birthday_m, bio_birthday_y));
   s = g_strdup_printf("Datum: %d.%d.%d / Geburtstag: %d.%d.%d / Tage: %d / Koerper: %d / Seele: %d / Geist: %d / Total: %d", bio_viewdata_d, bio_viewdata_m, bio_viewdata_y, bio_birthday_d, bio_birthday_m, bio_birthday_y, daysoflife, bio_bioday(daysoflife, 23), bio_bioday(daysoflife, 28), bio_bioday(daysoflife, 33), bio_biodaytotal(daysoflife));
@@ -275,7 +289,6 @@ int main(int argc, char **argv)
   GtkWidget *datei, *options, *hilfe, *datei_schliessen, *datei_bio, *console, *hilfe_info;
   GtkMenu *dateimenue, *optionmenu, *hilfemenue;
   GtkVBox *vbox;
-  const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
 
   gtk_init(&argc, &argv);
 
@@ -352,7 +365,6 @@ int main(int argc, char **argv)
   gtk_menu_shell_append(GTK_MENU_SHELL(hilfemenue), hilfe_info);
 
   /* hilfe -> about */
-  about = gnome_about_new("Biorhythmus", "0.0.1", "Copyright (c) 2003 Gabriel Mainberger", "Funny but useless ;-)", authors, NULL, NULL, NULL);
   g_signal_connect(hilfe_info, "activate", G_CALLBACK(showabout), NULL);
 
   /* hilfe */
