@@ -4,6 +4,7 @@ BIN=$(DESTDIR)/usr/bin
 
 all:
 	gcc `pkg-config --cflags gtk+-2.0` -o biorhythmus biorhythmus.c `pkg-config --libs gtk+-2.0`
+#	gcc `pkg-config --cflags gtk+-3.0` -o biorhythmus biorhythmus.c `pkg-config --libs gtk+-3.0`
 
 install:
 	gcc `pkg-config --cflags gtk+-3.0` -o biorhythmus biorhythmus.c `pkg-config --libs gtk+-3.0`
