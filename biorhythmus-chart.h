@@ -1,8 +1,8 @@
 /* -*-coding: utf-8;-*- */
+
 /* biorhythmus-chart.h
- * This file is part of biorhythmus
- *
- * Copyright (C) 2003-2013 by Gabriel Mainberger
+ * This file is part of Biorhythmus
+ * Copyright (C) 2003-2013, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -15,17 +15,15 @@
  * General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA
-
-*/
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef __BIORHYTHMUS_CHART_H__
 #define __BIORHYTHMUS_CHART_H__
 
 #include <math.h>
 #include <gtk/gtk.h>
+#include "biorhythmus-math.h"
 
 G_BEGIN_DECLS
 	
@@ -42,26 +40,23 @@ typedef struct _BiorhythmusChartPrivate	BiorhythmusChartPrivate;
 
 struct _BiorhythmusChart
 {
-	GObject parent_instance;
+	GtkDrawingArea parent_instance;
 
 	BiorhythmusChartPrivate *priv;
 };
 
 struct _BiorhythmusChartClass
 {
-	GObjectClass parent_class;
+	GtkDrawingAreaClass parent_class;
 };
 
 /* used by BIORHYTHMUS_TYPE_CHART */
 GType biorhythmus_chart_get_type (void) G_GNUC_CONST;
 
-BiorhythmusChart* biorhythmus_chart_new(GtkWidget *widget);
-void biorhythmus_chart_draw (BiorhythmusChart *self);
+GtkWidget* biorhythmus_chart_new();
 
 void biorhythmus_chart_set_birthday (BiorhythmusChart *self, gint day, gint month, gint year);
 void biorhythmus_chart_set_active_date (BiorhythmusChart *self, gint day, gint month, gint year);
-
-void biorhythmus_chart_get_private_variables (BiorhythmusChart *self);
 
 void biorhythmus_chart_set_option_physical (BiorhythmusChart *self, gboolean state);
 gboolean biorhythmus_chart_get_option_physical (BiorhythmusChart *self);
