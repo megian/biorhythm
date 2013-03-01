@@ -1,0 +1,12 @@
+Source: biorhythmus
+Section: x11
+Priority: optional
+Maintainer: Gabriel Mainberger <gabisoft@freesurf.ch>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: biorhythmus
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Biorhytmus-Program
+ To calculate your personal biorythmus.
