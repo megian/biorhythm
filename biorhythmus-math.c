@@ -35,14 +35,14 @@ biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days)
 }
 
 gint
-biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin)
+biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix)
 {
 	gdouble pi2, calcsin, ri;
 
 	pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
-	ri = (days_of_life - (bio_cycle_days * floor(days_of_life / bio_cycle_days)));
-	calcsin = sin((x - margin + (day_pix * ri)) * pi2 / (day_pix * bio_cycle_days));
-	return((gint)(floor(half_height - ((half_height-margin) * calcsin)) + 0.5));
+	ri = days_of_life - (bio_cycle_days * floor (days_of_life / bio_cycle_days));
+	calcsin = sin ((x + (day_pix * ri)) * pi2 / (day_pix * bio_cycle_days));
+	return (gint)(floor (half_height - (half_height* calcsin) + 0.5));
 }
 
 gint
@@ -76,13 +76,13 @@ biorhythmus_math_bioday_total (gint days_of_life)
 }
 
 gint
-biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin)
+biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix)
 {
 	gint result_physical, result_emotional, result_intellectual;
 	
-	result_physical = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_PHYSICAL, half_height, day_pix, margin), half_height);
-	result_emotional = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL, half_height, day_pix, margin), half_height);
-	result_intellectual = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL, half_height, day_pix, margin), half_height);
+	result_physical = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_PHYSICAL, half_height, day_pix), half_height);
+	result_emotional = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL, half_height, day_pix), half_height);
+	result_intellectual = biorhythmus_math_setpositivgraphic (biorhythmus_math_bioday_graphic (x, days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL, half_height, day_pix), half_height);
 
 	return((gint)((result_physical + result_emotional + result_intellectual) / 3));
 }

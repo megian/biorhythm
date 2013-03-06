@@ -49,6 +49,7 @@ struct _BiorhythmusFileViewClass
 	GtkTreeViewClass parent_class;
 
 	void (* date_changed) (BiorhythmusFileView *self);
+	void (* name_changed) (BiorhythmusFileView *self);
 };
 
 /* used by BIORHYTHMUS_TYPE_FILE_VIEW */
@@ -56,6 +57,7 @@ GType biorhythmus_file_view_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythmus_file_view_new ();
 
+gchar* biorhythmus_file_view_get_name (BiorhythmusFileView *file_view);
 gboolean biorhythmus_file_view_load_from_file (BiorhythmusFileView *file_view, gchar *filename);
 gboolean biorhythmus_file_view_save_to_file (BiorhythmusFileView *file_view);
 gboolean biorhythmus_file_view_save_to_new_file (BiorhythmusFileView *file_view, gchar *filename);
