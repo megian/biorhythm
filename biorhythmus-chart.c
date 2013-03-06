@@ -184,8 +184,8 @@ biorhythmus_chart_draw_day_lines(cairo_t *cr, gint margin, gint half_height, gin
 void
 biorhythmus_chart_caption_text_rgb (cairo_t *cr, char *s, double red, double green, double blue)
 {
-	g_return_if_fail (cr == NULL);
-	g_return_if_fail (s == NULL);
+	g_return_if_fail (cr != NULL);
+	g_return_if_fail (s != NULL);
 
 	cairo_set_source_rgb (cr, red, green, blue);
 	cairo_show_text (cr, s);
@@ -308,43 +308,37 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
  *              Public API              *
  ****************************************/
 
-gboolean
+void
 biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->birthday.day = day;
 	chart->priv->birthday.month = month;
 	chart->priv->birthday.year = year;
 
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
-gboolean
+void
 biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->active_date.day = day;
 	chart->priv->active_date.month = month;
 	chart->priv->active_date.year = year;
 
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
-gboolean
+void
 biorhythmus_chart_set_option_physical (BiorhythmusChart *chart, gboolean state)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->option_physical = state;
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
 gboolean
@@ -355,15 +349,13 @@ biorhythmus_chart_get_option_physical (BiorhythmusChart *chart)
 	return chart->priv->option_physical;
 }
 
-gboolean
+void
 biorhythmus_chart_set_option_emotional (BiorhythmusChart *chart, gboolean state)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->option_emotional = state;
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
 gboolean
@@ -374,15 +366,13 @@ biorhythmus_chart_get_option_emotional (BiorhythmusChart *chart)
 	return chart->priv->option_emotional;
 }
 
-gboolean
+void
 biorhythmus_chart_set_option_intellectual (BiorhythmusChart *chart, gboolean state)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->option_intellectual = state;
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
 gboolean
@@ -393,15 +383,13 @@ biorhythmus_chart_get_option_intellectual (BiorhythmusChart *chart)
 	return chart->priv->option_intellectual;
 }
 
-gboolean
+void
 biorhythmus_chart_set_option_total (BiorhythmusChart *chart, gboolean state)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CHART (chart), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CHART (chart));
 
 	chart->priv->option_total = state;
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
-
-	return TRUE;
 }
 
 gboolean

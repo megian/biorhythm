@@ -55,16 +55,16 @@ GType biorhythmus_chart_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythmus_chart_new();
 
-gboolean biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year);
-gboolean biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year);
+void biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year);
+void biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year);
 
-gboolean biorhythmus_chart_set_option_physical (BiorhythmusChart *chart, gboolean state);
+void biorhythmus_chart_set_option_physical (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_physical (BiorhythmusChart *chart);
-gboolean biorhythmus_chart_set_option_emotional (BiorhythmusChart *chart, gboolean state);
+void biorhythmus_chart_set_option_emotional (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_emotional (BiorhythmusChart *chart);
-gboolean biorhythmus_chart_set_option_intellectual (BiorhythmusChart *chart, gboolean state);
+void biorhythmus_chart_set_option_intellectual (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_intellectual (BiorhythmusChart *chart);
-gboolean biorhythmus_chart_set_option_total (BiorhythmusChart *chart, gboolean state);
+void biorhythmus_chart_set_option_total (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_total (BiorhythmusChart *chart);
 
 G_END_DECLS
