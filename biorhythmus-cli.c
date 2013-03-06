@@ -82,41 +82,35 @@ biorhythmus_cli_output (BiorhythmusCli *cli)
 {
 	gint days_of_life = biorhythmus_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
 
-	g_print ("Age in days: %i\n\n", days_of_life);
-
+	g_print ("Age in days: %i\n", days_of_life);
 	g_print ("Physical: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
 	g_print ("Emotional: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
 	g_print ("Intellectual: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
-
-	g_print ("\nTotal: %d\n", biorhythmus_math_bioday_total (days_of_life));
+	g_print ("Total: %d\n", biorhythmus_math_bioday_total (days_of_life));
 }
 
 /****************************************
  *             Private API              *
  ****************************************/
 
-gboolean
+void
 biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint year)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CLI (cli), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
 
 	cli->priv->birthday.day = day;
 	cli->priv->birthday.month = month;
 	cli->priv->birthday.year = year;
-
-	return TRUE;
 }
 
-gboolean
+void
 biorhythmus_cli_set_active_date (BiorhythmusCli *cli, gint day, gint month, gint year)
 {
-	g_return_val_if_fail (BIORHYTHMUS_IS_CLI (cli), FALSE);
+	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
 
 	cli->priv->active_date.day = day;
 	cli->priv->active_date.month = month;
 	cli->priv->active_date.year = year;
-
-	return TRUE;
 }
 
 /* ex:set ts=4 noet: */
