@@ -27,6 +27,7 @@
 #define BIORHYTHMUS_DAYS_PHYSICAL		23
 #define BIORHYTHMUS_DAYS_EMOTIONAL		28
 #define BIORHYTHMUS_DAYS_INTELLECTUAL	33
+#define BIORHYTHMUS_DAYS_TOTAL			0
 
 struct bio_date
 {
@@ -36,11 +37,11 @@ struct bio_date
 };
 
 gint biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days);
-gint biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix, gint margin);
+gint biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix);
 gint biorhythmus_math_setpositiv (gint i);
 gint biorhythmus_math_setpositivgraphic (gint i, gint half_height);
 gint biorhythmus_math_bioday_total (gint days_of_life);
-gint biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix, gint margin);
+gint biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix);
 glong biorhythmus_math_daysto (gint day, gint month, gint year);
 gint biorhythmus_math_daysoflife (struct bio_date date_active, struct bio_date date_birthday);
 

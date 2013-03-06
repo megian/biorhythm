@@ -52,6 +52,8 @@ struct _BiorhythmusFileViewPrivate
 	gint month;
     gint year;
 	gint day;
+
+	gchar *name;
 };
 
 enum
@@ -63,6 +65,7 @@ enum
 
 enum {
     DATE_CHANGED,
+	NAME_CHANGED,
 	LAST_SIGNAL
 };
 
@@ -85,6 +88,12 @@ biorhythmus_file_view_class_init (BiorhythmusFileViewClass *klass)
 				G_STRUCT_OFFSET (BiorhythmusFileViewClass, date_changed),
 				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 
+	biorhythmus_file_view_signals[NAME_CHANGED] = 
+				g_signal_new ("name-changed", G_TYPE_FROM_CLASS (klass),
+				G_SIGNAL_RUN_FIRST,
+				G_STRUCT_OFFSET (BiorhythmusFileViewClass, name_changed),
+				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+
 	g_type_class_add_private (klass, sizeof (BiorhythmusFileViewPrivate));
 }
 
@@ -94,6 +103,8 @@ biorhythmus_file_view_init (BiorhythmusFileView *file_view)
 	BiorhythmusFileViewPrivate *priv;
 
 	file_view->priv = priv = BIORHYTHMUS_FILE_VIEW_GET_PRIVATE (file_view);
+
+	priv->name = NULL;
     
 	priv->list_store = gtk_list_store_new (VIEW_COLUMN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
 
@@ -281,7 +292,7 @@ biorhythmus_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmusFileVi
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	gchar *str;
+	gchar *str_name, *str_birthday;
 	GDate *date;
 
 	selection = gtk_tree_view_get_selection (tree_view);
@@ -290,10 +301,10 @@ biorhythmus_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmusFileVi
 
 	if (gtk_tree_selection_get_selected (selection, &model, &iter))
 	{
-		gtk_tree_model_get (model, &iter, VIEW_COLUMN_BIRTHDAY, &str, -1);
+		gtk_tree_model_get (model, &iter, VIEW_COLUMN_NAME, &str_name, VIEW_COLUMN_BIRTHDAY, &str_birthday, -1);
 
 		date = g_date_new ();
-		g_date_set_parse (date, str);
+		g_date_set_parse (date, str_birthday);
 
 		if (g_date_valid (date))
 		{
@@ -301,10 +312,14 @@ biorhythmus_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmusFileVi
 			file_view->priv->month = g_date_get_month (date);
 			file_view->priv->year = g_date_get_year (date);
 
-			g_signal_emit_by_name(G_OBJECT (file_view), "date-changed", date);
+			file_view->priv->name = g_strdup (str_name);
+
+			g_signal_emit_by_name(G_OBJECT (file_view), "date-changed", date); //FIXME: Shouln't it be NULL?
+			g_signal_emit_by_name(G_OBJECT (file_view), "name-changed", NULL);
 		}
 
-		g_free (str);
+		g_free (str_name);
+		g_free (str_birthday);
 		g_date_free (date);
 	}
 }
@@ -494,6 +509,16 @@ biorhythmus_file_view_get_date (BiorhythmusFileView *file_view, guint *day, guin
 
 	if (year)
 		*year = priv->year;
+}
+
+gchar *
+biorhythmus_file_view_get_name (BiorhythmusFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHMUS_IS_FILE_VIEW (file_view));
+
+	BiorhythmusFileViewPrivate *priv = file_view->priv;
+
+	return priv->name;
 }
 
 gboolean biorhythmus_file_view_load_from_file (BiorhythmusFileView *file_view, gchar *filename)

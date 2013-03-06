@@ -146,6 +146,12 @@ biorhythmus_gui_on_file_view_birthday_changed_chart (BiorhythmusFileView *file_v
 }
 
 void
+biorhythmus_gui_on_file_view_name_changed_chart (BiorhythmusFileView *file_view, BiorhythmusChart *chart)
+{
+	biorhythmus_chart_set_name (chart, biorhythmus_file_view_get_name (file_view));
+}
+
+void
 biorhythmus_gui_on_file_view_birthday_changed_cli (BiorhythmusFileView *file_view, BiorhythmusCli *cli)
 {
 	gint day, month, year;
@@ -272,6 +278,7 @@ main (int argc, char **argv)
 	file_view = biorhythmus_file_view_new ();
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (biorhythmus_gui_on_file_view_birthday_changed_chart), chart);
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (biorhythmus_gui_on_file_view_birthday_changed_cli), cli);
+	g_signal_connect (G_OBJECT (file_view), "name-changed", G_CALLBACK (biorhythmus_gui_on_file_view_name_changed_chart), chart);
 	GtkWidget *file_view_scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (file_view_scrolled_window), GTK_WIDGET (file_view));
 
