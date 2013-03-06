@@ -182,27 +182,46 @@ biorhythmus_chart_draw_day_lines(cairo_t *cr, gint margin, gint half_height, gin
 }
 
 void
+biorhythmus_chart_caption_text_rgb (cairo_t *cr, char *s, double red, double green, double blue)
+{
+	cairo_set_source_rgb (cr, red, green, blue);
+	cairo_show_text (cr, s);
+	g_free (s);
+
+	cairo_rel_move_to (cr, 10, 0);
+}	
+
+void
 biorhythmus_chart_caption (BiorhythmusChartPrivate *priv, cairo_t *cr, gint margin, gint full_height)
 {
-	gchar *s;
 	gint days_of_life;
 
 	days_of_life = biorhythmus_math_daysoflife (priv->active_date, priv->birthday);
 
-	s = g_strdup_printf ("Date: %d.%d.%d    Birthday: %d.%d.%d    Days: %d    Physical: %d    Emotional: %d    Intellectual: %d    Total: %d",
-		priv->active_date.day, priv->active_date.month,	priv->active_date.year,
-		priv->birthday.day, priv->birthday.month, priv->birthday.year,
-		days_of_life, biorhythmus_math_bioday(days_of_life, BIORHYTHMUS_DAYS_PHYSICAL), biorhythmus_math_bioday(days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL), biorhythmus_math_bioday(days_of_life,
-		BIORHYTHMUS_DAYS_INTELLECTUAL),
-		biorhythmus_math_bioday_total (days_of_life));
-
-	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
 	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cr, 11);
-	cairo_move_to (cr, margin, full_height-margin);
-	cairo_show_text (cr, s);
+	cairo_move_to (cr, margin, full_height - margin);
 
-	g_free (s);
+	biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Date: %d.%d.%d", priv->active_date.day, priv->active_date.month, priv->active_date.year), 0.0, 0.0, 0.0);
+	biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Birthday: %d.%d.%d", priv->birthday.day, priv->birthday.month, priv->birthday.year), 0.0, 0.0, 0.0);
+	biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Days: %d", days_of_life), 0.0, 0.0, 0.0);
+	
+	// Physical
+	if (priv->option_physical == TRUE)	
+		biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Physical: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL)), 1.0, 0.0, 0.0);
+
+	// Emotional
+	if (priv->option_emotional == TRUE)
+		biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Emotional: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL)), 0.0, 1.0, 0.0);
+
+	// Intellectual
+	if (priv->option_intellectual == TRUE)
+		biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Intellectual: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL)), 0.0, 0.0, 1.0);
+
+	// Total
+	if (priv->option_total == TRUE)
+		biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Total: %d", biorhythmus_math_bioday_total (days_of_life)), 0.0, 0.0, 0.0);
+	
 	cairo_stroke (cr);
 }
 
@@ -247,7 +266,7 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 
 	// Caption
 	biorhythmus_chart_caption (priv, cr, margin, full_height);
-	full_height = full_height - (2*margin);
+	full_height = full_height - (2 * margin);
 
 	// Set Parameter
 	days_in_month = g_date_get_days_in_month (priv->active_date.month, priv->active_date.year);
