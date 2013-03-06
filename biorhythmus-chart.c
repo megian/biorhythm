@@ -184,6 +184,9 @@ biorhythmus_chart_draw_day_lines(cairo_t *cr, gint margin, gint half_height, gin
 void
 biorhythmus_chart_caption_text_rgb (cairo_t *cr, char *s, double red, double green, double blue)
 {
+	g_return_if_fail (cr == NULL);
+	g_return_if_fail (s == NULL);
+
 	cairo_set_source_rgb (cr, red, green, blue);
 	cairo_show_text (cr, s);
 	g_free (s);
