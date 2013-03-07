@@ -126,6 +126,28 @@ biorhythmus_chart_new ()
  ****************************************/
 
 void
+biorhythmus_chart_draw_curves_select_dash (cairo_t *cr, gint cycle_day)
+{
+	static const double dashed_physical[] = {40.0, 4.0};
+	static int dashed_physical_length = sizeof (dashed_physical) / sizeof (dashed_physical[0]);
+
+	static const double dashed_intellectual[] = {10.0, 6.0};
+	static int dashed_intellectual_length  = sizeof (dashed_intellectual) / sizeof (dashed_intellectual[0]);
+
+	static const double dashed_emotional[] = {20.0, 5.0, 2.0};
+	static int dashed_emotional_length  = sizeof (dashed_emotional) / sizeof (dashed_intellectual[0]);
+
+	if (cycle_day == BIORHYTHMUS_DAYS_PHYSICAL)
+		cairo_set_dash (cr, dashed_physical, dashed_physical_length, 0);
+	else if (cycle_day == BIORHYTHMUS_DAYS_INTELLECTUAL)
+		cairo_set_dash (cr, dashed_intellectual, dashed_intellectual_length, 1);
+	else if (cycle_day == BIORHYTHMUS_DAYS_EMOTIONAL)
+		cairo_set_dash (cr, dashed_emotional, dashed_emotional_length, 1);
+	else
+		cairo_set_dash (cr, NULL, 0, 0.0);
+}
+
+void
 biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, double red, double green, double blue, BiorhythmusChartDivision *division, gint days_in_month, gint day_pix, gint days_of_life, gint cycle_day)
 {
 	gint i = 0;
@@ -140,6 +162,8 @@ biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, doubl
 		return;
 
 	cairo_set_source_rgb (cr, red, green, blue);
+
+	biorhythmus_chart_draw_curves_select_dash (cr, cycle_day);
 
 	// Draw curves
 	while (i <= ((days_in_month - 1) * day_pix))
@@ -213,7 +237,22 @@ biorhythmus_chart_caption_text_rgb (cairo_t *cr, char *s, double red, double gre
 	g_free (s);
 
 	cairo_rel_move_to (cr, 10, 0);
-}	
+}
+
+void
+biorhythmus_chart_caption_line_rgb (cairo_t *cr, double red, double green, double blue, gint cycle_day)
+{
+	g_return_if_fail (cr != NULL);
+
+	cairo_set_source_rgb (cr, red, green, blue);
+
+	biorhythmus_chart_draw_curves_select_dash (cr, cycle_day);
+	cairo_set_line_width (cr, 0.5);
+	cairo_rel_move_to (cr, 5.0, 0.0);
+	cairo_rel_line_to (cr, 50.0, 0.0);
+	
+	cairo_rel_move_to (cr, 5, 0);
+}
 
 void
 biorhythmus_chart_caption (BiorhythmusChartPrivate *priv, cairo_t *cr, BiorhythmusChartDivision *division)
@@ -231,8 +270,11 @@ biorhythmus_chart_caption (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythm
 	biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Days: %d", days_of_life), 0.0, 0.0, 0.0);
 	
 	// Physical
-	if (priv->option_physical == TRUE)	
+	if (priv->option_physical == TRUE)
+	{
+		//biorhythmus_chart_caption_line_rgb (cr,	1.0, 0.0, 0.0, BIORHYTHMUS_DAYS_PHYSICAL);
 		biorhythmus_chart_caption_text_rgb (cr, g_strdup_printf ("Physical: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL)), 1.0, 0.0, 0.0);
+	}
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
