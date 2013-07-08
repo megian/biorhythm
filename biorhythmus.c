@@ -258,7 +258,9 @@ main (int argc, char **argv)
 	GtkWidget *file_view;
 
 	/* Init type system as soon as possible */
-	//g_type_init ();
+#ifdef GTK2
+	g_type_init ();
+#endif
 
 	/* Init GTK */
 	gtk_init (&argc, &argv);
