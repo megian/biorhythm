@@ -26,6 +26,12 @@
 #include "biorhythmus-cli.h"
 
 void
+biorhythmus_gui_on_file_new_activate (GtkWidget *widget, BiorhythmusFileView *file_view)
+{
+	biorhythmus_file_view_new_file (file_view);
+}
+
+void
 biorhythmus_gui_on_file_open_activate (GtkWidget *widget, BiorhythmusFileView *file_view)
 {
 	GtkWidget *dialog;
@@ -221,6 +227,7 @@ biorhythmus_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmusCh
 	/* FILE MENU */
 	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, "_File");
 
+	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_NEW, biorhythmus_gui_on_file_new_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_OPEN, biorhythmus_gui_on_file_open_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE, biorhythmus_gui_on_file_save_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE_AS, biorhythmus_gui_on_file_save_as_activate, file_view);
