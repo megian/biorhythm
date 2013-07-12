@@ -39,6 +39,8 @@ void biorhythmus_file_view_textrenderer_mark_empty_cell_green (GtkCellRenderer *
 void biorhythmus_file_view_textrenderer_mark_date_cell_if_invalid_date (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter);
 void biorhythmus_file_view_textrenderer_callback_name (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data);
 void biorhythmus_file_view_textrenderer_callback_date (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data);
+gboolean biorhythmus_file_view_close_dialog ();
+gboolean biorhythmus_file_view_close_file_dialog (BiorhythmusFileView *file_view);
 
 struct _BiorhythmusFileViewPrivate
 {
