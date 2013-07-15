@@ -22,6 +22,7 @@
 #define __BIORHYTHMUS_CLI_H__
 
 #include <math.h>
+#include <glib/gi18n.h>
 #include <glib-object.h>
 #include "biorhythmus-math.h"
 

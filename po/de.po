@@ -1,0 +1,139 @@
+# Biorhythmus - Deutsche Übersetzung
+# Copyright (C) 2013 Gabriel Mainberger
+# This file is distributed under the same license as the Biorhythmus package.
+# Gabriel Mainberger <gabisoft@freesurf.ch>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Biorythmus\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-07-15 21:02+0200\n"
+"PO-Revision-Date: 2013-07-12 17:49+GMT+1\n"
+"Last-Translator: Gabriel Mainberger <gabisoft@freesurf.ch>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../biorhythmus.c:42
+msgid "Open File"
+msgstr "Datei öffnen"
+
+#: ../biorhythmus.c:73
+msgid "Save File"
+msgstr "Datei speichern"
+
+#: ../biorhythmus.c:231
+msgid "_File"
+msgstr "_Datei"
+
+#: ../biorhythmus.c:243
+msgid "_Options"
+msgstr "_Einstellungen"
+
+#: ../biorhythmus.c:245
+msgid "_Physical"
+msgstr "_Körperlich"
+
+#: ../biorhythmus.c:246
+msgid "_Emotional"
+msgstr "_Emotional"
+
+#: ../biorhythmus.c:247
+msgid "_Intellectual"
+msgstr "_Geistig"
+
+#: ../biorhythmus.c:248
+msgid "_Total"
+msgstr "_Total"
+
+#: ../biorhythmus.c:252
+msgid "_Console"
+msgstr "K_onsole"
+
+#: ../biorhythmus.c:255
+msgid "_Help"
+msgstr "_Hilfe"
+
+#: ../biorhythmus-cli.c:85
+#, c-format
+msgid "Age in days: %i\n"
+msgstr "Alter in Tagen: %i\n"
+
+#: ../biorhythmus-cli.c:86
+#, c-format
+msgid "Physical: %d\n"
+msgstr "Körperlich: %d\n"
+
+#: ../biorhythmus-cli.c:87
+#, c-format
+msgid "Emotional: %d\n"
+msgstr "Emotional: %d\n"
+
+#: ../biorhythmus-cli.c:88
+#, c-format
+msgid "Intellectual: %d\n"
+msgstr "Geistig: %d\n"
+
+#: ../biorhythmus-cli.c:89
+#, c-format
+msgid "Total: %d\n"
+msgstr "Total: %d\n"
+
+#: ../biorhythmus-chart.c:289
+#, c-format
+msgid "Date: %d.%d.%d"
+msgstr "Datum: %d.%d.%d"
+
+#: ../biorhythmus-chart.c:290
+#, c-format
+msgid "Birthday: %d.%d.%d"
+msgstr "Geburtstag: %d.%d.%d"
+
+#: ../biorhythmus-chart.c:291
+#, c-format
+msgid "Days: %d"
+msgstr "Tage: %d"
+
+#: ../biorhythmus-chart.c:295
+#, c-format
+msgid "Physical: %d"
+msgstr "Körperlich: %d"
+
+#: ../biorhythmus-chart.c:299
+#, c-format
+msgid "Emotional: %d"
+msgstr "Emotional: %d"
+
+#: ../biorhythmus-chart.c:303
+#, c-format
+msgid "Intellectual: %d"
+msgstr "Geistig: %d"
+
+#: ../biorhythmus-chart.c:308
+#, c-format
+msgid "Total: %d"
+msgstr "Total: %d"
+
+#: ../biorhythmus-chart.c:323
+msgid "Biorhythmus for Unknown"
+msgstr "Biorhythmus für Unbekannt"
+
+#: ../biorhythmus-chart.c:325
+#, c-format
+msgid "Biorhythmus for %s"
+msgstr "Biorhythmus für %s"
+
+#: ../biorhythmus-fileview.c:134
+msgid "Name"
+msgstr "Name"
+
+#: ../biorhythmus-fileview.c:149
+msgid "Birthday"
+msgstr "Geburtstag"
+
+#: ../biorhythmus-fileview.c:506
+msgid "There are unsaved changes, do you like to continue?"
+msgstr "Es gibt ungespeicherte Änderungen. Wollen Sie weiterfahren?"

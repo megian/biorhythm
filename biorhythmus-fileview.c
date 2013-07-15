@@ -131,7 +131,7 @@ biorhythmus_file_view_init (BiorhythmusFileView *file_view)
 	g_object_set (priv->text_renderer_name, "editable", TRUE, NULL);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythmus_file_view_textrenderer_callback_name_edited), priv->list_store);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythmus_file_view_textrenderer_callback_edited), file_view);
-	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes ("Name", priv->text_renderer_name, 
+	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes (_("Name"), priv->text_renderer_name, 
 																				"text", VIEW_COLUMN_NAME,
 																				NULL);
 	g_object_set(column_name, "resizable", TRUE, 
@@ -146,7 +146,7 @@ biorhythmus_file_view_init (BiorhythmusFileView *file_view)
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythmus_file_view_textrenderer_callback_birthday_edited_list), priv->list_store);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythmus_file_view_textrenderer_callback_birthday_edited_view), file_view);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythmus_file_view_textrenderer_callback_edited), file_view);
-	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes ("Birthday", priv->text_renderer_birthday, 
+	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes (_("Birthday"), priv->text_renderer_birthday, 
 																					"text", VIEW_COLUMN_BIRTHDAY,
 																					NULL);
 	g_object_set (column_birthday, "resizable", TRUE,

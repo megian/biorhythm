@@ -82,11 +82,11 @@ biorhythmus_cli_output (BiorhythmusCli *cli)
 {
 	gint days_of_life = biorhythmus_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
 
-	g_print ("Age in days: %i\n", days_of_life);
-	g_print ("Physical: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
-	g_print ("Emotional: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
-	g_print ("Intellectual: %d\n", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
-	g_print ("Total: %d\n", biorhythmus_math_bioday_total (days_of_life));
+	g_print (_("Age in days: %i\n"), days_of_life);
+	g_print (_("Physical: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
+	g_print (_("Emotional: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
+	g_print (_("Intellectual: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
+	g_print (_("Total: %d\n"), biorhythmus_math_bioday_total (days_of_life));
 }
 
 /****************************************
