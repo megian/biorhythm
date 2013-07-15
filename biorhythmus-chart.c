@@ -286,26 +286,26 @@ biorhythmus_chart_caption (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythm
 	cairo_set_font_size (cr, 11);
 	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
 
-	biorhythmus_chart_caption_text (cr, g_strdup_printf ("Date: %d.%d.%d", priv->active_date.day, priv->active_date.month, priv->active_date.year));
-	biorhythmus_chart_caption_text (cr, g_strdup_printf ("Birthday: %d.%d.%d", priv->birthday.day, priv->birthday.month, priv->birthday.year));
-	biorhythmus_chart_caption_text (cr, g_strdup_printf ("Days: %d", days_of_life));
+	biorhythmus_chart_caption_text (cr, g_strdup_printf (_("Date: %d.%d.%d"), priv->active_date.day, priv->active_date.month, priv->active_date.year));
+	biorhythmus_chart_caption_text (cr, g_strdup_printf (_("Birthday: %d.%d.%d"), priv->birthday.day, priv->birthday.month, priv->birthday.year));
+	biorhythmus_chart_caption_text (cr, g_strdup_printf (_("Days: %d"), days_of_life));
 	
 	// Physical
 	if (priv->option_physical == TRUE)
-		biorhythmus_chart_caption_option (cr, g_strdup_printf ("Physical: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL)), BIORHYTHMUS_DAYS_PHYSICAL);
+		biorhythmus_chart_caption_option (cr, g_strdup_printf (_("Physical: %d"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL)), BIORHYTHMUS_DAYS_PHYSICAL);
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
-		biorhythmus_chart_caption_option (cr, g_strdup_printf ("Emotional: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL)), BIORHYTHMUS_DAYS_EMOTIONAL);
+		biorhythmus_chart_caption_option (cr, g_strdup_printf (_("Emotional: %d"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL)), BIORHYTHMUS_DAYS_EMOTIONAL);
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
-		biorhythmus_chart_caption_option (cr, g_strdup_printf ("Intellectual: %d", biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL)),
+		biorhythmus_chart_caption_option (cr, g_strdup_printf (_("Intellectual: %d"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL)),
 		BIORHYTHMUS_DAYS_INTELLECTUAL);
 
 	// Total
 	if (priv->option_total == TRUE)
-		biorhythmus_chart_caption_option (cr, g_strdup_printf ("Total: %d", biorhythmus_math_bioday_total (days_of_life)), BIORHYTHMUS_DAYS_TOTAL);
+		biorhythmus_chart_caption_option (cr, g_strdup_printf (_("Total: %d"), biorhythmus_math_bioday_total (days_of_life)), BIORHYTHMUS_DAYS_TOTAL);
 	
 	cairo_stroke (cr);
 }
@@ -320,9 +320,9 @@ biorhythmus_chart_title (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythmus
 	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
 
 	if (priv->name_of_person == NULL)
-		s = g_strdup_printf ("Biorhythmus for Unknown");
+		s = g_strdup_printf (_("Biorhythmus for Unknown"));
 	else	
-		s = g_strdup_printf ("Biorhythmus for %s", priv->name_of_person);
+		s = g_strdup_printf (_("Biorhythmus for %s"), priv->name_of_person);
 
 	cairo_show_text (cr, s);
 	g_free (s);

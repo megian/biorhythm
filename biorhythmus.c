@@ -25,6 +25,9 @@
 #include "biorhythmus-fileview.h"
 #include "biorhythmus-cli.h"
 
+#define GETTEXT_PACKAGE "biorhythmus"
+#define LOCALEDIR "locale"
+
 void
 biorhythmus_gui_on_file_new_activate (GtkWidget *widget, BiorhythmusFileView *file_view)
 {
@@ -225,7 +228,7 @@ biorhythmus_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmusCh
 	gtk_window_add_accel_group (GTK_WINDOW (window), accel);
 
 	/* FILE MENU */
-	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, "_File");
+	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, _("_File"));
 
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_NEW, biorhythmus_gui_on_file_new_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_OPEN, biorhythmus_gui_on_file_open_activate, file_view);
@@ -237,19 +240,19 @@ biorhythmus_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmusCh
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_CLOSE, biorhythmus_gui_on_window_destroy, NULL);
 	
 	/* OPTION MENU */
-	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, "_Options");
+	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, _("_Options"));
 
-	biorhythmus_gui_menubar_check_menu_item (sub_menu, "_Physical", biorhythmus_gui_on_option_physical_activate, chart);
-	biorhythmus_gui_menubar_check_menu_item (sub_menu, "_Emotional", biorhythmus_gui_on_option_emotional_activate, chart);
-	biorhythmus_gui_menubar_check_menu_item (sub_menu, "_Intellectual", biorhythmus_gui_on_option_intellectual_activate, chart);
-	biorhythmus_gui_menubar_check_menu_item (sub_menu, "_Total", biorhythmus_gui_on_option_total_activate, chart);
+	biorhythmus_gui_menubar_check_menu_item (sub_menu, _("_Physical"), biorhythmus_gui_on_option_physical_activate, chart);
+	biorhythmus_gui_menubar_check_menu_item (sub_menu, _("_Emotional"), biorhythmus_gui_on_option_emotional_activate, chart);
+	biorhythmus_gui_menubar_check_menu_item (sub_menu, _("_Intellectual"), biorhythmus_gui_on_option_intellectual_activate, chart);
+	biorhythmus_gui_menubar_check_menu_item (sub_menu, _("_Total"), biorhythmus_gui_on_option_total_activate, chart);
 	
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythmus_gui_menubar_mnemonic_menu_item (sub_menu, "_Console", biorhythmus_gui_on_console_activate, cli);
+	biorhythmus_gui_menubar_mnemonic_menu_item (sub_menu, _("_Console"), biorhythmus_gui_on_console_activate, cli);
 
 	/* HELP MENU */
-	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, "_Help");
+	sub_menu = biorhythmus_gui_menubar_sub_menu (menu, _("_Help"));
 
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_HELP, biorhythmus_gui_on_help_info_activate, NULL);
 }
@@ -268,6 +271,10 @@ main (int argc, char **argv)
 #ifdef GTK2
 	g_type_init ();
 #endif
+
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
 	/* Init GTK */
 	gtk_init (&argc, &argv);
