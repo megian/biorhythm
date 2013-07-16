@@ -17,16 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
-
-#include "biorhythmus-math.h"
-#include "biorhythmus-chart.h"
-#include "biorhythmus-fileview.h"
-#include "biorhythmus-cli.h"
-
-#define GETTEXT_PACKAGE "biorhythmus"
-#define LOCALEDIR "locale"
+#include <biorhythmus.h>
 
 void
 biorhythmus_gui_on_file_new_activate (GtkWidget *widget, BiorhythmusFileView *file_view)
