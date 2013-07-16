@@ -1,0 +1,4 @@
+	../biorhythmus-cli.c \
+	../biorhythmus-chart.c \
+	../biorhythmus-fileview.c \
+	../biorhythmus.c
