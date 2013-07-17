@@ -1,3 +1,9 @@
+biorhythmus (0.13-1) unstable; urgency=low
+
+  * New upsteam version 0.13
+
+ -- Gabriel Mainberger <gabisoft@freesurf.ch>  Wed, 17 Jul 2013 20:01:00 +0100
+
 biorhythmus (0.04-1) unstable; urgency=low
 
   * Initial Release.

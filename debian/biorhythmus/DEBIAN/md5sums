@@ -1,6 +1,4 @@
-2a7d51e82fd52eab52cddcf5b0947aca  usr/bin/biorhythmus
-64348f6f5b8d3b974cd3f1896f019527  usr/lib/menu/biorhythmus
+2a9dc905b15c6ab1175316990de6b955  usr/local/bin/biorhythmus
 0fdb42cb0071b4a0fc2b3d0e6861070d  usr/share/doc/biorhythmus/README.Debian
-bd967636f524c820d4911138f5c619e8  usr/share/doc/biorhythmus/copyright
-cfc5c5276944f625a52889c90d78e16d  usr/share/doc/biorhythmus/changelog.Debian.gz
-e8cc1cf8767c4b91512d10be9be8a73d  usr/share/doc-base/biorhythmus
+0bb081490d65b44031e7291ef156e929  usr/share/doc/biorhythmus/changelog.Debian.gz
+390318f671aa96d10da7216bc21b645e  usr/share/doc/biorhythmus/copyright

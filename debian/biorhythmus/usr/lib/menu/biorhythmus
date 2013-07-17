@@ -1,1 +1,0 @@
-?package(biorhythmus):needs=X11 section=Apps/Tools title="Biorhythmus" command="/usr/bin/biorhythmus"
