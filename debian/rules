@@ -24,6 +24,7 @@ configure: configure-stamp
 configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
+	./configure --prefix=/usr 
 
 	touch configure-stamp
 
@@ -71,7 +72,7 @@ binary-arch: build install
 	dh_installdocs
 	dh_installexamples
 #	dh_install
-#	dh_installmenu
+	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate
 #	dh_installemacsen
