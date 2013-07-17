@@ -26,7 +26,6 @@ set -e
 case "$1" in
     configure)
 
-    update-menus
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

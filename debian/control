@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
 Package: biorhythmus
-Architecture: any
+Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Biorhytmus-Program
- To calculate your personal biorythmus.
+ To calculate your personal biorythmus
