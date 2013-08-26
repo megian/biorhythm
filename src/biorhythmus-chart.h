@@ -58,6 +58,7 @@ GtkWidget* biorhythmus_chart_new ();
 
 void biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year);
 void biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year);
+void biorhythmus_chart_set_name (BiorhythmusChart *chart, gchar *s);
 
 void biorhythmus_chart_set_option_physical (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_physical (BiorhythmusChart *chart);

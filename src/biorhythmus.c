@@ -181,7 +181,7 @@ biorhythmus_gui_on_file_view_name_changed_chart (BiorhythmusFileView *file_view,
 void
 biorhythmus_gui_on_file_view_birthday_changed_cli (BiorhythmusFileView *file_view, BiorhythmusCli *cli)
 {
-	gint day, month, year;
+	guint day, month, year;
 
 	biorhythmus_file_view_get_date (file_view, &day, &month, &year);
 	biorhythmus_cli_set_birthday (cli, day, month, year);

@@ -40,7 +40,8 @@ biorhythmus_cli_class_init (BiorhythmusCliClass *klass)
 	g_type_class_add_private (klass, sizeof (BiorhythmusCliPrivate));
 }
 
-biorhythmus_cli_set_current_date(struct bio_date *date)
+static void
+biorhythmus_cli_set_current_date (struct bio_date *date)
 {
 	GTimeVal time_val;
 	GDate *current_date;
@@ -94,7 +95,7 @@ biorhythmus_cli_output (BiorhythmusCli *cli)
  ****************************************/
 
 void
-biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint year)
+biorhythmus_cli_set_birthday (BiorhythmusCli *cli, guint day, guint month, guint year)
 {
 	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
 
@@ -104,7 +105,7 @@ biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint ye
 }
 
 void
-biorhythmus_cli_set_active_date (BiorhythmusCli *cli, gint day, gint month, gint year)
+biorhythmus_cli_set_active_date (BiorhythmusCli *cli, guint day, guint month, guint year)
 {
 	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
 

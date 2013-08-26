@@ -56,8 +56,9 @@ GType biorhythmus_cli_get_type (void) G_GNUC_CONST;
 
 BiorhythmusCli* biorhythmus_cli_new ();
 
-void biorhythmus_cli_set_birthday (BiorhythmusCli *cli, gint day, gint month, gint year);
-void biorhythmus_cli_set_active_date (BiorhythmusCli *cli, gint day, gint month, gint year);
+void biorhythmus_cli_output (BiorhythmusCli *cli);
+void biorhythmus_cli_set_birthday (BiorhythmusCli *cli, guint day, guint month, guint year);
+void biorhythmus_cli_set_active_date (BiorhythmusCli *cli, guint day, guint month, guint year);
 
 G_END_DECLS
 
