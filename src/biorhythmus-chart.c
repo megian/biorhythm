@@ -332,7 +332,7 @@ biorhythmus_chart_title (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythmus
 void
 biorhythmus_chart_draw_cairo (BiorhythmusChart *widget, cairo_t *cr, gint full_height, gint full_width)
 {
-	gint days_of_life, month_day_offset, days_in_month, day_pix;
+	gint month_day_offset, days_in_month, day_pix;
 
 	BiorhythmusChartPrivate *priv = BIORHYTHMUS_CHART_GET_PRIVATE (widget);
 	BiorhythmusChartDivision *division_title = g_malloc (sizeof(BiorhythmusChartDivision));
@@ -362,7 +362,6 @@ biorhythmus_chart_draw_cairo (BiorhythmusChart *widget, cairo_t *cr, gint full_h
 
 	// Set Parameter
 	days_in_month = g_date_get_days_in_month (priv->active_date.month, priv->active_date.year);
-	days_of_life = biorhythmus_math_daysoflife (priv->active_date, priv->birthday);
 	month_day_offset = biorhythmus_math_monthdayoffset (priv->active_date, priv->birthday);
 	day_pix = division_chart->width / (days_in_month - 1);
 

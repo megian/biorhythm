@@ -44,6 +44,7 @@ gint biorhythmus_math_bioday_total (gint days_of_life);
 gint biorhythmus_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix);
 glong biorhythmus_math_daysto (gint day, gint month, gint year);
 gint biorhythmus_math_daysoflife (struct bio_date date_active, struct bio_date date_birthday);
+gint biorhythmus_math_monthdayoffset (struct bio_date date_active, struct bio_date date_birthday);
 
 #endif /* __BIORHYTHMUS_MATH_H__ */
 
