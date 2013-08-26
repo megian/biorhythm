@@ -22,16 +22,11 @@
 #define __BIORHYTHMUS_PRINT_H__
 
 #include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include "biorhythmus-chart.h"
 
 G_BEGIN_DECLS
 
 GtkPrintOperation* biorhythmus_print_operation_new ();
-GtkPageSetup* biorhythmus_print_get_page_setup (void);
-void biorhythmus_print_set_page_setup (GtkPageSetup *page_setup);
-GtkPrintSettings* biorhythmus_print_get_print_settings (void);
-void biorhythmus_print_set_print_settings (GtkPrintSettings *print_settings);
 
 G_END_DECLS
 
