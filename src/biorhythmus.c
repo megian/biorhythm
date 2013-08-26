@@ -148,7 +148,7 @@ biorhythmus_gui_on_help_info_activate (GtkMenuItem *menu_item, gpointer user_dat
 void
 biorhythmus_gui_on_calendar_changed_chart (GtkCalendar *calendar, BiorhythmusChart *chart)
 {
-	gint year, month, day;
+	guint year, month, day;
 
 	gtk_calendar_get_date (calendar, &year, &month, &day);
 	biorhythmus_chart_set_active_date (chart, day, month+1, year);
@@ -157,7 +157,7 @@ biorhythmus_gui_on_calendar_changed_chart (GtkCalendar *calendar, BiorhythmusCha
 void
 biorhythmus_gui_on_calendar_changed_cli (GtkCalendar *calendar, BiorhythmusCli *cli)
 {
-	gint year, month, day;
+	guint year, month, day;
 	gtk_calendar_get_date (calendar, &year, &month, &day);
 
 	biorhythmus_cli_set_active_date (cli, day, month+1, year);
@@ -166,7 +166,7 @@ biorhythmus_gui_on_calendar_changed_cli (GtkCalendar *calendar, BiorhythmusCli *
 void
 biorhythmus_gui_on_file_view_birthday_changed_chart (BiorhythmusFileView *file_view, BiorhythmusChart *chart)
 {
-	gint day, month, year;
+	guint day, month, year;
 
 	biorhythmus_file_view_get_date (file_view, &day, &month, &year);
 	biorhythmus_chart_set_birthday (chart, day, month, year);
@@ -238,7 +238,6 @@ void
 biorhythmus_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmusChart *chart, BiorhythmusFileView *file_view, BiorhythmusCli *cli)
 {
 	GtkAccelGroup *accel;
-	GtkWidget *menu_item;
 	GtkMenu *sub_menu;
 
 	/* AccelGroup */
