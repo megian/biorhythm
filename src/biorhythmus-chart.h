@@ -68,6 +68,8 @@ gboolean biorhythmus_chart_get_option_intellectual (BiorhythmusChart *chart);
 void biorhythmus_chart_set_option_total (BiorhythmusChart *chart, gboolean state);
 gboolean biorhythmus_chart_get_option_total (BiorhythmusChart *chart);
 
+void biorhythmus_chart_draw_cairo (BiorhythmusChart *widget, cairo_t *cr, gint full_height, gint full_width);
+
 G_END_DECLS
 
 #endif /* __BIORHYTHMUS_CHART_H__ */

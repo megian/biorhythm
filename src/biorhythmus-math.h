@@ -37,7 +37,7 @@ struct bio_date
 };
 
 gint biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days);
-gint biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix);
+gint biorhythmus_math_bioday_graphic (gint x, gint month_day_offset, gint bio_cycle_days, gint half_height, gint day_pix);
 gint biorhythmus_math_setpositiv (gint i);
 gint biorhythmus_math_setpositivgraphic (gint i, gint half_height);
 gint biorhythmus_math_bioday_total (gint days_of_life);

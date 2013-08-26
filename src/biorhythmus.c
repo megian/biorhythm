@@ -82,6 +82,44 @@ biorhythmus_gui_on_file_save_as_activate (GtkWidget *widget, BiorhythmusFileView
 }
 
 void
+biorhythmus_gui_on_print_activate (GtkWidget *widget, BiorhythmusChart *chart)
+{
+	GtkWidget *dialog;
+	GError *error = NULL;
+	GtkPrintOperation *print;
+	GtkPrintOperationResult res;
+
+	print = biorhythmus_print_operation_new (chart);      
+
+	res = gtk_print_operation_run (print,
+                                       GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG,
+                                       NULL, &error);
+
+    if (res == GTK_PRINT_OPERATION_RESULT_ERROR)
+	{
+                dialog = gtk_message_dialog_new (NULL, //GTK_WINDOW (window),
+                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
+                                                 GTK_MESSAGE_ERROR,
+                                                 GTK_BUTTONS_CLOSE,
+                                                 _("Error printing file:\n%s"),
+                                                 error->message);
+                g_signal_connect (dialog, "response",
+                                  G_CALLBACK (gtk_widget_destroy), NULL);
+                gtk_widget_show (dialog);
+                g_error_free (error);
+	}
+	else if (res == GTK_PRINT_OPERATION_RESULT_APPLY)
+	{
+                GtkPageSetup *new_page_setup;
+                biorhythmus_print_set_print_settings (gtk_print_operation_get_print_settings (print));
+                new_page_setup = gtk_print_operation_get_default_page_setup (print);
+                /*if (window->priv->page_setup != NULL)
+                        g_object_unref (window->priv->page_setup);
+                window->priv->page_setup = g_object_ref (new_page_setup);*/
+	}
+}
+
+void
 biorhythmus_gui_on_option_physical_activate (GtkCheckMenuItem *menu_item, BiorhythmusChart *chart)
 {
 	biorhythmus_chart_set_option_physical (chart, gtk_check_menu_item_get_active (menu_item));
@@ -225,6 +263,10 @@ biorhythmus_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmusCh
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_OPEN, biorhythmus_gui_on_file_open_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE, biorhythmus_gui_on_file_save_activate, file_view);
 	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE_AS, biorhythmus_gui_on_file_save_as_activate, file_view);
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
+
+	biorhythmus_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_PRINT, biorhythmus_gui_on_print_activate, chart);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 

@@ -35,14 +35,14 @@ biorhythmus_math_bioday (gint days_of_life, gint bio_cycle_days)
 }
 
 gint
-biorhythmus_math_bioday_graphic (gint x, gint days_of_life, gint bio_cycle_days, gint half_height, gint day_pix)
+biorhythmus_math_bioday_graphic (gint x, gint month_day_offset, gint bio_cycle_days, gint half_height, gint day_pix)
 {
 	gdouble pi2, calcsin, ri;
 
 	pi2 = (gfloat)(6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
-	ri = days_of_life - (bio_cycle_days * floor (days_of_life / bio_cycle_days));
+	ri = month_day_offset - (bio_cycle_days * floor (month_day_offset / bio_cycle_days));
 	calcsin = sin ((x + (day_pix * ri)) * pi2 / (day_pix * bio_cycle_days));
-	return (gint)(floor (half_height - (half_height* calcsin) + 0.5));
+	return (gint)(floor (half_height - (half_height * calcsin) + 0.5));
 }
 
 gint
@@ -121,5 +121,10 @@ biorhythmus_math_daysoflife (struct bio_date date_active, struct bio_date date_b
 	return (gint)(biorhythmus_math_daysto (date_active.day, date_active.month, date_active.year) - biorhythmus_math_daysto (date_birthday.day, date_birthday.month, date_birthday.year));
 }
 
+gint
+biorhythmus_math_monthdayoffset (struct bio_date date_active, struct bio_date date_birthday)
+{
+	return (gint)(biorhythmus_math_daysto (1, date_active.month, date_active.year) - biorhythmus_math_daysto (date_birthday.day, date_birthday.month, date_birthday.year));
+}
 
 /* ex:set ts=4 noet: */
