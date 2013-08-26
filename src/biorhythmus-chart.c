@@ -161,7 +161,7 @@ biorhythmus_chart_draw_curves_select_color (cairo_t *cr, gint cycle_day)
 }
 
 void
-biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, BiorhythmusChartDivision *division, gint days_in_month, gint day_pix, gint days_of_life, gint cycle_day)
+biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, BiorhythmusChartDivision *division, gint days_in_month, gint day_pix, gint month_day_offset, gint cycle_day)
 {
 	gint i = 0;
 	gint half_height = division->height / 2;
@@ -169,9 +169,9 @@ biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorh
 	if ((priv->birthday.month == priv->active_date.month) && (priv->birthday.year == priv->active_date.year))
 	{
 		i = (priv->birthday.day - 1) * day_pix;
-		days_of_life = (priv->birthday.day - 1) * -1;
+		month_day_offset = (priv->birthday.day - 1) * -1;
 	}
-	else if (days_of_life < 0)
+	else if (month_day_offset < 0)
 		return;
 
 	biorhythmus_chart_draw_curves_select_color (cr, cycle_day);
@@ -181,9 +181,9 @@ biorhythmus_chart_draw_curves (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorh
 	while (i <= ((days_in_month - 1) * day_pix))
 	{
 		if (cycle_day == BIORHYTHMUS_DAYS_TOTAL)
-			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythmus_math_bioday_graphic_total (i, days_of_life, half_height, day_pix));
+			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythmus_math_bioday_graphic_total (i, month_day_offset, half_height, day_pix));
 		else
-			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythmus_math_bioday_graphic (i, days_of_life, cycle_day, half_height, day_pix));
+			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythmus_math_bioday_graphic (i, month_day_offset, cycle_day, half_height, day_pix));
 
 		i++;
 	}
@@ -329,20 +329,10 @@ biorhythmus_chart_title (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythmus
 	cairo_stroke (cr);
 }
 
-#ifdef GTK2
-static gboolean
-biorhythmus_chart_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data)
-#else
 void
-biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
-#endif
+biorhythmus_chart_draw_cairo (BiorhythmusChart *widget, cairo_t *cr, gint full_height, gint full_width)
 {
-	gint days_of_life, days_in_month, day_pix, full_height, full_width;
-
-#ifdef GTK2
-	cairo_t *cr;
-	GdkWindow *window;
-#endif
+	gint days_of_life, month_day_offset, days_in_month, day_pix;
 
 	BiorhythmusChartPrivate *priv = BIORHYTHMUS_CHART_GET_PRIVATE (widget);
 	BiorhythmusChartDivision *division_title = g_malloc (sizeof(BiorhythmusChartDivision));
@@ -351,15 +341,6 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 
 	g_return_if_fail (priv != NULL);
 	g_return_if_fail (division_chart != NULL);
-
-#ifdef GTK2
-	window = gtk_widget_get_window (widget);
-	if ((cr = gdk_cairo_create (window))==NULL)
-	{
-		cairo_destroy (cr);
-		return (FALSE);
-	}
-#endif
 
 	// Inizialize
 	division_chart->margin_top = 60;
@@ -374,14 +355,6 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 	division_title->margin_left = 25;
 	division_title->height = 50;
 
-#ifdef GTK2
-	full_height = widget->allocation.height;
-	full_width = widget->allocation.width;
-#else
-	full_height = gtk_widget_get_allocated_height (widget);
-	full_width = gtk_widget_get_allocated_width (widget);
-#endif
-
 	division_chart->height = full_height - division_chart->margin_top - division_chart->margin_bottom;
 	division_chart->width = full_width - division_chart->margin_left - division_chart->margin_right;
 
@@ -390,6 +363,7 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 	// Set Parameter
 	days_in_month = g_date_get_days_in_month (priv->active_date.month, priv->active_date.year);
 	days_of_life = biorhythmus_math_daysoflife (priv->active_date, priv->birthday);
+	month_day_offset = biorhythmus_math_monthdayoffset (priv->active_date, priv->birthday);
 	day_pix = division_chart->width / (days_in_month - 1);
 
 	biorhythmus_chart_draw_lines (cr, division_chart, days_in_month, day_pix);
@@ -398,18 +372,19 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 
 	// Physical
 	if (priv->option_physical == TRUE)
-		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, days_of_life, BIORHYTHMUS_DAYS_PHYSICAL);
+		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHMUS_DAYS_PHYSICAL);
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
-		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL);
+		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHMUS_DAYS_EMOTIONAL);
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
-		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL);
+		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHMUS_DAYS_INTELLECTUAL);
 
+	// Total
 	if (priv->option_total == TRUE)
-		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, days_of_life, BIORHYTHMUS_DAYS_TOTAL);
+		biorhythmus_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHMUS_DAYS_TOTAL);
 
 	cairo_stroke (cr);
 
@@ -422,6 +397,39 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 	g_free (division_title);
 	g_free (division_chart);
 	g_free (division_caption);
+}
+
+#ifdef GTK2
+static gboolean
+biorhythmus_chart_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data)
+#else
+void
+biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
+#endif
+{
+	gint full_height, full_width;
+
+#ifdef GTK2
+	cairo_t *cr;
+	GdkWindow *window;
+
+	window = gtk_widget_get_window (widget);
+	if ((cr = gdk_cairo_create (window))==NULL)
+	{
+		cairo_destroy (cr);
+		return (FALSE);
+	}
+#endif
+
+#ifdef GTK2
+	full_height = widget->allocation.height;
+	full_width = widget->allocation.width;
+#else
+	full_height = gtk_widget_get_allocated_height (widget);
+	full_width = gtk_widget_get_allocated_width (widget);
+#endif
+
+	biorhythmus_chart_draw_cairo (widget, cr, full_height, full_width);
 
 #ifdef GTK2
 	cairo_destroy (cr);

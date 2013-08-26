@@ -5,7 +5,8 @@ biorhythmus_SOURCES = \
 	biorhythmus-chart.h biorhythmus-chart.c \
 	biorhythmus-cli.h biorhythmus-cli.c \
 	biorhythmus-fileview.h biorhythmus-fileview.c \
-	biorhythmus-math.h biorhythmus-math.c
+	biorhythmus-math.h biorhythmus-math.c \
+	biorhythmus-print.h biorhythmus-print.c
 
 biorhythmus_CFLAGS  = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
 # $(GNOMEPRINT_CFLAGS)
