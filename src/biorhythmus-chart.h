@@ -54,7 +54,7 @@ struct _BiorhythmusChartClass
 /* used by BIORHYTHMUS_TYPE_CHART */
 GType biorhythmus_chart_get_type (void) G_GNUC_CONST;
 
-GtkWidget* biorhythmus_chart_new();
+GtkWidget* biorhythmus_chart_new ();
 
 void biorhythmus_chart_set_birthday (BiorhythmusChart *chart, gint day, gint month, gint year);
 void biorhythmus_chart_set_active_date (BiorhythmusChart *chart, gint day, gint month, gint year);
