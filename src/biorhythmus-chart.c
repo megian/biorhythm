@@ -330,11 +330,11 @@ biorhythmus_chart_title (BiorhythmusChartPrivate *priv, cairo_t *cr, Biorhythmus
 }
 
 void
-biorhythmus_chart_draw_cairo (BiorhythmusChart *widget, cairo_t *cr, gint full_height, gint full_width)
+biorhythmus_chart_draw_cairo (BiorhythmusChart *chart, cairo_t *cr, gint full_height, gint full_width)
 {
 	gint month_day_offset, days_in_month, day_pix;
 
-	BiorhythmusChartPrivate *priv = BIORHYTHMUS_CHART_GET_PRIVATE (widget);
+	BiorhythmusChartPrivate *priv = BIORHYTHMUS_CHART_GET_PRIVATE (chart);
 	BiorhythmusChartDivision *division_title = g_malloc (sizeof(BiorhythmusChartDivision));
 	BiorhythmusChartDivision *division_chart = g_malloc (sizeof(BiorhythmusChartDivision));
 	BiorhythmusChartDivision *division_caption = g_malloc (sizeof(BiorhythmusChartDivision));
@@ -428,7 +428,7 @@ biorhythmus_chart_draw (GtkWidget *widget, cairo_t *cr)
 	full_width = gtk_widget_get_allocated_width (widget);
 #endif
 
-	biorhythmus_chart_draw_cairo (widget, cr, full_height, full_width);
+	biorhythmus_chart_draw_cairo (BIORHYTHMUS_CHART (widget), cr, full_height, full_width);
 
 #ifdef GTK2
 	cairo_destroy (cr);

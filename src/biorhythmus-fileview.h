@@ -58,6 +58,7 @@ GType biorhythmus_file_view_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythmus_file_view_new ();
 
+void biorhythmus_file_view_get_date (BiorhythmusFileView *file_view, guint *day, guint *month, guint *year);
 gchar* biorhythmus_file_view_get_name (BiorhythmusFileView *file_view);
 gboolean biorhythmus_file_view_new_file (BiorhythmusFileView *file_view);
 gboolean biorhythmus_file_view_load_from_file (BiorhythmusFileView *file_view, gchar *filename);

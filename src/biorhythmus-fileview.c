@@ -556,7 +556,7 @@ biorhythmus_file_view_get_date (BiorhythmusFileView *file_view, guint *day, guin
 gchar *
 biorhythmus_file_view_get_name (BiorhythmusFileView *file_view)
 {
-	g_return_if_fail (BIORHYTHMUS_IS_FILE_VIEW (file_view));
+	g_return_val_if_fail (BIORHYTHMUS_IS_FILE_VIEW (file_view), NULL);
 
 	BiorhythmusFileViewPrivate *priv = file_view->priv;
 
