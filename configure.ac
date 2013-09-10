@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.69])
 AC_INIT(Biorhythmus, 0.13, gabisoft@freesurf.ch)
-AM_INIT_AUTOMAKE($PACKAGE_TARNAME, $PACKAGE_VERSION)
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 
 AC_PROG_INTLTOOL(, no-xml)      # require >= 0.31 for autoreconf

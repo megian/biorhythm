@@ -2728,9 +2728,8 @@ fi
 
 
 # Define the identity of the package.
-
- PACKAGE=$PACKAGE_TARNAME
- VERSION=$PACKAGE_VERSION
+ PACKAGE='biorhythmus'
+ VERSION='0.13'
 
 
 cat >>confdefs.h <<_ACEOF
