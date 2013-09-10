@@ -142,7 +142,7 @@ void
 biorhythmus_gui_on_help_info_activate (GtkMenuItem *menu_item, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
-	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythmus", "title", "Funny and useless :)", "version", "0.12", "copyright", "Copyright © 2003-2013 Gabriel Mainberger", NULL);
+	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythmus", "title", "Funny and useless :)", "version", VERSION, "copyright", "Copyright © 2003-2013 Gabriel Mainberger", NULL);
 }
 
 void
