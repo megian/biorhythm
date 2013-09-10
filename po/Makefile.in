@@ -19,9 +19,9 @@
 
 GETTEXT_PACKAGE = biorhythmus
 PACKAGE = biorhythmus
-VERSION = 0.13
+VERSION = 0.14
 
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 srcdir = .
 top_srcdir = ..
@@ -37,7 +37,7 @@ DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
 install_sh = ${SHELL} /home/gabriel/Git/biorhythmus/install-sh
-# Automake >= 1.8 provides $(MKDIR_P).
+# Automake >= 1.8 provides /bin/mkdir -p.
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d
 
