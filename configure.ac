@@ -24,13 +24,13 @@ PKG_CHECK_MODULES(JSONGLIB, [json-glib-1.0], [
             )
 
 # Checks for libraries.
+AC_CHECK_LIB([m],[floor])
 
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
-AC_CHECK_FUNCS([floor])
 
 GETTEXT_PACKAGE="$PACKAGE"
 AC_SUBST(GETTEXT_PACKAGE)
