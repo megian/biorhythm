@@ -1,3 +1,9 @@
+biorhythm (0.15-1) unstable; urgency=low
+
+  * Renamed from Biorthumus to Biorhthm
+
+ -- Gabriel Mainberger <gabisoft@freesurf.ch>  Mon, 7 Oct 2013 13:58:00 +0100
+
 biorhythmus (0.14-1) unstable; urgency=low
 
   * New upsteam version 0.14

@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH BIORHYTHMUS SECTION "November  9, 2003"
+.TH BIORHYTHM SECTION "November  9, 2003"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,16 +16,16 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-biorhythmus \- program to do something
+biorhythm \- program to do something
 .SH SYNOPSIS
-.B biorhythmus
+.B biorhythm
 .RI [ options ] " files" ...
 .br
 .B bar
 .RI [ options ] " files" ...
 .SH DESCRIPTION
 This manual page documents briefly the
-.B biorhythmus
+.B biorhythm
 and
 .B bar
 commands.
@@ -36,7 +36,7 @@ Instead, it has documentation in the GNU Info format; see below.
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invode bold face and italics, 
 .\" respectively.
-\fBbiorhythmus\fP is a program that...
+\fBbiorhythm\fP is a program that...
 .SH OPTIONS
 These programs follow the usual GNU command line syntax, with long
 options starting with two dashes (`-').
@@ -56,5 +56,5 @@ The programs are documented fully by
 .IR "The Rise and Fall of a Fooish Bar" ,
 available via the Info system.
 .SH AUTHOR
-This manual page was written by Gabriel Mainberger <gabriel@andromeda.mainberger.local>,
+This manual page was written by Gabriel Mainberger <gabisoft@freesurf.ch>,
 for the Debian project (but may be used by others).

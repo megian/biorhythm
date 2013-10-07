@@ -1,14 +1,14 @@
-bin_PROGRAMS = biorhythmus
+bin_PROGRAMS = biorhythm
 
-biorhythmus_SOURCES = \
-	biorhythmus.h biorhythmus.c \
-	biorhythmus-chart.h biorhythmus-chart.c \
-	biorhythmus-cli.h biorhythmus-cli.c \
-	biorhythmus-fileview.h biorhythmus-fileview.c \
-	biorhythmus-math.h biorhythmus-math.c \
-	biorhythmus-print.h biorhythmus-print.c
+biorhythm_SOURCES = \
+	biorhythm.h biorhythm.c \
+	biorhythm-chart.h biorhythm-chart.c \
+	biorhythm-cli.h biorhythm-cli.c \
+	biorhythm-fileview.h biorhythm-fileview.c \
+	biorhythm-math.h biorhythm-math.c \
+	biorhythm-print.h biorhythm-print.c
 
-biorhythmus_CFLAGS  = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
+biorhythm_CFLAGS  = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
 # $(GNOMEPRINT_CFLAGS)
-biorhythmus_LDADD   = $(GTK_LIBS) $(INTLLIBS) $(JSONGLIB_LIBS)
+biorhythm_LDADD   = $(GTK_LIBS) $(INTLLIBS) $(JSONGLIB_LIBS)
 # $(GNOMEPRINT_LIBS)

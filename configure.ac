@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(Biorhythmus, 0.14, gabisoft@freesurf.ch)
+AC_INIT(Biorhythm, 0.14, gabisoft@freesurf.ch)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 

@@ -1,5 +1,5 @@
 #! /bin/sh
-# postrm script for biorhythmus
+# postrm script for biorhythm
 #
 # see: dh_installdeb(1)
 
