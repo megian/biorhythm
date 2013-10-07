@@ -17,8 +17,8 @@
 # We have the following line for use by intltoolize:
 # INTLTOOL_MAKEFILE
 
-GETTEXT_PACKAGE = biorhythmus
-PACKAGE = biorhythmus
+GETTEXT_PACKAGE = biorhythm
+PACKAGE = biorhythm
 VERSION = 0.14
 
 SHELL = /bin/bash
@@ -28,7 +28,7 @@ top_srcdir = ..
 top_builddir = ..
 
 
-prefix = /usr/local
+prefix = /usr
 exec_prefix = ${prefix}
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -36,7 +36,7 @@ libdir = ${exec_prefix}/lib
 DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
-install_sh = ${SHELL} /home/gabriel/Git/biorhythmus/install-sh
+install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
 # Automake >= 1.8 provides /bin/mkdir -p.
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d

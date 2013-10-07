@@ -1,4 +1,4 @@
 #
-# Regular cron jobs for the biorhythmus package
+# Regular cron jobs for the biorhythm package
 #
-0 4	* * *	root	biorhythmus_maintenance
+0 4	* * *	root	biorhythm_maintenance

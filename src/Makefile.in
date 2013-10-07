@@ -49,7 +49,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = biorhythmus$(EXEEXT)
+bin_PROGRAMS = biorhythm$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -62,18 +62,18 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_biorhythmus_OBJECTS = biorhythmus-biorhythmus.$(OBJEXT) \
-	biorhythmus-biorhythmus-chart.$(OBJEXT) \
-	biorhythmus-biorhythmus-cli.$(OBJEXT) \
-	biorhythmus-biorhythmus-fileview.$(OBJEXT) \
-	biorhythmus-biorhythmus-math.$(OBJEXT) \
-	biorhythmus-biorhythmus-print.$(OBJEXT)
-biorhythmus_OBJECTS = $(am_biorhythmus_OBJECTS)
+am_biorhythm_OBJECTS = biorhythm-biorhythm.$(OBJEXT) \
+	biorhythm-biorhythm-chart.$(OBJEXT) \
+	biorhythm-biorhythm-cli.$(OBJEXT) \
+	biorhythm-biorhythm-fileview.$(OBJEXT) \
+	biorhythm-biorhythm-math.$(OBJEXT) \
+	biorhythm-biorhythm-print.$(OBJEXT)
+biorhythm_OBJECTS = $(am_biorhythm_OBJECTS)
 am__DEPENDENCIES_1 =
-biorhythmus_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+biorhythm_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-biorhythmus_LINK = $(CCLD) $(biorhythmus_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+biorhythm_LINK = $(CCLD) $(biorhythm_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -82,8 +82,8 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(biorhythmus_SOURCES)
-DIST_SOURCES = $(biorhythmus_SOURCES)
+SOURCES = $(biorhythm_SOURCES)
+DIST_SOURCES = $(biorhythm_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -215,17 +215,17 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-biorhythmus_SOURCES = \
-	biorhythmus.h biorhythmus.c \
-	biorhythmus-chart.h biorhythmus-chart.c \
-	biorhythmus-cli.h biorhythmus-cli.c \
-	biorhythmus-fileview.h biorhythmus-fileview.c \
-	biorhythmus-math.h biorhythmus-math.c \
-	biorhythmus-print.h biorhythmus-print.c
+biorhythm_SOURCES = \
+	biorhythm.h biorhythm.c \
+	biorhythm-chart.h biorhythm-chart.c \
+	biorhythm-cli.h biorhythm-cli.c \
+	biorhythm-fileview.h biorhythm-fileview.c \
+	biorhythm-math.h biorhythm-math.c \
+	biorhythm-print.h biorhythm-print.c
 
-biorhythmus_CFLAGS = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
+biorhythm_CFLAGS = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
 # $(GNOMEPRINT_CFLAGS)
-biorhythmus_LDADD = $(GTK_LIBS) $(INTLLIBS) $(JSONGLIB_LIBS)
+biorhythm_LDADD = $(GTK_LIBS) $(INTLLIBS) $(JSONGLIB_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -239,9 +239,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
 	$(am__cd) $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign src/Makefile
+	  $(AUTOMAKE) --gnu src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -300,9 +300,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
-biorhythmus$(EXEEXT): $(biorhythmus_OBJECTS) $(biorhythmus_DEPENDENCIES) $(EXTRA_biorhythmus_DEPENDENCIES) 
-	@rm -f biorhythmus$(EXEEXT)
-	$(biorhythmus_LINK) $(biorhythmus_OBJECTS) $(biorhythmus_LDADD) $(LIBS)
+biorhythm$(EXEEXT): $(biorhythm_OBJECTS) $(biorhythm_DEPENDENCIES) $(EXTRA_biorhythm_DEPENDENCIES) 
+	@rm -f biorhythm$(EXEEXT)
+	$(biorhythm_LINK) $(biorhythm_OBJECTS) $(biorhythm_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -310,12 +310,12 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus-chart.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus-cli.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus-fileview.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus-math.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus-print.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythmus-biorhythmus.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm-chart.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm-cli.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm-fileview.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm-math.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm-print.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/biorhythm-biorhythm.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -331,89 +331,89 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-biorhythmus-biorhythmus.o: biorhythmus.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus.Tpo -c -o biorhythmus-biorhythmus.o `test -f 'biorhythmus.c' || echo '$(srcdir)/'`biorhythmus.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus.Tpo $(DEPDIR)/biorhythmus-biorhythmus.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus.c' object='biorhythmus-biorhythmus.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm.o: biorhythm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm.Tpo -c -o biorhythm-biorhythm.o `test -f 'biorhythm.c' || echo '$(srcdir)/'`biorhythm.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm.Tpo $(DEPDIR)/biorhythm-biorhythm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm.c' object='biorhythm-biorhythm.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus.o `test -f 'biorhythmus.c' || echo '$(srcdir)/'`biorhythmus.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm.o `test -f 'biorhythm.c' || echo '$(srcdir)/'`biorhythm.c
 
-biorhythmus-biorhythmus.obj: biorhythmus.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus.Tpo -c -o biorhythmus-biorhythmus.obj `if test -f 'biorhythmus.c'; then $(CYGPATH_W) 'biorhythmus.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus.Tpo $(DEPDIR)/biorhythmus-biorhythmus.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus.c' object='biorhythmus-biorhythmus.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm.obj: biorhythm.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm.Tpo -c -o biorhythm-biorhythm.obj `if test -f 'biorhythm.c'; then $(CYGPATH_W) 'biorhythm.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm.Tpo $(DEPDIR)/biorhythm-biorhythm.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm.c' object='biorhythm-biorhythm.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus.obj `if test -f 'biorhythmus.c'; then $(CYGPATH_W) 'biorhythmus.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm.obj `if test -f 'biorhythm.c'; then $(CYGPATH_W) 'biorhythm.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm.c'; fi`
 
-biorhythmus-biorhythmus-chart.o: biorhythmus-chart.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-chart.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-chart.Tpo -c -o biorhythmus-biorhythmus-chart.o `test -f 'biorhythmus-chart.c' || echo '$(srcdir)/'`biorhythmus-chart.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-chart.Tpo $(DEPDIR)/biorhythmus-biorhythmus-chart.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-chart.c' object='biorhythmus-biorhythmus-chart.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-chart.o: biorhythm-chart.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-chart.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-chart.Tpo -c -o biorhythm-biorhythm-chart.o `test -f 'biorhythm-chart.c' || echo '$(srcdir)/'`biorhythm-chart.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-chart.Tpo $(DEPDIR)/biorhythm-biorhythm-chart.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-chart.c' object='biorhythm-biorhythm-chart.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-chart.o `test -f 'biorhythmus-chart.c' || echo '$(srcdir)/'`biorhythmus-chart.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-chart.o `test -f 'biorhythm-chart.c' || echo '$(srcdir)/'`biorhythm-chart.c
 
-biorhythmus-biorhythmus-chart.obj: biorhythmus-chart.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-chart.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-chart.Tpo -c -o biorhythmus-biorhythmus-chart.obj `if test -f 'biorhythmus-chart.c'; then $(CYGPATH_W) 'biorhythmus-chart.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-chart.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-chart.Tpo $(DEPDIR)/biorhythmus-biorhythmus-chart.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-chart.c' object='biorhythmus-biorhythmus-chart.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-chart.obj: biorhythm-chart.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-chart.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-chart.Tpo -c -o biorhythm-biorhythm-chart.obj `if test -f 'biorhythm-chart.c'; then $(CYGPATH_W) 'biorhythm-chart.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-chart.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-chart.Tpo $(DEPDIR)/biorhythm-biorhythm-chart.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-chart.c' object='biorhythm-biorhythm-chart.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-chart.obj `if test -f 'biorhythmus-chart.c'; then $(CYGPATH_W) 'biorhythmus-chart.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-chart.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-chart.obj `if test -f 'biorhythm-chart.c'; then $(CYGPATH_W) 'biorhythm-chart.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-chart.c'; fi`
 
-biorhythmus-biorhythmus-cli.o: biorhythmus-cli.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-cli.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-cli.Tpo -c -o biorhythmus-biorhythmus-cli.o `test -f 'biorhythmus-cli.c' || echo '$(srcdir)/'`biorhythmus-cli.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-cli.Tpo $(DEPDIR)/biorhythmus-biorhythmus-cli.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-cli.c' object='biorhythmus-biorhythmus-cli.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-cli.o: biorhythm-cli.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-cli.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-cli.Tpo -c -o biorhythm-biorhythm-cli.o `test -f 'biorhythm-cli.c' || echo '$(srcdir)/'`biorhythm-cli.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-cli.Tpo $(DEPDIR)/biorhythm-biorhythm-cli.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-cli.c' object='biorhythm-biorhythm-cli.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-cli.o `test -f 'biorhythmus-cli.c' || echo '$(srcdir)/'`biorhythmus-cli.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-cli.o `test -f 'biorhythm-cli.c' || echo '$(srcdir)/'`biorhythm-cli.c
 
-biorhythmus-biorhythmus-cli.obj: biorhythmus-cli.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-cli.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-cli.Tpo -c -o biorhythmus-biorhythmus-cli.obj `if test -f 'biorhythmus-cli.c'; then $(CYGPATH_W) 'biorhythmus-cli.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-cli.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-cli.Tpo $(DEPDIR)/biorhythmus-biorhythmus-cli.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-cli.c' object='biorhythmus-biorhythmus-cli.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-cli.obj: biorhythm-cli.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-cli.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-cli.Tpo -c -o biorhythm-biorhythm-cli.obj `if test -f 'biorhythm-cli.c'; then $(CYGPATH_W) 'biorhythm-cli.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-cli.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-cli.Tpo $(DEPDIR)/biorhythm-biorhythm-cli.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-cli.c' object='biorhythm-biorhythm-cli.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-cli.obj `if test -f 'biorhythmus-cli.c'; then $(CYGPATH_W) 'biorhythmus-cli.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-cli.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-cli.obj `if test -f 'biorhythm-cli.c'; then $(CYGPATH_W) 'biorhythm-cli.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-cli.c'; fi`
 
-biorhythmus-biorhythmus-fileview.o: biorhythmus-fileview.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-fileview.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-fileview.Tpo -c -o biorhythmus-biorhythmus-fileview.o `test -f 'biorhythmus-fileview.c' || echo '$(srcdir)/'`biorhythmus-fileview.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-fileview.Tpo $(DEPDIR)/biorhythmus-biorhythmus-fileview.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-fileview.c' object='biorhythmus-biorhythmus-fileview.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-fileview.o: biorhythm-fileview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-fileview.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-fileview.Tpo -c -o biorhythm-biorhythm-fileview.o `test -f 'biorhythm-fileview.c' || echo '$(srcdir)/'`biorhythm-fileview.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-fileview.Tpo $(DEPDIR)/biorhythm-biorhythm-fileview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-fileview.c' object='biorhythm-biorhythm-fileview.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-fileview.o `test -f 'biorhythmus-fileview.c' || echo '$(srcdir)/'`biorhythmus-fileview.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-fileview.o `test -f 'biorhythm-fileview.c' || echo '$(srcdir)/'`biorhythm-fileview.c
 
-biorhythmus-biorhythmus-fileview.obj: biorhythmus-fileview.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-fileview.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-fileview.Tpo -c -o biorhythmus-biorhythmus-fileview.obj `if test -f 'biorhythmus-fileview.c'; then $(CYGPATH_W) 'biorhythmus-fileview.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-fileview.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-fileview.Tpo $(DEPDIR)/biorhythmus-biorhythmus-fileview.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-fileview.c' object='biorhythmus-biorhythmus-fileview.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-fileview.obj: biorhythm-fileview.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-fileview.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-fileview.Tpo -c -o biorhythm-biorhythm-fileview.obj `if test -f 'biorhythm-fileview.c'; then $(CYGPATH_W) 'biorhythm-fileview.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-fileview.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-fileview.Tpo $(DEPDIR)/biorhythm-biorhythm-fileview.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-fileview.c' object='biorhythm-biorhythm-fileview.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-fileview.obj `if test -f 'biorhythmus-fileview.c'; then $(CYGPATH_W) 'biorhythmus-fileview.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-fileview.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-fileview.obj `if test -f 'biorhythm-fileview.c'; then $(CYGPATH_W) 'biorhythm-fileview.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-fileview.c'; fi`
 
-biorhythmus-biorhythmus-math.o: biorhythmus-math.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-math.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-math.Tpo -c -o biorhythmus-biorhythmus-math.o `test -f 'biorhythmus-math.c' || echo '$(srcdir)/'`biorhythmus-math.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-math.Tpo $(DEPDIR)/biorhythmus-biorhythmus-math.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-math.c' object='biorhythmus-biorhythmus-math.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-math.o: biorhythm-math.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-math.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-math.Tpo -c -o biorhythm-biorhythm-math.o `test -f 'biorhythm-math.c' || echo '$(srcdir)/'`biorhythm-math.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-math.Tpo $(DEPDIR)/biorhythm-biorhythm-math.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-math.c' object='biorhythm-biorhythm-math.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-math.o `test -f 'biorhythmus-math.c' || echo '$(srcdir)/'`biorhythmus-math.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-math.o `test -f 'biorhythm-math.c' || echo '$(srcdir)/'`biorhythm-math.c
 
-biorhythmus-biorhythmus-math.obj: biorhythmus-math.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-math.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-math.Tpo -c -o biorhythmus-biorhythmus-math.obj `if test -f 'biorhythmus-math.c'; then $(CYGPATH_W) 'biorhythmus-math.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-math.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-math.Tpo $(DEPDIR)/biorhythmus-biorhythmus-math.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-math.c' object='biorhythmus-biorhythmus-math.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-math.obj: biorhythm-math.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-math.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-math.Tpo -c -o biorhythm-biorhythm-math.obj `if test -f 'biorhythm-math.c'; then $(CYGPATH_W) 'biorhythm-math.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-math.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-math.Tpo $(DEPDIR)/biorhythm-biorhythm-math.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-math.c' object='biorhythm-biorhythm-math.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-math.obj `if test -f 'biorhythmus-math.c'; then $(CYGPATH_W) 'biorhythmus-math.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-math.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-math.obj `if test -f 'biorhythm-math.c'; then $(CYGPATH_W) 'biorhythm-math.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-math.c'; fi`
 
-biorhythmus-biorhythmus-print.o: biorhythmus-print.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-print.o -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-print.Tpo -c -o biorhythmus-biorhythmus-print.o `test -f 'biorhythmus-print.c' || echo '$(srcdir)/'`biorhythmus-print.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-print.Tpo $(DEPDIR)/biorhythmus-biorhythmus-print.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-print.c' object='biorhythmus-biorhythmus-print.o' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-print.o: biorhythm-print.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-print.o -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-print.Tpo -c -o biorhythm-biorhythm-print.o `test -f 'biorhythm-print.c' || echo '$(srcdir)/'`biorhythm-print.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-print.Tpo $(DEPDIR)/biorhythm-biorhythm-print.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-print.c' object='biorhythm-biorhythm-print.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-print.o `test -f 'biorhythmus-print.c' || echo '$(srcdir)/'`biorhythmus-print.c
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-print.o `test -f 'biorhythm-print.c' || echo '$(srcdir)/'`biorhythm-print.c
 
-biorhythmus-biorhythmus-print.obj: biorhythmus-print.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -MT biorhythmus-biorhythmus-print.obj -MD -MP -MF $(DEPDIR)/biorhythmus-biorhythmus-print.Tpo -c -o biorhythmus-biorhythmus-print.obj `if test -f 'biorhythmus-print.c'; then $(CYGPATH_W) 'biorhythmus-print.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-print.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythmus-biorhythmus-print.Tpo $(DEPDIR)/biorhythmus-biorhythmus-print.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythmus-print.c' object='biorhythmus-biorhythmus-print.obj' libtool=no @AMDEPBACKSLASH@
+biorhythm-biorhythm-print.obj: biorhythm-print.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -MT biorhythm-biorhythm-print.obj -MD -MP -MF $(DEPDIR)/biorhythm-biorhythm-print.Tpo -c -o biorhythm-biorhythm-print.obj `if test -f 'biorhythm-print.c'; then $(CYGPATH_W) 'biorhythm-print.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-print.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/biorhythm-biorhythm-print.Tpo $(DEPDIR)/biorhythm-biorhythm-print.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='biorhythm-print.c' object='biorhythm-biorhythm-print.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythmus_CFLAGS) $(CFLAGS) -c -o biorhythmus-biorhythmus-print.obj `if test -f 'biorhythmus-print.c'; then $(CYGPATH_W) 'biorhythmus-print.c'; else $(CYGPATH_W) '$(srcdir)/biorhythmus-print.c'; fi`
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(biorhythm_CFLAGS) $(CFLAGS) -c -o biorhythm-biorhythm-print.obj `if test -f 'biorhythm-print.c'; then $(CYGPATH_W) 'biorhythm-print.c'; else $(CYGPATH_W) '$(srcdir)/biorhythm-print.c'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \

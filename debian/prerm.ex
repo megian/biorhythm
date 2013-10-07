@@ -1,5 +1,5 @@
 #! /bin/sh
-# prerm script for biorhythmus
+# prerm script for biorhythm
 #
 # see: dh_installdeb(1)
 
@@ -19,7 +19,7 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-#       install-info --quiet --remove /usr/info/biorhythmus.info.gz
+#       install-info --quiet --remove /usr/info/biorhythm.info.gz
         ;;
     failed-upgrade)
         ;;
