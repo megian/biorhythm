@@ -28,4 +28,3 @@
 #include "../config.h"
 
 #define GETTEXT_PACKAGE "biorhythm"
-#define LOCALEDIR "locale"
