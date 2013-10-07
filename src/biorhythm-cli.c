@@ -1,7 +1,7 @@
 /* -*-coding: utf-8;-*- */
 
-/* biorhythmus-cli.c
- * This file is part of Biorhythmus
+/* biorhythm-cli.c
+ * This file is part of Biorhythm
  * Copyright (C) 2003-2013, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,30 +18,30 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "biorhythmus-cli.h"
+#include "biorhythm-cli.h"
 
-struct _BiorhythmusCliPrivate
+struct _BiorhythmCliPrivate
 {
 	struct bio_date birthday;
 	struct bio_date active_date;
 };
 
-#define BIORHYTHMUS_CLI_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHMUS_TYPE_CLI, BiorhythmusCliPrivate));
+#define BIORHYTHM_CLI_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_CLI, BiorhythmCliPrivate));
 
-G_DEFINE_TYPE (BiorhythmusCli, biorhythmus_cli, G_TYPE_OBJECT)
+G_DEFINE_TYPE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)
 
 /****************************************
  *                 Class                *
  ****************************************/
 
 static void
-biorhythmus_cli_class_init (BiorhythmusCliClass *klass)
+biorhythm_cli_class_init (BiorhythmCliClass *klass)
 {
-	g_type_class_add_private (klass, sizeof (BiorhythmusCliPrivate));
+	g_type_class_add_private (klass, sizeof (BiorhythmCliPrivate));
 }
 
 static void
-biorhythmus_cli_set_current_date (struct bio_date *date)
+biorhythm_cli_set_current_date (struct bio_date *date)
 {
 	GTimeVal time_val;
 	GDate *current_date;
@@ -58,20 +58,20 @@ biorhythmus_cli_set_current_date (struct bio_date *date)
 }
 
 static void
-biorhythmus_cli_init (BiorhythmusCli *cli)
+biorhythm_cli_init (BiorhythmCli *cli)
 {
-	BiorhythmusCliPrivate *priv;
+	BiorhythmCliPrivate *priv;
 
-	cli->priv = priv = BIORHYTHMUS_CLI_GET_PRIVATE (cli);
+	cli->priv = priv = BIORHYTHM_CLI_GET_PRIVATE (cli);
 
-	biorhythmus_cli_set_current_date (&priv->active_date);
-	biorhythmus_cli_set_current_date (&priv->birthday);
+	biorhythm_cli_set_current_date (&priv->active_date);
+	biorhythm_cli_set_current_date (&priv->birthday);
 }
 
-BiorhythmusCli*
-biorhythmus_cli_new ()
+BiorhythmCli*
+biorhythm_cli_new ()
 {
-	return g_object_new (BIORHYTHMUS_TYPE_CLI, NULL);
+	return g_object_new (BIORHYTHM_TYPE_CLI, NULL);
 }
 
 /****************************************
@@ -79,15 +79,15 @@ biorhythmus_cli_new ()
  ****************************************/
 
 void
-biorhythmus_cli_output (BiorhythmusCli *cli)
+biorhythm_cli_output (BiorhythmCli *cli)
 {
-	gint days_of_life = biorhythmus_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
+	gint days_of_life = biorhythm_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
 
 	g_print (_("Age in days: %i\n"), days_of_life);
-	g_print (_("Physical: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_PHYSICAL));
-	g_print (_("Emotional: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_EMOTIONAL));
-	g_print (_("Intellectual: %d\n"), biorhythmus_math_bioday (days_of_life, BIORHYTHMUS_DAYS_INTELLECTUAL));
-	g_print (_("Total: %d\n"), biorhythmus_math_bioday_total (days_of_life));
+	g_print (_("Physical: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL));
+	g_print (_("Emotional: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL));
+	g_print (_("Intellectual: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL));
+	g_print (_("Total: %d\n"), biorhythm_math_bioday_total (days_of_life));
 }
 
 /****************************************
@@ -95,9 +95,9 @@ biorhythmus_cli_output (BiorhythmusCli *cli)
  ****************************************/
 
 void
-biorhythmus_cli_set_birthday (BiorhythmusCli *cli, guint day, guint month, guint year)
+biorhythm_cli_set_birthday (BiorhythmCli *cli, guint day, guint month, guint year)
 {
-	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
+	g_return_if_fail (BIORHYTHM_IS_CLI (cli));
 
 	cli->priv->birthday.day = day;
 	cli->priv->birthday.month = month;
@@ -105,9 +105,9 @@ biorhythmus_cli_set_birthday (BiorhythmusCli *cli, guint day, guint month, guint
 }
 
 void
-biorhythmus_cli_set_active_date (BiorhythmusCli *cli, guint day, guint month, guint year)
+biorhythm_cli_set_active_date (BiorhythmCli *cli, guint day, guint month, guint year)
 {
-	g_return_if_fail (BIORHYTHMUS_IS_CLI (cli));
+	g_return_if_fail (BIORHYTHM_IS_CLI (cli));
 
 	cli->priv->active_date.day = day;
 	cli->priv->active_date.month = month;

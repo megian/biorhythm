@@ -1,7 +1,7 @@
 /* -*-coding: utf-8;-*- */
 
-/* biorhythmus-print.h
- * This file is part of Biorhythmus
+/* biorhythm-print.h
+ * This file is part of Biorhythm
  * Copyright (C) 2003-2013, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,16 +18,16 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __BIORHYTHMUS_PRINT_H__
-#define __BIORHYTHMUS_PRINT_H__
+#ifndef __BIORHYTHM_PRINT_H__
+#define __BIORHYTHM_PRINT_H__
 
 #include <gtk/gtk.h>
-#include "biorhythmus-chart.h"
+#include "biorhythm-chart.h"
 
 G_BEGIN_DECLS
 
-GtkPrintOperation* biorhythmus_print_operation_new ();
+GtkPrintOperation* biorhythm_print_operation_new ();
 
 G_END_DECLS
 
-#endif /* __BIORHYTHMUS_PRINT_H__ */
+#endif /* __BIORHYTHM_PRINT_H__ */

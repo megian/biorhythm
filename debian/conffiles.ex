@@ -4,4 +4,4 @@
 # See the policy manual
 #
 # for example:
-# /etc/biorhythmus/biorhythmus.conf
+# /etc/biorhythm/biorhythm.conf

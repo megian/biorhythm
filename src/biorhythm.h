@@ -1,6 +1,6 @@
 /* -*-coding: utf-8;-*- */
 
-/* Biorhythmus
+/* Biorhythm
  * Copyright (C) 2003-2013, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,12 +20,11 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "biorhythmus-math.h"
-#include "biorhythmus-chart.h"
-#include "biorhythmus-fileview.h"
-#include "biorhythmus-cli.h"
-#include "biorhythmus-print.h"
+#include "biorhythm-math.h"
+#include "biorhythm-chart.h"
+#include "biorhythm-fileview.h"
+#include "biorhythm-cli.h"
+#include "biorhythm-print.h"
 #include "../config.h"
 
-//#define GETTEXT_PACKAGE "biorhythmus"
-//#define LOCALEDIR "locale"
+#define GETTEXT_PACKAGE "biorhythm"

@@ -1,13 +1,13 @@
 #!/bin/sh -e
-# /usr/lib/emacsen-common/packages/remove/biorhythmus
+# /usr/lib/emacsen-common/packages/remove/biorhythm
 
 FLAVOR=$1
-PACKAGE=biorhythmus
+PACKAGE=biorhythm
 
 if [ ${FLAVOR} != emacs ]; then
     if test -x /usr/sbin/install-info-altdir; then
         echo remove/${PACKAGE}: removing Info links for ${FLAVOR}
-        install-info-altdir --quiet --remove --dirname=${FLAVOR} /usr/info/biorhythmus.info.gz
+        install-info-altdir --quiet --remove --dirname=${FLAVOR} /usr/info/biorhythm.info.gz
     fi
 
     echo remove/${PACKAGE}: purging byte-compiled files for ${FLAVOR}

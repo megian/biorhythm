@@ -1,5 +1,5 @@
 #! /bin/sh
-# preinst script for biorhythmus
+# preinst script for biorhythm
 #
 # see: dh_installdeb(1)
 
@@ -20,8 +20,8 @@ case "$1" in
 #        if [ "$1" = "upgrade" ]
 #        then
 #            start-stop-daemon --stop --quiet --oknodo  \
-#                --pidfile /var/run/biorhythmus.pid  \
-#                --exec /usr/sbin/biorhythmus 2>/dev/null || true
+#                --pidfile /var/run/biorhythm.pid  \
+#                --exec /usr/sbin/biorhythm 2>/dev/null || true
 #        fi
     ;;
 
