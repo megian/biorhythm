@@ -17,7 +17,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <biorhythmus.h>
+#include "biorhythmus.h"
 
 void
 biorhythmus_gui_on_file_new_activate (GtkWidget *widget, BiorhythmusFileView *file_view)
