@@ -3,4 +3,4 @@
 # to check for upstream updates and more.
 # Site		Directory		Pattern			Version	Script
 version=2
-sunsite.unc.edu	/pub/Linux/Incoming	biorhythmus-(.*)\.tar\.gz	debian	uupdate
+sunsite.unc.edu	/pub/Linux/Incoming	biorhythm-(.*)\.tar\.gz	debian	uupdate

@@ -1,0 +1,78 @@
+/* -*-coding: utf-8;-*- */
+
+/* biorhythm-chart.h
+ * This file is part of Biorhythm
+ * Copyright (C) 2003-2013, Gabriel Mainberger
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef __BIORHYTHM_CHART_H__
+#define __BIORHYTHM_CHART_H__
+
+#include <math.h>
+#include <gtk/gtk.h>
+#include <glib/gi18n.h>
+#include "biorhythm-math.h"
+
+G_BEGIN_DECLS
+	
+#define BIORHYTHM_TYPE_CHART		(biorhythm_chart_get_type ())
+#define BIORHYTHM_CHART(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), BIORHYTHM_TYPE_CHART, BiorhythmChart))
+#define BIORHYTHM_IS_CHART(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), BIORHYTHM_TYPE_CHART))
+#define BIORHYTHM_CHART_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), BIORHYTHM_TYPE_CHART, BiorhythmChartClass))
+#define BIORHYTHM_IS_CHART_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), BIORHYTHM_TYPE_CHART))
+#define BIORHYTHM_CHART_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), BIORHYTHM_TYPE_CHART, BiorhythmChartClass))
+
+typedef struct _BiorhythmChart		BiorhythmChart;
+typedef struct _BiorhythmChartClass	BiorhythmChartClass;
+typedef struct _BiorhythmChartPrivate	BiorhythmChartPrivate;
+
+struct _BiorhythmChart
+{
+	GtkDrawingArea parent_instance;
+
+	BiorhythmChartPrivate *priv;
+};
+
+struct _BiorhythmChartClass
+{
+	GtkDrawingAreaClass parent_class;
+};
+
+/* used by BIORHYTHM_TYPE_CHART */
+GType biorhythm_chart_get_type (void) G_GNUC_CONST;
+
+GtkWidget* biorhythm_chart_new ();
+
+void biorhythm_chart_set_birthday (BiorhythmChart *chart, gint day, gint month, gint year);
+void biorhythm_chart_set_active_date (BiorhythmChart *chart, gint day, gint month, gint year);
+void biorhythm_chart_set_name (BiorhythmChart *chart, gchar *s);
+
+void biorhythm_chart_set_option_physical (BiorhythmChart *chart, gboolean state);
+gboolean biorhythm_chart_get_option_physical (BiorhythmChart *chart);
+void biorhythm_chart_set_option_emotional (BiorhythmChart *chart, gboolean state);
+gboolean biorhythm_chart_get_option_emotional (BiorhythmChart *chart);
+void biorhythm_chart_set_option_intellectual (BiorhythmChart *chart, gboolean state);
+gboolean biorhythm_chart_get_option_intellectual (BiorhythmChart *chart);
+void biorhythm_chart_set_option_total (BiorhythmChart *chart, gboolean state);
+gboolean biorhythm_chart_get_option_total (BiorhythmChart *chart);
+
+void biorhythm_chart_draw_cairo (BiorhythmChart *widget, cairo_t *cr, gint full_height, gint full_width);
+
+G_END_DECLS
+
+#endif /* __BIORHYTHM_CHART_H__ */
+
+/* ex:set ts=4 noet: */

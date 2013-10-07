@@ -1,0 +1,18 @@
+[Desktop Entry]
+_Name=biorhythm
+_GenericName=Biorhythm
+_Comment=Check your personal biorhythm
+Exec=biorhythm %U
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Icon=accessories-text-editor
+Categories=GNOME;GTK;
+X-GNOME-DocPath=biorhythm/biorhythm.xml
+_X-GNOME-FullName=biorhythm
+X-GNOME-Bugzilla-Bugzilla=GNOME
+X-GNOME-Bugzilla-Product=biorhythm
+X-GNOME-Bugzilla-Component=general
+X-GNOME-Bugzilla-Version=0.15
+X-GNOME-Bugzilla-ExtraInfoScript=/usr/libexec/biorhythm/biorhythm-bugreport.sh

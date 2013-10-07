@@ -26,8 +26,8 @@ manpage.1: manpage.sgml
   <!ENTITY dhsection   "<manvolnum>SECTION</manvolnum>">
   <!ENTITY dhemail     "<email>gabriel@andromeda.mainberger.local</email>">
   <!ENTITY dhusername  "Gabriel Mainberger">
-  <!ENTITY dhucpackage "<refentrytitle>BIORHYTHMUS</refentrytitle>">
-  <!ENTITY dhpackage   "biorhythmus">
+  <!ENTITY dhucpackage "<refentrytitle>BIORHYTHM</refentrytitle>">
+  <!ENTITY dhpackage   "biorhythm">
 
   <!ENTITY debian      "<productname>Debian</productname>">
   <!ENTITY gnu         "<acronym>GNU</acronym>">

@@ -1,5 +1,7 @@
 [encoding: UTF-8]
-biorhythmus-cli.c
-biorhythmus-chart.c
-biorhythmus-fileview.c
-biorhythmus.c
+biorhythm-cli.c
+biorhythm-chart.c
+biorhythm-fileview.c
+biorhythm-math.h
+biorhythm-print.h
+biorhythm.c

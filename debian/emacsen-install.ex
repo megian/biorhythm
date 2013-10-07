@@ -1,12 +1,12 @@
 #! /bin/sh -e
-# /usr/lib/emacsen-common/packages/install/biorhythmus
+# /usr/lib/emacsen-common/packages/install/biorhythm
 
 # Written by Jim Van Zandt <jrv@vanzandt.mv.com>, borrowing heavily
 # from the install scripts for gettext by Santiago Vila
 # <sanvila@ctv.es> and octave by Dirk Eddelbuettel <edd@debian.org>.
 
 FLAVOR=$1
-PACKAGE=biorhythmus
+PACKAGE=biorhythm
 
 if [ ${FLAVOR} = emacs ]; then exit 0; fi
 
