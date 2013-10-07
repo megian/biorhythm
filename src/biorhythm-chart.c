@@ -275,6 +275,20 @@ biorhythm_chart_caption_option (cairo_t *cr, char *s, gint cycle_day)
 	biorhythm_chart_caption_text (cr, s);
 }
 
+char*
+biorhythm_chart_caption_weekday (struct bio_date date)
+{
+	GDate *gdate;
+	char *s;
+	static char *weekdays[] = {"", N_("Mon"), N_("Tue"), N_("Wed"), N_("Thu"), N_("Fri"), N_("Sat"), N_("Sun")};
+
+	gdate = g_date_new_dmy (date.day, date.month, date.year);
+	s = weekdays[g_date_get_weekday (gdate)];
+	g_date_free (gdate);
+	
+	return s;
+}
+
 void
 biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartDivision *division)
 {
@@ -286,8 +300,8 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChar
 	cairo_set_font_size (cr, 11);
 	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
 
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Date: %d.%d.%d"), priv->active_date.day, priv->active_date.month, priv->active_date.year));
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Birthday: %d.%d.%d"), priv->birthday.day, priv->birthday.month, priv->birthday.year));
+	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
+	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
 	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Days: %d"), days_of_life));
 	
 	// Physical

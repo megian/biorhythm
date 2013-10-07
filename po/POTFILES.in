@@ -2,4 +2,6 @@
 biorhythm-cli.c
 biorhythm-chart.c
 biorhythm-fileview.c
+biorhythm-math.h
+biorhythm-print.h
 biorhythm.c
