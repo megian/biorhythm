@@ -1,4 +1,4 @@
-biorhythmus
-===========
+biorhythm
+=========
 
-A GTK biorhythmus application
+A GTK biorhythm application
