@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Biorythmus\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-07 14:14+0200\n"
+"POT-Creation-Date: 2013-10-07 15:41+0200\n"
 "PO-Revision-Date: 2013-07-12 17:49+GMT+1\n"
 "Last-Translator: Gabriel Mainberger <gabisoft@freesurf.ch>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -89,49 +89,77 @@ msgstr "K_onsole"
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: ../src/biorhythm-chart.c:289
-#, c-format
-msgid "Date: %d.%d.%d"
+#: ../src/biorhythm-chart.c:283
+msgid "Mon"
+msgstr "Mon"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Tue"
+msgstr "Die"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Wed"
+msgstr "Mit"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Thu"
+msgstr "Don"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Fri"
+msgstr "Fre"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Sat"
+msgstr "Sam"
+
+#: ../src/biorhythm-chart.c:283
+msgid "Sun"
+msgstr "Son"
+
+#: ../src/biorhythm-chart.c:303
+#, fuzzy, c-format
+msgid "Date: %s %d.%d.%d"
 msgstr "Datum: %d.%d.%d"
 
-#: ../src/biorhythm-chart.c:290
-#, c-format
-msgid "Birthday: %d.%d.%d"
+#: ../src/biorhythm-chart.c:304
+#, fuzzy, c-format
+msgid "Birthday: %s %d.%d.%d"
 msgstr "Geburtstag: %d.%d.%d"
 
-#: ../src/biorhythm-chart.c:291
+#: ../src/biorhythm-chart.c:305
 #, c-format
 msgid "Days: %d"
 msgstr "Tage: %d"
 
-#: ../src/biorhythm-chart.c:295
+#: ../src/biorhythm-chart.c:309
 #, c-format
 msgid "Physical: %d"
 msgstr "Körperlich: %d"
 
-#: ../src/biorhythm-chart.c:299
+#: ../src/biorhythm-chart.c:313
 #, c-format
 msgid "Emotional: %d"
 msgstr "Emotional: %d"
 
-#: ../src/biorhythm-chart.c:303
+#: ../src/biorhythm-chart.c:317
 #, c-format
 msgid "Intellectual: %d"
 msgstr "Geistig: %d"
 
-#: ../src/biorhythm-chart.c:308
+#: ../src/biorhythm-chart.c:322
 #, c-format
 msgid "Total: %d"
 msgstr "Total: %d"
 
-#: ../src/biorhythm-chart.c:323
+#: ../src/biorhythm-chart.c:337
 msgid "Biorhythm for Unknown"
-msgstr "Biorhythm für Unbekannt"
+msgstr "Biorhythmus für Unbekannt"
 
-#: ../src/biorhythm-chart.c:325
+#: ../src/biorhythm-chart.c:339
 #, c-format
 msgid "Biorhythm for %s"
-msgstr "Biorhythm für %s"
+msgstr "Biorhythmus für %s"
 
 #: ../src/biorhythm-fileview.c:134
 msgid "Name"

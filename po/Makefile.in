@@ -19,7 +19,7 @@
 
 GETTEXT_PACKAGE = biorhythm
 PACKAGE = biorhythm
-VERSION = 0.14
+VERSION = 0.15
 
 SHELL = /bin/bash
 
