@@ -27,5 +27,5 @@
 #include "biorhythmus-print.h"
 #include "../config.h"
 
-#define GETTEXT_PACKAGE "biorhythmus"
-#define LOCALEDIR "locale"
+//#define GETTEXT_PACKAGE "biorhythmus"
+//#define LOCALEDIR "locale"
