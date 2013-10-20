@@ -1,0 +1,2 @@
+xgettext -L C -k -k_ -kN_ -o de.pot $(find ../ -name "*.c")
+msgmerge de.po de.pot --output-file=de.po
