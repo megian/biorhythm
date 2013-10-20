@@ -6565,7 +6565,7 @@ _ACEOF
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile po/Makefile.in"
+ac_config_files="$ac_config_files Makefile src/Makefile po/Makefile.in data/biorhythm.desktop.in data/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -7299,6 +7299,8 @@ do
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "po/Makefile.in") CONFIG_FILES="$CONFIG_FILES po/Makefile.in" ;;
+    "data/biorhythm.desktop.in") CONFIG_FILES="$CONFIG_FILES data/biorhythm.desktop.in" ;;
+    "data/Makefile") CONFIG_FILES="$CONFIG_FILES data/Makefile" ;;
     "po/stamp-it") CONFIG_COMMANDS="$CONFIG_COMMANDS po/stamp-it" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
