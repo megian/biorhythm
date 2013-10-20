@@ -48,13 +48,20 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure AUTHORS ChangeLog NEWS compile depcomp \
+	$(top_srcdir)/configure ABOUT-NLS AUTHORS ChangeLog NEWS \
+	compile config.guess config.rpath config.sub depcomp \
 	install-sh missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
+	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
+	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
+	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -126,22 +133,17 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm/missing --run aclocal-1.11
-ALL_LINGUAS = 
 AMTAR = $${TAR-tar}
-AM_DEFAULT_VERBOSITY = 1
 AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoconf
 AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoheader
 AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm/missing --run automake-1.11
 AWK = gawk
-CATALOGS = 
-CATOBJEXT = .gmo
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -Wall
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
-DATADIRNAME = share
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
 ECHO_C = 
@@ -149,9 +151,9 @@ ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 EXEEXT = 
-GETTEXT_PACKAGE = biorhythm
-GMOFILES = 
+GETTEXT_MACRO_VERSION = 0.18
 GMSGFMT = /usr/bin/msgfmt
+GMSGFMT_015 = /usr/bin/msgfmt
 GREP = /bin/grep
 GTK_CFLAGS = -pthread -I/usr/include/gtk-3.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/pixman-1 -I/usr/include/libpng12  
 GTK_LIBS = -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lglib-2.0  
@@ -160,27 +162,22 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
-INSTOBJEXT = .mo
 INTLLIBS = 
-INTLTOOL_EXTRACT = /usr/bin/intltool-extract
-INTLTOOL_MERGE = /usr/bin/intltool-merge
-INTLTOOL_PERL = /usr/bin/perl
-INTLTOOL_UPDATE = /usr/bin/intltool-update
-INTLTOOL_V_MERGE = $(INTLTOOL__v_MERGE_$(V))
-INTLTOOL_V_MERGE_OPTIONS = $(intltool__v_merge_options_$(V))
-INTLTOOL__v_MERGE_ = $(INTLTOOL__v_MERGE_$(AM_DEFAULT_VERBOSITY))
-INTLTOOL__v_MERGE_0 = @echo "  ITMRG " $@;
+INTL_MACOSX_LIBS = 
 JSONGLIB_CFLAGS = -pthread -I/usr/include/json-glib-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include  
 JSONGLIB_LIBS = -ljson-glib-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0  
 LDFLAGS = 
+LIBICONV = -liconv
+LIBINTL = 
 LIBOBJS = 
 LIBS = -lm 
+LTLIBICONV = -liconv
+LTLIBINTL = 
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm/missing --run makeinfo
 MKDIR_P = /bin/mkdir -p
-MKINSTALLDIRS = ./mkinstalldirs
 MSGFMT = /usr/bin/msgfmt
-MSGFMT_OPTS = -c
+MSGFMT_015 = /usr/bin/msgfmt
 MSGMERGE = /usr/bin/msgmerge
 OBJEXT = o
 PACKAGE = biorhythm
@@ -194,16 +191,15 @@ PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
-POFILES = 
 POSUB = po
-PO_IN_DATADIR_FALSE = 
-PO_IN_DATADIR_TRUE = 
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
 USE_NLS = yes
 VERSION = 0.15
 XGETTEXT = /usr/bin/xgettext
+XGETTEXT_015 = /usr/bin/xgettext
+XGETTEXT_EXTRA_OPTIONS = 
 abs_builddir = /home/gabriel/Git/biorhythm
 abs_srcdir = /home/gabriel/Git/biorhythm
 abs_top_builddir = /home/gabriel/Git/biorhythm
@@ -215,23 +211,29 @@ am__quote =
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
+build = x86_64-unknown-linux-gnu
 build_alias = 
+build_cpu = x86_64
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
+host = x86_64-unknown-linux-gnu
 host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
-intltool__v_merge_options_ = $(intltool__v_merge_options_$(AM_DEFAULT_VERBOSITY))
-intltool__v_merge_options_0 = -q
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
-localedir = /usr/share/locale
+localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
 mkdir_p = /bin/mkdir -p
@@ -248,8 +250,10 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
+ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = src po data
+EXTRA_DIST = config.rpath m4/ChangeLog  config.rpath
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

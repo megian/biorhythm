@@ -6,7 +6,6 @@ AC_INIT(Biorhythm, 0.15, gabisoft@freesurf.ch)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 
-AC_PROG_INTLTOOL(, no-xml)      # require >= 0.31 for autoreconf
 AC_PROG_CC
 if test "$GCC" = "yes"; then
         CFLAGS="$CFLAGS -Wall"
@@ -31,17 +30,10 @@ AC_CHECK_LIB([m],[floor])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
+AC_CHECK_FUNCS([floor])
 
-GETTEXT_PACKAGE="$PACKAGE"
-AC_SUBST(GETTEXT_PACKAGE)
-AM_GLIB_GNU_GETTEXT
-AM_GLIB_DEFINE_LOCALEDIR(LOCALEDIR)
-
-#AM_GNU_GETTEXT([external])
-#AM_GNU_GETTEXT_VERSION([0.12])
-
-POSUB="po"
-AC_SUBST(POSUB)
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.18.1])
 
 AC_OUTPUT([
 Makefile

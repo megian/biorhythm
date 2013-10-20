@@ -26,5 +26,3 @@
 #include "biorhythm-cli.h"
 #include "biorhythm-print.h"
 #include "../config.h"
-
-#define GETTEXT_PACKAGE "biorhythm"
