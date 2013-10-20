@@ -1,0 +1,7 @@
+DOMAIN = $(PACKAGE)
+subdir = po
+top_builddir = ..
+XGETTEXT_OPTIONS = --keyword=_ --keyword=N_
+COPYRIGHT_HOLDER = Gabriel Mainberger
+MSGID_BUGS_ADDRESS = gabisoft@freesurf.ch
+EXTRA_LOCALE_CATEGORIES =

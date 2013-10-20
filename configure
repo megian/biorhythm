@@ -6565,6 +6565,12 @@ _ACEOF
 
 
 
+#AM_GNU_GETTEXT([external])
+#AM_GNU_GETTEXT_VERSION([0.12])
+
+POSUB="po"
+
+
 ac_config_files="$ac_config_files Makefile src/Makefile po/Makefile.in data/biorhythm.desktop.in data/Makefile"
 
 cat >confcache <<\_ACEOF
