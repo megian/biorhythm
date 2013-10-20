@@ -118,37 +118,30 @@ msgid "Sun"
 msgstr "Son"
 
 #: ../src/biorhythm-chart.c:303
-#, fuzzy, c-format
 msgid "Date: %s %d.%d.%d"
 msgstr "Datum: %d.%d.%d"
 
 #: ../src/biorhythm-chart.c:304
-#, fuzzy, c-format
 msgid "Birthday: %s %d.%d.%d"
 msgstr "Geburtstag: %d.%d.%d"
 
 #: ../src/biorhythm-chart.c:305
-#, c-format
 msgid "Days: %d"
 msgstr "Tage: %d"
 
 #: ../src/biorhythm-chart.c:309
-#, c-format
 msgid "Physical: %d"
 msgstr "Körperlich: %d"
 
 #: ../src/biorhythm-chart.c:313
-#, c-format
 msgid "Emotional: %d"
 msgstr "Emotional: %d"
 
 #: ../src/biorhythm-chart.c:317
-#, c-format
 msgid "Intellectual: %d"
 msgstr "Geistig: %d"
 
 #: ../src/biorhythm-chart.c:322
-#, c-format
 msgid "Total: %d"
 msgstr "Total: %d"
 
@@ -157,7 +150,6 @@ msgid "Biorhythm for Unknown"
 msgstr "Biorhythmus für Unbekannt"
 
 #: ../src/biorhythm-chart.c:339
-#, c-format
 msgid "Biorhythm for %s"
 msgstr "Biorhythmus für %s"
 
