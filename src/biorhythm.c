@@ -293,9 +293,9 @@ main (int argc, char **argv)
 	g_type_init ();
 #endif
 
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
+	textdomain (PACKAGE);
 
 	/* Init GTK */
 	gtk_init (&argc, &argv);
