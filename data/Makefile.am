@@ -1,5 +1,7 @@
-desktopdir 	 = $(datadir)/applications
+desktopdir	 = $(datadir)/applications
 desktop_in_files = biorhythm.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
 
 man_MANS = biorhythm.1
 

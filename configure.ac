@@ -5,6 +5,11 @@ AC_PREREQ([2.69])
 AC_INIT(Biorhythm, 0.15, gabisoft@freesurf.ch)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
+
+IT_PROG_INTLTOOL([0.35.0], [no-xml])
+LT_INIT
+AC_SUBST([LIBTOOL_DEPS])
 
 AC_PROG_CC
 if test "$GCC" = "yes"; then
@@ -32,8 +37,18 @@ AC_CHECK_LIB([m],[floor])
 # Checks for library functions.
 AC_CHECK_FUNCS([floor])
 
-AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION([0.18.1])
+dnl --------------------------------------------------------------------------
+dnl Set gettext package name
+dnl --------------------------------------------------------------------------
+GETTEXT_PACKAGE=biorhythm
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [biorhythm])
+
+dnl --------------------------------------------------------------------------
+dnl Languages supported
+dnl --------------------------------------------------------------------------
+ALL_LINGUAS="de"
+AM_GLIB_GNU_GETTEXT([external])
 
 AC_OUTPUT([
 Makefile
