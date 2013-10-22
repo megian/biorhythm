@@ -119,11 +119,11 @@ msgstr "Son"
 
 #: ../src/biorhythm-chart.c:303
 msgid "Date: %s %d.%d.%d"
-msgstr "Datum: %d.%d.%d"
+msgstr "Datum: %s %d.%d.%d"
 
 #: ../src/biorhythm-chart.c:304
 msgid "Birthday: %s %d.%d.%d"
-msgstr "Geburtstag: %d.%d.%d"
+msgstr "Geburtstag: %s %d.%d.%d"
 
 #: ../src/biorhythm-chart.c:305
 msgid "Days: %d"

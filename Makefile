@@ -54,14 +54,14 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/configure ABOUT-NLS AUTHORS ChangeLog NEWS \
-	compile config.guess config.rpath config.sub depcomp \
-	install-sh missing
+	compile config.guess config.sub depcomp install-sh ltmain.sh \
+	missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
-	$(top_srcdir)/m4/iconv.m4 $(top_srcdir)/m4/lib-ld.m4 \
-	$(top_srcdir)/m4/lib-link.m4 $(top_srcdir)/m4/lib-prefix.m4 \
-	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/m4/po.m4 \
-	$(top_srcdir)/m4/progtest.m4 $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -133,27 +133,37 @@ am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm/missing --run aclocal-1.11
+ALL_LINGUAS = de
 AMTAR = $${TAR-tar}
+AM_DEFAULT_VERBOSITY = 1
+AR = ar
 AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoconf
 AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoheader
 AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm/missing --run automake-1.11
 AWK = gawk
+CATALOGS =  de.gmo
+CATOBJEXT = .gmo
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2 -Wall
 CPP = gcc -E
 CPPFLAGS = 
 CYGPATH_W = echo
+DATADIRNAME = share
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
+DLLTOOL = false
+DSYMUTIL = 
+DUMPBIN = 
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 EXEEXT = 
-GETTEXT_MACRO_VERSION = 0.18
+FGREP = /bin/grep -F
+GETTEXT_PACKAGE = biorhythm
+GMOFILES =  de.gmo
 GMSGFMT = /usr/bin/msgfmt
-GMSGFMT_015 = /usr/bin/msgfmt
 GREP = /bin/grep
 GTK_CFLAGS = -pthread -I/usr/include/gtk-3.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/pango-1.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/pixman-1 -I/usr/include/libpng12  
 GTK_LIBS = -lgtk-3 -lgdk-3 -latk-1.0 -lgio-2.0 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lcairo-gobject -lpango-1.0 -lcairo -lgobject-2.0 -lglib-2.0  
@@ -162,24 +172,40 @@ INSTALL_DATA = ${INSTALL} -m 644
 INSTALL_PROGRAM = ${INSTALL}
 INSTALL_SCRIPT = ${INSTALL}
 INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
+INSTOBJEXT = .mo
 INTLLIBS = 
-INTL_MACOSX_LIBS = 
+INTLTOOL_EXTRACT = /usr/bin/intltool-extract
+INTLTOOL_MERGE = /usr/bin/intltool-merge
+INTLTOOL_PERL = /usr/bin/perl
+INTLTOOL_UPDATE = /usr/bin/intltool-update
+INTLTOOL_V_MERGE = $(INTLTOOL__v_MERGE_$(V))
+INTLTOOL_V_MERGE_OPTIONS = $(intltool__v_merge_options_$(V))
+INTLTOOL__v_MERGE_ = $(INTLTOOL__v_MERGE_$(AM_DEFAULT_VERBOSITY))
+INTLTOOL__v_MERGE_0 = @echo "  ITMRG " $@;
 JSONGLIB_CFLAGS = -pthread -I/usr/include/json-glib-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include  
 JSONGLIB_LIBS = -ljson-glib-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0  
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
-LIBICONV = -liconv
-LIBINTL = 
 LIBOBJS = 
 LIBS = -lm 
-LTLIBICONV = -liconv
-LTLIBINTL = 
+LIBTOOL = $(SHELL) $(top_builddir)/libtool
+LIBTOOL_DEPS = ./ltmain.sh
+LIPO = 
+LN_S = ln -s
 LTLIBOBJS = 
 MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm/missing --run makeinfo
+MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
+MKINSTALLDIRS = ./mkinstalldirs
 MSGFMT = /usr/bin/msgfmt
-MSGFMT_015 = /usr/bin/msgfmt
+MSGFMT_OPTS = -c
 MSGMERGE = /usr/bin/msgmerge
+NM = /usr/bin/nm -B
+NMEDIT = 
+OBJDUMP = objdump
 OBJEXT = o
+OTOOL = 
+OTOOL64 = 
 PACKAGE = biorhythm
 PACKAGE_BUGREPORT = gabisoft@freesurf.ch
 PACKAGE_NAME = Biorhythm
@@ -191,20 +217,25 @@ PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
+POFILES =  de.po
 POSUB = po
+PO_IN_DATADIR_FALSE = 
+PO_IN_DATADIR_TRUE = 
+RANLIB = ranlib
+SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/bash
-STRIP = 
+STRIP = strip
 USE_NLS = yes
 VERSION = 0.15
 XGETTEXT = /usr/bin/xgettext
-XGETTEXT_015 = /usr/bin/xgettext
-XGETTEXT_EXTRA_OPTIONS = 
 abs_builddir = /home/gabriel/Git/biorhythm
 abs_srcdir = /home/gabriel/Git/biorhythm
 abs_top_builddir = /home/gabriel/Git/biorhythm
 abs_top_srcdir = /home/gabriel/Git/biorhythm
+ac_ct_AR = ar
 ac_ct_CC = gcc
+ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
 am__quote = 
@@ -231,6 +262,8 @@ htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
 install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
+intltool__v_merge_options_ = $(intltool__v_merge_options_$(AM_DEFAULT_VERBOSITY))
+intltool__v_merge_options_0 = -q
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -307,6 +340,15 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool config.lt
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -667,12 +709,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-hdr distclean-tags
+distclean-am: clean-am distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags
 
 dvi: dvi-recursive
 
@@ -722,7 +765,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-recursive
 
@@ -739,19 +782,19 @@ uninstall-am:
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
-	ctags ctags-recursive dist dist-all dist-bzip2 dist-gzip \
-	dist-lzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-generic distclean-hdr \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am
+	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
+	dist-gzip dist-lzip dist-lzma dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
