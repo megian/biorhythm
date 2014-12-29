@@ -33,9 +33,8 @@ biorhythm_gui_on_file_open_activate (GtkWidget *widget, BiorhythmFileView *file_
 	dialog = gtk_file_chooser_dialog_new (_("Open File"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
-						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						GTK_STOCK_OPEN,
-						GTK_RESPONSE_ACCEPT,
+						_("_Cancel"), GTK_RESPONSE_CANCEL,
+						_("_Open"), GTK_RESPONSE_ACCEPT,
 						NULL);
 
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -60,14 +59,17 @@ void
 biorhythm_gui_on_file_save_as_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {
 	GtkWidget *dialog;
+	GtkFileChooser *chooser;
 
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 						NULL,
 						GTK_FILE_CHOOSER_ACTION_SAVE,
-						GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-						GTK_STOCK_SAVE,
-						GTK_RESPONSE_ACCEPT,
+						_("_Cancel"), GTK_RESPONSE_CANCEL,
+						_("_Save"), GTK_RESPONSE_ACCEPT,
 						NULL);
+
+	chooser = GTK_FILE_CHOOSER (dialog);
+	gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
 
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
 	{
@@ -142,7 +144,7 @@ void
 biorhythm_gui_on_help_info_activate (GtkMenuItem *menu_item, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
-	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", VERSION, "copyright", "Copyright © 2003-2013 Gabriel Mainberger", NULL);
+	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", VERSION, "copyright", "Copyright © 2003-2014 Gabriel Mainberger", NULL);
 }
 
 void
@@ -209,14 +211,6 @@ biorhythm_gui_menubar_check_menu_item (GtkMenu *menu, gchar *caption, void *call
 }
 
 void
-biorhythm_gui_menubar_image_menu_item (GtkMenu *menu, GtkAccelGroup *accel, gchar *stock_id, void *callback_function, void *object_pointer)
-{
-	GtkWidget *menu_item = gtk_image_menu_item_new_from_stock (stock_id, accel);
-	g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (callback_function), object_pointer);
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-}
-
-void
 biorhythm_gui_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
 {
 	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
@@ -237,28 +231,23 @@ biorhythm_gui_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 void
 biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
-	GtkAccelGroup *accel;
 	GtkMenu *sub_menu;
-
-	/* AccelGroup */
-	accel = g_object_new (GTK_TYPE_ACCEL_GROUP, NULL);
-	gtk_window_add_accel_group (GTK_WINDOW (window), accel);
 
 	/* FILE MENU */
 	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_File"));
 
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_NEW, biorhythm_gui_on_file_new_activate, file_view);
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_OPEN, biorhythm_gui_on_file_open_activate, file_view);
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE, biorhythm_gui_on_file_save_activate, file_view);
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_SAVE_AS, biorhythm_gui_on_file_save_as_activate, file_view);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_New"), biorhythm_gui_on_file_new_activate, file_view);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Open"), biorhythm_gui_on_file_open_activate, file_view);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Save"), biorhythm_gui_on_file_save_activate, file_view);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), biorhythm_gui_on_file_save_as_activate, file_view);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_PRINT, biorhythm_gui_on_print_activate, chart);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Print"), biorhythm_gui_on_print_activate, chart);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_CLOSE, biorhythm_gui_on_window_destroy, NULL);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Close"), biorhythm_gui_on_window_destroy, NULL);
 	
 	/* OPTION MENU */
 	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Options"));
@@ -275,7 +264,7 @@ biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart 
 	/* HELP MENU */
 	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Help"));
 
-	biorhythm_gui_menubar_image_menu_item (sub_menu, accel, GTK_STOCK_HELP, biorhythm_gui_on_help_info_activate, NULL);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Info"), biorhythm_gui_on_help_info_activate, NULL);
 }
 
 int
