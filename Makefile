@@ -83,11 +83,10 @@ DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(srcdir)/config.h.in AUTHORS ChangeLog NEWS README compile \
 	config.guess config.sub depcomp install-sh missing ltmain.sh
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
-	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
-	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
-	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/m4/nls.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -195,24 +194,14 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-<<<<<<< HEAD
-ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm-old/missing aclocal-1.14
-=======
 ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm/missing aclocal-1.14
->>>>>>> 463c73956ea5b45d54eb552d201fa6b74b14163b
 ALL_LINGUAS = de
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
 AR = ar
-<<<<<<< HEAD
-AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm-old/missing autoconf
-AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm-old/missing autoheader
-AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm-old/missing automake-1.14
-=======
 AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm/missing autoconf
 AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm/missing autoheader
 AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm/missing automake-1.14
->>>>>>> 463c73956ea5b45d54eb552d201fa6b74b14163b
 AWK = gawk
 CATALOGS =  de.gmo
 CATOBJEXT = .gmo
@@ -266,11 +255,7 @@ LIBTOOL_DEPS = ./ltmain.sh
 LIPO = 
 LN_S = ln -s
 LTLIBOBJS = 
-<<<<<<< HEAD
-MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm-old/missing makeinfo
-=======
 MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm/missing makeinfo
->>>>>>> 463c73956ea5b45d54eb552d201fa6b74b14163b
 MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 MKINSTALLDIRS = ./mkinstalldirs
@@ -306,10 +291,10 @@ STRIP = strip
 USE_NLS = yes
 VERSION = 0.15
 XGETTEXT = /usr/bin/xgettext
-abs_builddir = /home/gabriel/Git/biorhythm-old
-abs_srcdir = /home/gabriel/Git/biorhythm-old
-abs_top_builddir = /home/gabriel/Git/biorhythm-old
-abs_top_srcdir = /home/gabriel/Git/biorhythm-old
+abs_builddir = /home/gabriel/Git/biorhythm
+abs_srcdir = /home/gabriel/Git/biorhythm
+abs_top_builddir = /home/gabriel/Git/biorhythm
+abs_top_srcdir = /home/gabriel/Git/biorhythm
 ac_ct_AR = ar
 ac_ct_CC = gcc
 ac_ct_DUMPBIN = 
@@ -338,7 +323,7 @@ host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/gabriel/Git/biorhythm-old/install-sh
+install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
 intltool__v_merge_options_ = $(intltool__v_merge_options_$(AM_DEFAULT_VERBOSITY))
 intltool__v_merge_options_0 = -q
 libdir = ${exec_prefix}/lib
@@ -362,12 +347,8 @@ top_builddir = .
 top_srcdir = .
 ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
-<<<<<<< HEAD
-SUBDIRS = src po
-=======
 SUBDIRS = src po data
 EXTRA_DIST = config.rpath m4/ChangeLog  config.rpath
->>>>>>> 3e6b98efa264855fa0ef2750c084faea799ce4ea
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
