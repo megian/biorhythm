@@ -20,13 +20,8 @@
 
 #include "biorhythm-chart.h"
 
-#ifdef GTK2
-static gboolean
-biorhythm_chart_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data);
-#else
 void
 biorhythm_chart_draw (GtkWidget *widget, cairo_t *cr);
-#endif
 
 struct _BiorhythmChartPrivate
 {
@@ -73,11 +68,7 @@ biorhythm_chart_class_init (BiorhythmChartClass *klass)
 	
 	widget_class = GTK_WIDGET_CLASS (klass);
 
-#ifdef GTK2
-	widget_class->expose_event = (void*)biorhythm_chart_draw;
-#else
 	widget_class->draw = (void*)biorhythm_chart_draw;
-#endif
 }
 
 void
@@ -412,42 +403,15 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 	g_free (division_caption);
 }
 
-#ifdef GTK2
-static gboolean
-biorhythm_chart_draw (GtkWidget *widget, GdkEventExpose *event, gpointer data)
-#else
 void
 biorhythm_chart_draw (GtkWidget *widget, cairo_t *cr)
-#endif
 {
 	gint full_height, full_width;
 
-#ifdef GTK2
-	cairo_t *cr;
-	GdkWindow *window;
-
-	window = gtk_widget_get_window (widget);
-	if ((cr = gdk_cairo_create (window))==NULL)
-	{
-		cairo_destroy (cr);
-		return (FALSE);
-	}
-#endif
-
-#ifdef GTK2
-	full_height = widget->allocation.height;
-	full_width = widget->allocation.width;
-#else
 	full_height = gtk_widget_get_allocated_height (widget);
 	full_width = gtk_widget_get_allocated_width (widget);
-#endif
 
 	biorhythm_chart_draw_cairo (BIORHYTHM_CHART (widget), cr, full_height, full_width);
-
-#ifdef GTK2
-	cairo_destroy (cr);
-	return (FALSE);
-#endif
 }
 
 /****************************************
