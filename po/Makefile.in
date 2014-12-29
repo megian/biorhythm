@@ -21,14 +21,14 @@ GETTEXT_PACKAGE = biorhythm
 PACKAGE = biorhythm
 VERSION = 0.15
 
-SHELL = /bin/bash
+SHELL = /bin/sh
 
 srcdir = .
 top_srcdir = ..
 top_builddir = ..
 
 
-prefix = /usr
+prefix = /usr/local
 exec_prefix = ${prefix}
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
@@ -37,7 +37,7 @@ DATADIRNAME = share
 itlocaledir = $(prefix)/$(DATADIRNAME)/locale
 subdir = po
 install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
-# Automake >= 1.8 provides /bin/mkdir -p.
+# Automake >= 1.8 provides $(MKDIR_P).
 # Until it can be supposed, use the safe fallback:
 mkdir_p = $(install_sh) -d
 
