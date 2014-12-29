@@ -1,0 +1,29 @@
+2013-10-20  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.18.1.
+
+2013-10-20  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* Makefile.am (EXTRA_DIST): Add config.rpath, m4/ChangeLog.
+
+2013-10-20  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.18.1.
+
+2013-10-20  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* configure.ac (AM_GNU_GETTEXT_VERSION): Bump to 0.18.1.
+
+2013-10-20  gettextize  <bug-gnu-gettext@gnu.org>
+
+	* m4/gettext.m4: New file, from gettext-0.18.1.
+	* m4/iconv.m4: New file, from gettext-0.18.1.
+	* m4/lib-ld.m4: New file, from gettext-0.18.1.
+	* m4/lib-link.m4: New file, from gettext-0.18.1.
+	* m4/lib-prefix.m4: New file, from gettext-0.18.1.
+	* m4/nls.m4: New file, from gettext-0.18.1.
+	* m4/po.m4: New file, from gettext-0.18.1.
+	* m4/progtest.m4: New file, from gettext-0.18.1.
+	* Makefile.am (EXTRA_DIST): New variable.
+	* configure.ac (AC_OUTPUT): Add po/Makefile.in.
+

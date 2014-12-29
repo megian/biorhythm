@@ -8,7 +8,7 @@ biorhythm_SOURCES = \
 	biorhythm-math.h biorhythm-math.c \
 	biorhythm-print.h biorhythm-print.c
 
-biorhythm_CFLAGS  = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS)
+biorhythm_CFLAGS  = $(GTK_CFLAGS) $(JSONGLIB_CFLAGS) -DLOCALEDIR=\"$(localedir)\"
 # $(GNOMEPRINT_CFLAGS)
 biorhythm_LDADD   = $(GTK_LIBS) $(INTLLIBS) $(JSONGLIB_LIBS)
 # $(GNOMEPRINT_LIBS)

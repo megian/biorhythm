@@ -48,13 +48,20 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
+build_triplet = x86_64-unknown-linux-gnu
+host_triplet = x86_64-unknown-linux-gnu
 subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
-	$(top_srcdir)/configure AUTHORS ChangeLog NEWS compile depcomp \
-	install-sh missing
+	$(top_srcdir)/configure ABOUT-NLS AUTHORS ChangeLog NEWS \
+	compile config.guess config.sub depcomp install-sh ltmain.sh \
+	missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/intltool.m4 \
+	$(top_srcdir)/m4/libtool.m4 $(top_srcdir)/m4/ltoptions.m4 \
+	$(top_srcdir)/m4/ltsugar.m4 $(top_srcdir)/m4/ltversion.m4 \
+	$(top_srcdir)/m4/lt~obsolete.m4 $(top_srcdir)/m4/nls.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -125,15 +132,16 @@ distuninstallcheck_listfiles = find . -type f -print
 am__distuninstallcheck_listfiles = $(distuninstallcheck_listfiles) \
   | sed 's|^\./|$(prefix)/|' | grep -v '$(infodir)/dir$$'
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm/missing --run aclocal-1.11
-ALL_LINGUAS = 
+ACLOCAL = ${SHELL} /home/gabriel/Git/biorhythm-old/missing aclocal-1.14
+ALL_LINGUAS = de
 AMTAR = $${TAR-tar}
 AM_DEFAULT_VERBOSITY = 1
-AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm/missing --run automake-1.11
+AR = ar
+AUTOCONF = ${SHELL} /home/gabriel/Git/biorhythm-old/missing autoconf
+AUTOHEADER = ${SHELL} /home/gabriel/Git/biorhythm-old/missing autoheader
+AUTOMAKE = ${SHELL} /home/gabriel/Git/biorhythm-old/missing automake-1.14
 AWK = gawk
-CATALOGS = 
+CATALOGS =  de.gmo
 CATOBJEXT = .gmo
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -144,13 +152,17 @@ CYGPATH_W = echo
 DATADIRNAME = share
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
+DLLTOOL = false
+DSYMUTIL = 
+DUMPBIN = 
 ECHO_C = 
 ECHO_N = -n
 ECHO_T = 
 EGREP = /bin/grep -E
 EXEEXT = 
+FGREP = /bin/grep -F
 GETTEXT_PACKAGE = biorhythm
-GMOFILES = 
+GMOFILES =  de.gmo
 GMSGFMT = /usr/bin/msgfmt
 GREP = /bin/grep
 GTK_CFLAGS = -pthread -I/usr/include/gtk-3.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0/ -I/usr/include/cairo -I/usr/include/pango-1.0 -I/usr/include/harfbuzz -I/usr/include/pango-1.0 -I/usr/include/atk-1.0 -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/libpng12 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng12 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include 
@@ -172,17 +184,28 @@ INTLTOOL__v_MERGE_ = $(INTLTOOL__v_MERGE_$(AM_DEFAULT_VERBOSITY))
 INTLTOOL__v_MERGE_0 = @echo "  ITMRG " $@;
 JSONGLIB_CFLAGS = -pthread -I/usr/include/json-glib-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include 
 JSONGLIB_LIBS = -ljson-glib-1.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 
+LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBOBJS = 
 LIBS = -lm 
+LIBTOOL = $(SHELL) $(top_builddir)/libtool
+LIBTOOL_DEPS = ./ltmain.sh
+LIPO = 
+LN_S = ln -s
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/gabriel/Git/biorhythm-old/missing makeinfo
+MANIFEST_TOOL = :
 MKDIR_P = /bin/mkdir -p
 MKINSTALLDIRS = ./mkinstalldirs
 MSGFMT = /usr/bin/msgfmt
 MSGFMT_OPTS = -c
 MSGMERGE = /usr/bin/msgmerge
+NM = /usr/bin/nm -B
+NMEDIT = 
+OBJDUMP = objdump
 OBJEXT = o
+OTOOL = 
+OTOOL64 = 
 PACKAGE = biorhythm
 PACKAGE_BUGREPORT = gabisoft@freesurf.ch
 PACKAGE_NAME = Biorhythm
@@ -194,47 +217,59 @@ PATH_SEPARATOR = :
 PKG_CONFIG = /usr/bin/pkg-config
 PKG_CONFIG_LIBDIR = 
 PKG_CONFIG_PATH = 
-POFILES = 
+POFILES =  de.po
 POSUB = po
 PO_IN_DATADIR_FALSE = 
 PO_IN_DATADIR_TRUE = 
+RANLIB = ranlib
+SED = /bin/sed
 SET_MAKE = 
 SHELL = /bin/sh
-STRIP = 
+STRIP = strip
 USE_NLS = yes
 VERSION = 0.15
 XGETTEXT = /usr/bin/xgettext
-abs_builddir = /home/gabriel/Git/biorhythm
-abs_srcdir = /home/gabriel/Git/biorhythm
-abs_top_builddir = /home/gabriel/Git/biorhythm
-abs_top_srcdir = /home/gabriel/Git/biorhythm
+abs_builddir = /home/gabriel/Git/biorhythm-old
+abs_srcdir = /home/gabriel/Git/biorhythm-old
+abs_top_builddir = /home/gabriel/Git/biorhythm-old
+abs_top_srcdir = /home/gabriel/Git/biorhythm-old
+ac_ct_AR = ar
 ac_ct_CC = gcc
+ac_ct_DUMPBIN = 
 am__include = include
 am__leading_dot = .
 am__quote = 
 am__tar = $${TAR-tar} chof - "$$tardir"
 am__untar = $${TAR-tar} xf -
 bindir = ${exec_prefix}/bin
+build = x86_64-unknown-linux-gnu
 build_alias = 
+build_cpu = x86_64
+build_os = linux-gnu
+build_vendor = unknown
 builddir = .
 datadir = ${datarootdir}
 datarootdir = ${prefix}/share
 docdir = ${datarootdir}/doc/${PACKAGE_TARNAME}
 dvidir = ${docdir}
 exec_prefix = ${prefix}
+host = x86_64-unknown-linux-gnu
 host_alias = 
+host_cpu = x86_64
+host_os = linux-gnu
+host_vendor = unknown
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = ${SHELL} /home/gabriel/Git/biorhythm/install-sh
+install_sh = ${SHELL} /home/gabriel/Git/biorhythm-old/install-sh
 intltool__v_merge_options_ = $(intltool__v_merge_options_$(AM_DEFAULT_VERBOSITY))
 intltool__v_merge_options_0 = -q
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
-localedir = /usr/local/share/locale
+localedir = ${datarootdir}/locale
 localstatedir = ${prefix}/var
 mandir = ${datarootdir}/man
-mkdir_p = /bin/mkdir -p
+mkdir_p = $(MKDIR_P)
 oldincludedir = /usr/include
 pdfdir = ${docdir}
 prefix = /usr/local
@@ -248,8 +283,14 @@ target_alias =
 top_build_prefix = 
 top_builddir = .
 top_srcdir = .
+ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign
+<<<<<<< HEAD
 SUBDIRS = src po
+=======
+SUBDIRS = src po data
+EXTRA_DIST = config.rpath m4/ChangeLog  config.rpath
+>>>>>>> 3e6b98efa264855fa0ef2750c084faea799ce4ea
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -303,6 +344,15 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+	-rm -f libtool config.lt
 
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
@@ -663,12 +713,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f Makefile
-distclean-am: clean-am distclean-generic distclean-hdr distclean-tags
+distclean-am: clean-am distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags
 
 dvi: dvi-recursive
 
@@ -718,7 +769,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-generic
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-recursive
 
@@ -735,19 +786,19 @@ uninstall-am:
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-am clean clean-generic \
-	ctags ctags-recursive dist dist-all dist-bzip2 dist-gzip \
-	dist-lzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
-	distcheck distclean distclean-generic distclean-hdr \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am
+	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
+	dist-gzip dist-lzip dist-lzma dist-shar dist-tarZ dist-xz \
+	dist-zip distcheck distclean distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

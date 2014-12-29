@@ -5,8 +5,12 @@ AC_PREREQ([2.69])
 AC_INIT(Biorhythm, 0.15, gabisoft@freesurf.ch)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
 
-AC_PROG_INTLTOOL(, no-xml)      # require >= 0.31 for autoreconf
+IT_PROG_INTLTOOL([0.35.0], [no-xml])
+LT_INIT
+AC_SUBST([LIBTOOL_DEPS])
+
 AC_PROG_CC
 if test "$GCC" = "yes"; then
         CFLAGS="$CFLAGS -Wall"
@@ -31,14 +35,25 @@ AC_CHECK_LIB([m],[floor])
 # Checks for typedefs, structures, and compiler characteristics.
 
 # Checks for library functions.
+AC_CHECK_FUNCS([floor])
 
-GETTEXT_PACKAGE="$PACKAGE"
+dnl --------------------------------------------------------------------------
+dnl Set gettext package name
+dnl --------------------------------------------------------------------------
+GETTEXT_PACKAGE=biorhythm
 AC_SUBST(GETTEXT_PACKAGE)
-AM_GLIB_GNU_GETTEXT
-AM_GLIB_DEFINE_LOCALEDIR(LOCALEDIR)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [biorhythm])
+
+dnl --------------------------------------------------------------------------
+dnl Languages supported
+dnl --------------------------------------------------------------------------
+ALL_LINGUAS="de"
+AM_GLIB_GNU_GETTEXT([external])
 
 AC_OUTPUT([
 Makefile
 src/Makefile
 po/Makefile.in
+data/biorhythm.desktop.in
+data/Makefile
 ])
