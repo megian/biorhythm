@@ -288,11 +288,6 @@ main (int argc, char **argv)
 	GtkWidget *calendar;
 	GtkWidget *file_view;
 
-	/* Init type system as soon as possible */
-#ifdef GTK2
-	g_type_init ();
-#endif
-
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
@@ -331,20 +326,12 @@ main (int argc, char **argv)
 
 	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (menu), FALSE, TRUE, 0);
 
-#ifdef GTK2
-	GtkWidget *hpaned = gtk_hpaned_new ();
-#else
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
-#endif
 
 	gtk_paned_pack1 (GTK_PANED (hpaned), calendar, FALSE, FALSE);
 	gtk_paned_pack2 (GTK_PANED (hpaned), file_view_scrolled_window, TRUE, TRUE);
 
-#ifdef GTK2
-	GtkWidget *vpaned = gtk_vpaned_new ();
-#else
 	GtkWidget *vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
-#endif
 
 	gtk_paned_pack1 (GTK_PANED (vpaned), chart, TRUE, TRUE);
 	gtk_paned_pack2 (GTK_PANED (vpaned), hpaned, FALSE, FALSE);
