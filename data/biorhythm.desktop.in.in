@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Biorhythm
+GenericName=Biorhythm
+GenericName[de]=Biorhythmus
+Comment=Check your personal biorhythm
+Comment[de]=Prüfe deinen persönlichen Biorhythmus
+Exec=biorhythm %U
+Terminal=false
+Type=Application
+StartupNotify=true
+MimeType=text/plain;
+Icon=biorhythm
+Categories=GNOME;GTK;

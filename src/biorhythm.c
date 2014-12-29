@@ -288,9 +288,20 @@ main (int argc, char **argv)
 	GtkWidget *calendar;
 	GtkWidget *file_view;
 
+<<<<<<< HEAD
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
+=======
+	/* Init type system as soon as possible */
+#ifdef GTK2
+	g_type_init ();
+#endif
+
+	bindtextdomain (PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (PACKAGE, "UTF-8");
+	textdomain (PACKAGE);
+>>>>>>> 3e6b98efa264855fa0ef2750c084faea799ce4ea
 
 	/* Init GTK */
 	gtk_init (&argc, &argv);
