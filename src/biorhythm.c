@@ -310,24 +310,23 @@ main (int argc, char **argv)
 	/* Init Menu */
 	biorhythm_gui_menubar_init (window, menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
 
-	/* GUI Layout */
-	GtkVBox *vbox = g_object_new (GTK_TYPE_VBOX, NULL);
-
-	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (menu), FALSE, TRUE, 0);
-
+	/* Paned */
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
-
 	gtk_paned_pack1 (GTK_PANED (hpaned), calendar, FALSE, FALSE);
 	gtk_paned_pack2 (GTK_PANED (hpaned), file_view_scrolled_window, TRUE, TRUE);
 
 	GtkWidget *vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
-
 	gtk_paned_pack1 (GTK_PANED (vpaned), chart, TRUE, TRUE);
 	gtk_paned_pack2 (GTK_PANED (vpaned), hpaned, FALSE, FALSE);
 
-	gtk_box_pack_start (GTK_BOX (vbox), GTK_WIDGET (vpaned), TRUE, TRUE, 0);
+	/* GUI Layout */
+	GtkWidget *grid = gtk_grid_new ();
+	gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (menu), 0, 0, 1, 1);
+	gtk_widget_set_hexpand (vpaned, TRUE);
+	gtk_widget_set_vexpand (vpaned, TRUE);
+	gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (vpaned), 0, 1, 1, 1);
 
-	gtk_container_add (GTK_CONTAINER (window), GTK_WIDGET (vbox));
+	gtk_container_add (GTK_CONTAINER (window), grid);
 	gtk_widget_show_all (GTK_WIDGET (window));
 
 	gtk_main ();
