@@ -144,7 +144,7 @@ void
 biorhythm_gui_on_help_info_activate (GtkMenuItem *menu_item, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
-	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", VERSION, "copyright", "Copyright © 2003-2014 Gabriel Mainberger", NULL);
+	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", PACKAGE_VERSION, "copyright", "Copyright © 2003-2014 Gabriel Mainberger", NULL);
 }
 
 void
@@ -277,7 +277,7 @@ main (int argc, char **argv)
 	GtkWidget *calendar;
 	GtkWidget *file_view;
 
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 

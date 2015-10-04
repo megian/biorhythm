@@ -1,0 +1,5 @@
+#define PACKAGE_VERSION "${VERSION}"
+#define PACKAGE_STRING "biorhythm ${PACKAGE_VERSION}"
+#define ENABLE_NLS
+#define PACKAGE "biorhythm"
+#define PACKAGE_LOCALE_DIR "${CMAKE_INSTALL_PREFIX}/share/locale"
