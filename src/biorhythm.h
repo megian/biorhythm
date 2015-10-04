@@ -25,4 +25,4 @@
 #include "biorhythm-fileview.h"
 #include "biorhythm-cli.h"
 #include "biorhythm-print.h"
-#include "../config.h"
+#include "config.h"
