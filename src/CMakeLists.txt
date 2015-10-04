@@ -16,8 +16,8 @@ include_directories(
 	${JSON-GLIB_INCLUDE_DIRS}
 	)
 
-set (GETTEXT_PACKAGE "biorhythmus")
-add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
+#set (GETTEXT_PACKAGE "biorhythmus")
+#add_definitions(-DGETTEXT_PACKAGE=\"${GETTEXT_PACKAGE}\")
 
 link_directories(${GTK3_LIBRARY_DIRS})
 
