@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Biorhythm package.
 # Gabriel Mainberger <gabisoft@freesurf.ch>, 2013.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Biorythmus\n"
