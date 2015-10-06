@@ -1,7 +1,0 @@
-data/biorhythm.desktop.in
-src/biorhythm-cli.c
-src/biorhythm-chart.c
-src/biorhythm-fileview.c
-src/biorhythm-math.h
-src/biorhythm-print.h
-src/biorhythm.c
