@@ -53,7 +53,7 @@ typedef struct _BiorhythmChartDivision BiorhythmChartDivision;
 
 #define BIORHYTHM_CHART_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_CHART, BiorhythmChartPrivate));
 
-G_DEFINE_TYPE (BiorhythmChart, biorhythm_chart, GTK_TYPE_DRAWING_AREA)
+G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmChart, biorhythm_chart, GTK_TYPE_DRAWING_AREA)
 
 /****************************************
  *                 Class                *
@@ -64,8 +64,6 @@ biorhythm_chart_class_init (BiorhythmChartClass *klass)
 {
 	GtkWidgetClass *widget_class;
 
-	g_type_class_add_private (klass, sizeof (BiorhythmChartPrivate));
-	
 	widget_class = GTK_WIDGET_CLASS (klass);
 
 	widget_class->draw = (void*)biorhythm_chart_draw;
