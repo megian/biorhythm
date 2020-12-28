@@ -72,12 +72,11 @@ biorhythm_chart_class_init (BiorhythmChartClass *klass)
 void
 biorhythm_chart_set_current_date (struct bio_date *date)
 {
-	GTimeVal time_val;
+	time_t now = time (NULL);
 	GDate *current_date;
 
-	g_get_current_time (&time_val);
 	current_date = g_date_new ();
-	g_date_set_time_val (current_date, &time_val);
+	g_date_set_time_t (current_date, now);
 
 	date->day = g_date_get_day (current_date);
 	date->month = g_date_get_month (current_date);
