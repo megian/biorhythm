@@ -51,8 +51,6 @@ struct _BiorhythmChartDivision
 
 typedef struct _BiorhythmChartDivision BiorhythmChartDivision;
 
-#define BIORHYTHM_CHART_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_CHART, BiorhythmChartPrivate));
-
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmChart, biorhythm_chart, GTK_TYPE_DRAWING_AREA)
 
 /****************************************
@@ -90,7 +88,7 @@ biorhythm_chart_init (BiorhythmChart *self)
 {
 	BiorhythmChartPrivate *priv;
 
-	self->priv = priv = BIORHYTHM_CHART_GET_PRIVATE (self);
+	self->priv = priv = biorhythm_chart_get_instance_private (self);
 
 	priv->option_physical = TRUE;
 	priv->option_emotional = TRUE;
@@ -336,7 +334,7 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 {
 	gint month_day_offset, days_in_month, day_pix;
 
-	BiorhythmChartPrivate *priv = BIORHYTHM_CHART_GET_PRIVATE (chart);
+	BiorhythmChartPrivate *priv = biorhythm_chart_get_instance_private (chart);
 	BiorhythmChartDivision *division_title = g_malloc (sizeof(BiorhythmChartDivision));
 	BiorhythmChartDivision *division_chart = g_malloc (sizeof(BiorhythmChartDivision));
 	BiorhythmChartDivision *division_caption = g_malloc (sizeof(BiorhythmChartDivision));

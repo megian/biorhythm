@@ -75,8 +75,6 @@ enum {
 
 static guint biorhythm_file_view_signals[LAST_SIGNAL] = { 0 };
 
-#define BIORHYTHM_FILE_VIEW_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_FILE_VIEW, BiorhythmFileViewPrivate));
-
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TREE_VIEW)
 
 /****************************************
@@ -104,7 +102,7 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 {
 	BiorhythmFileViewPrivate *priv;
 
-	file_view->priv = priv = BIORHYTHM_FILE_VIEW_GET_PRIVATE (file_view);
+	file_view->priv = priv = biorhythm_file_view_get_instance_private (file_view);
 
 	priv->name = NULL;
 
