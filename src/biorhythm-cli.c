@@ -28,7 +28,7 @@ struct _BiorhythmCliPrivate
 
 #define BIORHYTHM_CLI_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_CLI, BiorhythmCliPrivate));
 
-G_DEFINE_TYPE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)
 
 /****************************************
  *                 Class                *
@@ -37,7 +37,6 @@ G_DEFINE_TYPE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)
 static void
 biorhythm_cli_class_init (BiorhythmCliClass *klass)
 {
-	g_type_class_add_private (klass, sizeof (BiorhythmCliPrivate));
 }
 
 static void

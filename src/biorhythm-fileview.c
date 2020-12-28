@@ -77,7 +77,7 @@ static guint biorhythm_file_view_signals[LAST_SIGNAL] = { 0 };
 
 #define BIORHYTHM_FILE_VIEW_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_FILE_VIEW, BiorhythmFileViewPrivate));
 
-G_DEFINE_TYPE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TREE_VIEW)
+G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TREE_VIEW)
 
 /****************************************
  *                 Class                *
@@ -97,8 +97,6 @@ biorhythm_file_view_class_init (BiorhythmFileViewClass *klass)
 				G_SIGNAL_RUN_FIRST,
 				G_STRUCT_OFFSET (BiorhythmFileViewClass, name_changed),
 				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
-
-	g_type_class_add_private (klass, sizeof (BiorhythmFileViewPrivate));
 }
 
 static void
