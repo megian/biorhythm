@@ -26,8 +26,6 @@ struct _BiorhythmCliPrivate
 	struct bio_date active_date;
 };
 
-#define BIORHYTHM_CLI_GET_PRIVATE(object)(G_TYPE_INSTANCE_GET_PRIVATE ((object), BIORHYTHM_TYPE_CLI, BiorhythmCliPrivate));
-
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)
 
 /****************************************
@@ -60,7 +58,7 @@ biorhythm_cli_init (BiorhythmCli *cli)
 {
 	BiorhythmCliPrivate *priv;
 
-	cli->priv = priv = BIORHYTHM_CLI_GET_PRIVATE (cli);
+	cli->priv = priv = biorhythm_cli_get_instance_private (cli);
 
 	biorhythm_cli_set_current_date (&priv->active_date);
 	biorhythm_cli_set_current_date (&priv->birthday);
