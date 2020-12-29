@@ -22,8 +22,7 @@
 
 void
 biorhythm_chart_draw (GtkWidget *widget, cairo_t *cr);
-
-struct _BiorhythmChartPrivate
+typedef struct
 {
 	GtkWidget *parent_widget;
 
@@ -36,6 +35,13 @@ struct _BiorhythmChartPrivate
 	gboolean option_emotional;
 	gboolean option_intellectual;
 	gboolean option_total;
+} BiorhythmChartPrivate;
+
+struct _BiorhythmChart
+{
+	GtkDrawingArea parent_instance;
+
+	BiorhythmChartPrivate *priv;
 };
 
 struct _BiorhythmChartDivision

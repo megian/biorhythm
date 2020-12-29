@@ -29,30 +29,12 @@
 G_BEGIN_DECLS
 	
 #define BIORHYTHM_TYPE_CHART		(biorhythm_chart_get_type ())
-#define BIORHYTHM_CHART(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), BIORHYTHM_TYPE_CHART, BiorhythmChart))
-#define BIORHYTHM_IS_CHART(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), BIORHYTHM_TYPE_CHART))
-#define BIORHYTHM_CHART_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), BIORHYTHM_TYPE_CHART, BiorhythmChartClass))
-#define BIORHYTHM_IS_CHART_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), BIORHYTHM_TYPE_CHART))
-#define BIORHYTHM_CHART_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), BIORHYTHM_TYPE_CHART, BiorhythmChartClass))
-
-typedef struct _BiorhythmChart		BiorhythmChart;
-typedef struct _BiorhythmChartClass	BiorhythmChartClass;
-typedef struct _BiorhythmChartPrivate	BiorhythmChartPrivate;
-
-struct _BiorhythmChart
-{
-	GtkDrawingArea parent_instance;
-
-	BiorhythmChartPrivate *priv;
-};
+G_DECLARE_FINAL_TYPE (BiorhythmChart, biorhythm_chart, BIORHYTHM, CHART, GtkDrawingArea)
 
 struct _BiorhythmChartClass
 {
 	GtkDrawingAreaClass parent_class;
 };
-
-/* used by BIORHYTHM_TYPE_CHART */
-GType biorhythm_chart_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythm_chart_new ();
 
