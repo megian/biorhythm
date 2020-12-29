@@ -31,9 +31,9 @@ gboolean biorhythm_file_view_check_other_cells_empty (GtkListStore *list_store, 
 void biorhythm_file_view_add_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
 gboolean biorhythm_file_view_delete_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
 void biorhythm_file_view_change_cell_text (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
+void biorhythm_file_view_textrenderer_callback_update_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
 void biorhythm_file_view_textrenderer_callback_name_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
 void biorhythm_file_view_textrenderer_callback_birthday_edited_list (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
-void biorhythm_file_view_textrenderer_callback_birthday_edited_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
 void biorhythm_file_view_textrenderer_callback_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
 void biorhythm_file_view_textrenderer_mark_empty_cell_green (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter);
 void biorhythm_file_view_textrenderer_mark_date_cell_if_invalid_date (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter);
@@ -134,6 +134,7 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	g_object_set (priv->text_renderer_name, "editable", TRUE, NULL);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_name_edited), priv->list_store);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
+	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
 	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes (_("Name"), priv->text_renderer_name, 
 																				"text", VIEW_COLUMN_NAME,
 																				NULL);
@@ -147,8 +148,8 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	priv->text_renderer_birthday = gtk_cell_renderer_text_new ();
 	g_object_set (priv->text_renderer_birthday, "editable", TRUE, NULL);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_birthday_edited_list), priv->list_store);
-	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_birthday_edited_view), file_view);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
+	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
 	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes (_("Birthday"), priv->text_renderer_birthday, 
 																					"text", VIEW_COLUMN_BIRTHDAY,
 																					NULL);
@@ -434,7 +435,7 @@ biorhythm_file_view_textrenderer_callback_birthday_edited_list (GtkCellRendererT
 }
 
 void
-biorhythm_file_view_textrenderer_callback_birthday_edited_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
+biorhythm_file_view_textrenderer_callback_update_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
 {
 	g_signal_emit_by_name (G_OBJECT(user_data), "cursor-changed");
 }
