@@ -28,22 +28,7 @@
 G_BEGIN_DECLS
 	
 #define BIORHYTHM_TYPE_FILE_VIEW		(biorhythm_file_view_get_type ())
-#define BIORHYTHM_FILE_VIEW(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), BIORHYTHM_TYPE_FILE_VIEW, BiorhythmFileView))
-#define BIORHYTHM_IS_FILE_VIEW(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), BIORHYTHM_TYPE_FILE_VIEW))
-#define BIORHYTHM_FILE_VIEW_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), BIORHYTHM_TYPE_FILE_VIEW, BiorhythmFileViewClass))
-#define BIORHYTHM_IS_FILE_VIEW_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), BIORHYTHM_TYPE_FILE_VIEW))
-#define BIORHYTHM_FILE_VIEW_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), BIORHYTHM_TYPE_FILE_VIEW, BiorhythmFileViewClass))
-
-typedef struct _BiorhythmFileView		BiorhythmFileView;
-typedef struct _BiorhythmFileViewClass		BiorhythmFileViewClass;
-typedef struct _BiorhythmFileViewPrivate	BiorhythmFileViewPrivate;
-
-struct _BiorhythmFileView
-{
-	GtkTreeView parent_instance;
-
-	BiorhythmFileViewPrivate *priv;
-};
+G_DECLARE_FINAL_TYPE (BiorhythmFileView, biorhythm_file_view, BIORHYTHM, FILE_VIEW, GtkTreeView)
 
 struct _BiorhythmFileViewClass
 {
@@ -52,9 +37,6 @@ struct _BiorhythmFileViewClass
 	void (* date_changed) (BiorhythmFileView *self);
 	void (* name_changed) (BiorhythmFileView *self);
 };
-
-/* used by BIORHYTHM_TYPE_FILE_VIEW */
-GType biorhythm_file_view_get_type (void) G_GNUC_CONST;
 
 GtkWidget* biorhythm_file_view_new ();
 

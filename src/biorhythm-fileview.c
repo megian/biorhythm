@@ -42,7 +42,7 @@ void biorhythm_file_view_textrenderer_callback_date (GtkTreeViewColumn *tree_col
 gboolean biorhythm_file_view_close_dialog ();
 gboolean biorhythm_file_view_close_file_dialog (BiorhythmFileView *file_view);
 
-struct _BiorhythmFileViewPrivate
+typedef struct
 {
 	GtkWidget *parent_widget;
 
@@ -58,6 +58,13 @@ struct _BiorhythmFileViewPrivate
 
 	gchar *name;
 	gboolean saved;
+} BiorhythmFileViewPrivate;
+
+struct _BiorhythmFileView
+{
+	GtkTreeView parent_instance;
+
+	BiorhythmFileViewPrivate *priv;
 };
 
 enum
@@ -87,13 +94,13 @@ biorhythm_file_view_class_init (BiorhythmFileViewClass *klass)
 	biorhythm_file_view_signals[DATE_CHANGED] = 
 				g_signal_new ("date-changed", G_TYPE_FROM_CLASS (klass),
 				G_SIGNAL_RUN_FIRST,
-				G_STRUCT_OFFSET (BiorhythmFileViewClass, date_changed),
+				0,
 				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 
 	biorhythm_file_view_signals[NAME_CHANGED] = 
 				g_signal_new ("name-changed", G_TYPE_FROM_CLASS (klass),
 				G_SIGNAL_RUN_FIRST,
-				G_STRUCT_OFFSET (BiorhythmFileViewClass, name_changed),
+				0,
 				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 }
 
