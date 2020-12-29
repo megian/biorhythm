@@ -20,10 +20,21 @@
 
 #include "biorhythm-cli.h"
 
-struct _BiorhythmCliPrivate
+#include <math.h>
+#include <glib/gi18n.h>
+#include "biorhythm-math.h"
+
+typedef struct
 {
 	struct bio_date birthday;
 	struct bio_date active_date;
+} BiorhythmCliPrivate;
+
+struct _BiorhythmCli
+{
+	GObject parent_instance;
+
+	BiorhythmCliPrivate *priv;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmCli, biorhythm_cli, G_TYPE_OBJECT)

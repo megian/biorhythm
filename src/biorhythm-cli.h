@@ -21,38 +21,17 @@
 #ifndef __BIORHYTHM_CLI_H__
 #define __BIORHYTHM_CLI_H__
 
-#include <math.h>
-#include <glib/gi18n.h>
 #include <glib-object.h>
-#include "biorhythm-math.h"
 
 G_BEGIN_DECLS
-	
+
 #define BIORHYTHM_TYPE_CLI		(biorhythm_cli_get_type ())
-#define BIORHYTHM_CLI(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), BIORHYTHM_TYPE_CLI, BiorhythmCli))
-#define BIORHYTHM_IS_CLI(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), BIORHYTHM_TYPE_CLI))
-#define BIORHYTHM_CLI_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), BIORHYTHM_TYPE_CLI, BiorhythmCliClass))
-#define BIORHYTHM_IS_CLI_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), BIORHYTHM_TYPE_CLI))
-#define BIORHYTHM_CLI_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS ((obj), BIORHYTHM_TYPE_CLI, BiorhythmCliClass))
-
-typedef struct _BiorhythmCli        	BiorhythmCli;
-typedef struct _BiorhythmCliClass   	BiorhythmCliClass;
-typedef struct _BiorhythmCliPrivate	BiorhythmCliPrivate;
-
-struct _BiorhythmCli
-{
-	GObject parent_instance;
-
-	BiorhythmCliPrivate *priv;
-};
+G_DECLARE_FINAL_TYPE (BiorhythmCli, biorhythm_cli, BIORHYTHM, CLI, GObject)
 
 struct _BiorhythmCliClass
 {
 	GObjectClass parent_class;
 };
-
-/* used by BIORHYTHM_TYPE_CLI */
-GType biorhythm_cli_get_type (void) G_GNUC_CONST;
 
 BiorhythmCli* biorhythm_cli_new ();
 
