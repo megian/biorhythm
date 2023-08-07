@@ -189,16 +189,10 @@ biorhythm_gui_on_file_view_birthday_changed_cli (BiorhythmFileView *file_view, B
 	biorhythm_cli_set_birthday (cli, day, month, year);
 };
 
-gboolean
-biorhythm_gui_on_delete_event (GtkWindow *widget, GdkEvent event, gpointer user_data)
-{
-	return FALSE;
-}
-
 void
 biorhythm_gui_on_window_destroy (GtkWidget *widget, gpointer user_data)
 {
-	gtk_main_quit ();
+	g_application_quit (user_data);
 }
 
 void
@@ -229,7 +223,7 @@ biorhythm_gui_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 }
 
 void
-biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
+biorhythm_gui_menubar_init (GtkApplication *app, GtkWindow *window, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
 	GtkMenu *sub_menu;
 
@@ -247,7 +241,7 @@ biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart 
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Close"), biorhythm_gui_on_window_destroy, NULL);
+	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Close"), biorhythm_gui_on_window_destroy, app);
 
 	/* OPTION MENU */
 	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Options"));
@@ -267,10 +261,10 @@ biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart 
 	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Info"), biorhythm_gui_on_help_info_activate, NULL);
 }
 
-int
-main (int argc, char **argv)
+static void
+activate (GtkApplication *app)
 {
-	GtkWindow *window;
+	GtkWidget *window;
 	GtkMenuBar *menu;
 	BiorhythmCli *cli;
 	GtkWidget *chart;
@@ -280,9 +274,6 @@ main (int argc, char **argv)
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
-
-	/* Init GTK */
-	gtk_init (&argc, &argv);
 
 	/* Init Objects */
 	menu = g_object_new (GTK_TYPE_MENU_BAR, NULL);
@@ -303,12 +294,13 @@ main (int argc, char **argv)
 	GtkWidget *file_view_scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (file_view_scrolled_window), GTK_WIDGET (file_view));
 
-	window = g_object_new (GTK_TYPE_WINDOW, "title", "Biorhythm", "default-width", 800, "default-height", 600, NULL);
-	g_signal_connect (G_OBJECT (window), "delete-event", G_CALLBACK (biorhythm_gui_on_delete_event), NULL);
-	g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (biorhythm_gui_on_window_destroy), NULL);
+	window = gtk_application_window_new (app);
+	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
+	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
+	g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (biorhythm_gui_on_window_destroy), app);
 
 	/* Init Menu */
-	biorhythm_gui_menubar_init (window, menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
+	biorhythm_gui_menubar_init (app, GTK_WINDOW (window), menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
 
 	/* Paned */
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -327,11 +319,23 @@ main (int argc, char **argv)
 	gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (vpaned), 0, 1, 1, 1);
 
 	gtk_container_add (GTK_CONTAINER (window), grid);
-	gtk_widget_show_all (GTK_WIDGET (window));
+	gtk_widget_show_all (window);
+}
 
-	gtk_main ();
+int
+main (int argc, char **argv)
+{
+  GtkApplication *app;
+  int status;
 
-	return (0);
+  app = gtk_application_new ("org.gtk.biorhythm", G_APPLICATION_DEFAULT_FLAGS);
+  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+
+  status = g_application_run (G_APPLICATION (app), argc, argv);
+
+  g_object_unref (app);
+
+  return status;
 }
 
 /* ex:set ts=4 noet: */
