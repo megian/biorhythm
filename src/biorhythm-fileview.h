@@ -26,7 +26,7 @@
 #include <json-glib/json-glib.h>
 
 G_BEGIN_DECLS
-	
+
 #define BIORHYTHM_TYPE_FILE_VIEW		(biorhythm_file_view_get_type ())
 G_DECLARE_FINAL_TYPE (BiorhythmFileView, biorhythm_file_view, BIORHYTHM, FILE_VIEW, GtkTreeView)
 

@@ -27,7 +27,7 @@
 #include "biorhythm-math.h"
 
 G_BEGIN_DECLS
-	
+
 #define BIORHYTHM_TYPE_CHART		(biorhythm_chart_get_type ())
 G_DECLARE_FINAL_TYPE (BiorhythmChart, biorhythm_chart, BIORHYTHM, CHART, GtkDrawingArea)
 

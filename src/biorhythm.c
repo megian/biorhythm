@@ -91,7 +91,7 @@ biorhythm_gui_on_print_activate (GtkWidget *widget, BiorhythmChart *chart)
 	GtkPrintOperation *print;
 	GtkPrintOperationResult res;
 
-	print = biorhythm_print_operation_new (chart);      
+	print = biorhythm_print_operation_new (chart);
 
 	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, NULL, &error);
 
@@ -248,7 +248,7 @@ biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
 	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Close"), biorhythm_gui_on_window_destroy, NULL);
-	
+
 	/* OPTION MENU */
 	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Options"));
 
@@ -256,7 +256,7 @@ biorhythm_gui_menubar_init (GtkWindow *window, GtkMenuBar *menu, BiorhythmChart 
 	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Emotional"), biorhythm_gui_on_option_emotional_activate, chart);
 	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Intellectual"), biorhythm_gui_on_option_intellectual_activate, chart);
 	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Total"), biorhythm_gui_on_option_total_activate, chart);
-	
+
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
 	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Console"), biorhythm_gui_on_console_activate, cli);
