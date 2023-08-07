@@ -121,7 +121,6 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	biorhythm_file_view_list_store_add_empty_row (priv->list_store);
 
 	g_object_set (GTK_TREE_VIEW (file_view), "model", priv->list_store, 
-										"rules-hint", TRUE, 
 										"headers-clickable", TRUE, 
 										"reorderable", TRUE, 
 										"enable-search", TRUE, 
