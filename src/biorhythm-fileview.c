@@ -25,7 +25,7 @@ void biorhythm_file_view_list_store_add_empty_row (GtkListStore *list_store);
 void biorhythm_file_view_read_file_each_element (JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data);
 int biorhythm_file_view_read_file (BiorhythmFileView *file_view);
 void biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GtkListStore *list_store);
-gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view); 
+gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view);
 void biorhythm_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmFileView *file_view);
 gboolean biorhythm_file_view_check_other_cells_empty (GtkListStore *list_store, GtkTreeIter *iter, gint except_column);
 void biorhythm_file_view_add_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
@@ -91,13 +91,13 @@ G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TRE
 static void
 biorhythm_file_view_class_init (BiorhythmFileViewClass *klass)
 {
-	biorhythm_file_view_signals[DATE_CHANGED] = 
+	biorhythm_file_view_signals[DATE_CHANGED] =
 				g_signal_new ("date-changed", G_TYPE_FROM_CLASS (klass),
 				G_SIGNAL_RUN_FIRST,
 				0,
 				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
 
-	biorhythm_file_view_signals[NAME_CHANGED] = 
+	biorhythm_file_view_signals[NAME_CHANGED] =
 				g_signal_new ("name-changed", G_TYPE_FROM_CLASS (klass),
 				G_SIGNAL_RUN_FIRST,
 				0,
@@ -114,18 +114,18 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	priv->name = NULL;
 
 	priv->saved = TRUE;
-    
+
 	priv->list_store = gtk_list_store_new (VIEW_COLUMN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
 
 	biorhythm_file_view_list_store_clear (priv->list_store);
 	biorhythm_file_view_list_store_add_empty_row (priv->list_store);
 
-	g_object_set (GTK_TREE_VIEW (file_view), "model", priv->list_store, 
-										"headers-clickable", TRUE, 
-										"reorderable", TRUE, 
-										"enable-search", TRUE, 
+	g_object_set (GTK_TREE_VIEW (file_view), "model", priv->list_store,
+										"headers-clickable", TRUE,
+										"reorderable", TRUE,
+										"enable-search", TRUE,
 										"search-column", 0,
-										"enable-grid-lines", GTK_TREE_VIEW_GRID_LINES_BOTH, 
+										"enable-grid-lines", GTK_TREE_VIEW_GRID_LINES_BOTH,
 										"rubber-banding", FALSE,
 										NULL);
 
@@ -134,12 +134,12 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_name_edited), priv->list_store);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
 	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
-	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes (_("Name"), priv->text_renderer_name, 
+	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes (_("Name"), priv->text_renderer_name,
 																				"text", VIEW_COLUMN_NAME,
 																				NULL);
-	g_object_set(column_name, "resizable", TRUE, 
-							"clickable", TRUE, 
-							"reorderable", TRUE, 
+	g_object_set(column_name, "resizable", TRUE,
+							"clickable", TRUE,
+							"reorderable", TRUE,
 							NULL);
 	gtk_tree_view_column_set_cell_data_func (column_name, priv->text_renderer_name, biorhythm_file_view_textrenderer_callback_name, NULL, NULL);
 	gtk_tree_view_append_column (GTK_TREE_VIEW (file_view), column_name);
@@ -149,7 +149,7 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_birthday_edited_list), priv->list_store);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
 	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
-	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes (_("Birthday"), priv->text_renderer_birthday, 
+	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes (_("Birthday"), priv->text_renderer_birthday,
 																					"text", VIEW_COLUMN_BIRTHDAY,
 																					NULL);
 	g_object_set (column_birthday, "resizable", TRUE,
@@ -591,7 +591,7 @@ biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filenam
 	file_view->priv->filename = g_strdup (filename);
 
 	if (biorhythm_file_view_close_file_dialog (file_view) == TRUE)
-	{	
+	{
 		biorhythm_file_view_list_store_clear (file_view->priv->list_store);
 		result = biorhythm_file_view_read_file (file_view);
 		biorhythm_file_view_list_store_add_empty_row (file_view->priv->list_store);
