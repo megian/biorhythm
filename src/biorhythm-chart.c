@@ -277,7 +277,7 @@ biorhythm_chart_caption_weekday (struct bio_date date)
 	gdate = g_date_new_dmy (date.day, date.month, date.year);
 	s = weekdays[g_date_get_weekday (gdate)];
 	g_date_free (gdate);
-	
+
 	return s;
 }
 
@@ -295,7 +295,7 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChar
 	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
 	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
 	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Days: %d"), days_of_life));
-	
+
 	// Physical
 	if (priv->option_physical == TRUE)
 		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
@@ -312,7 +312,7 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChar
 	// Total
 	if (priv->option_total == TRUE)
 		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
-	
+
 	cairo_stroke (cr);
 }
 
@@ -327,7 +327,7 @@ biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartD
 
 	if (priv->name_of_person == NULL)
 		s = g_strdup_printf (_("Biorhythm for Unknown"));
-	else	
+	else
 		s = g_strdup_printf (_("Biorhythm for %s"), priv->name_of_person);
 
 	cairo_show_text (cr, s);
