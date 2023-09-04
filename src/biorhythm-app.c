@@ -18,23 +18,26 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include "biorhythm-app.h"
+#include "biorhythm-app-private.h"
 
 typedef struct
 {
-	GSettings         *window_settings;
+	GtkMenuBar        *menu;
 } BiorhythmAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
 
 void
-biorhythm_gui_on_file_new_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_new_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {
 	biorhythm_file_view_new_file (file_view);
 }
 
 void
-biorhythm_gui_on_file_open_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_open_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {
 	GtkWidget *dialog;
 
@@ -58,13 +61,13 @@ biorhythm_gui_on_file_open_activate (GtkWidget *widget, BiorhythmFileView *file_
 }
 
 void
-biorhythm_gui_on_file_save_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_save_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {
 	biorhythm_file_view_save_to_file (file_view);
 }
 
 void
-biorhythm_gui_on_file_save_as_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_save_as_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {
 	GtkWidget *dialog;
 	GtkFileChooser *chooser;
@@ -92,7 +95,7 @@ biorhythm_gui_on_file_save_as_activate (GtkWidget *widget, BiorhythmFileView *fi
 }
 
 void
-biorhythm_gui_on_print_activate (GtkWidget *widget, BiorhythmChart *chart)
+_biorhythm_app_print_activate (GtkWidget *widget, BiorhythmChart *chart)
 {
 	GtkWidget *dialog;
 	GError *error = NULL;
@@ -119,44 +122,44 @@ biorhythm_gui_on_print_activate (GtkWidget *widget, BiorhythmChart *chart)
 }
 
 void
-biorhythm_gui_on_option_physical_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+_biorhythm_app_option_physical_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_option_physical (chart, gtk_check_menu_item_get_active (menu_item));
 }
 
 void
-biorhythm_gui_on_option_emotional_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+_biorhythm_app_option_emotional_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_option_emotional (chart, gtk_check_menu_item_get_active (menu_item));
 }
 
 void
-biorhythm_gui_on_option_intellectual_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+_biorhythm_app_option_intellectual_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_option_intellectual (chart, gtk_check_menu_item_get_active (menu_item));
 }
 
 void
-biorhythm_gui_on_option_total_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+_biorhythm_app_option_total_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_option_total (chart, gtk_check_menu_item_get_active (menu_item));
 }
 
 void
-biorhythm_gui_on_console_activate (GtkMenuItem *menu_item, BiorhythmCli *cli)
+_biorhythm_app_console_activate (GtkMenuItem *menu_item, BiorhythmCli *cli)
 {
 	biorhythm_cli_output (cli);
 }
 
 void
-biorhythm_gui_on_help_info_activate (GtkMenuItem *menu_item, gpointer user_data)
+_biorhythm_app_about_activated (GtkMenuItem *menu_item, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
 	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", PACKAGE_VERSION, "copyright", "Copyright © 2003-2023 Gabriel Mainberger", NULL);
 }
 
 void
-biorhythm_gui_on_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *chart)
+_biorhythm_app_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *chart)
 {
 	guint year, month, day;
 
@@ -165,7 +168,7 @@ biorhythm_gui_on_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *
 }
 
 void
-biorhythm_gui_on_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
+_biorhythm_app_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
 {
 	guint year, month, day;
 	gtk_calendar_get_date (calendar, &year, &month, &day);
@@ -174,7 +177,7 @@ biorhythm_gui_on_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
 }
 
 void
-biorhythm_gui_on_file_view_birthday_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
+_biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
 {
 	guint day, month, year;
 
@@ -183,13 +186,13 @@ biorhythm_gui_on_file_view_birthday_changed_chart (BiorhythmFileView *file_view,
 }
 
 void
-biorhythm_gui_on_file_view_name_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
+_biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_name (chart, biorhythm_file_view_get_name (file_view));
 }
 
 void
-biorhythm_gui_on_file_view_birthday_changed_cli (BiorhythmFileView *file_view, BiorhythmCli *cli)
+_biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
 	guint day, month, year;
 
@@ -198,13 +201,13 @@ biorhythm_gui_on_file_view_birthday_changed_cli (BiorhythmFileView *file_view, B
 };
 
 void
-biorhythm_gui_on_window_destroy (GtkWidget *widget, gpointer user_data)
+_biorhythm_app_window_destroy (GtkWidget *widget, gpointer user_data)
 {
 	g_application_quit (user_data);
 }
 
 void
-biorhythm_gui_menubar_check_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
+_biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
 {
 	GtkWidget *menu_item = gtk_check_menu_item_new_with_mnemonic (_(caption));
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), TRUE);
@@ -213,7 +216,7 @@ biorhythm_gui_menubar_check_menu_item (GtkMenu *menu, gchar *caption, void *call
 }
 
 void
-biorhythm_gui_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
+_biorhythm_app_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
 {
 	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
 	g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (callback_function), object_pointer);
@@ -221,7 +224,7 @@ biorhythm_gui_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *c
 }
 
 GtkMenu*
-biorhythm_gui_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
+_biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 {
 	GtkMenu *sub_menu = g_object_new (GTK_TYPE_MENU, NULL);
 	GtkWidget *menu_item = menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
@@ -231,46 +234,46 @@ biorhythm_gui_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 }
 
 void
-biorhythm_gui_menubar_init (GtkApplication *app, GtkWindow *window, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
+_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
 	GtkMenu *sub_menu;
 
 	/* FILE MENU */
-	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_File"));
+	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_File"));
 
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_New"), biorhythm_gui_on_file_new_activate, file_view);
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Open"), biorhythm_gui_on_file_open_activate, file_view);
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Save"), biorhythm_gui_on_file_save_activate, file_view);
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), biorhythm_gui_on_file_save_as_activate, file_view);
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
-
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Print"), biorhythm_gui_on_print_activate, chart);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_New"), _biorhythm_app_file_new_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Open"), _biorhythm_app_file_open_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save"), _biorhythm_app_file_save_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), _biorhythm_app_file_save_as_activate, file_view);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Close"), biorhythm_gui_on_window_destroy, app);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Print"), _biorhythm_app_print_activate, chart);
+
+	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
+
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Close"), _biorhythm_app_window_destroy, app);
 
 	/* OPTION MENU */
-	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Options"));
+	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Options"));
 
-	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Physical"), biorhythm_gui_on_option_physical_activate, chart);
-	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Emotional"), biorhythm_gui_on_option_emotional_activate, chart);
-	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Intellectual"), biorhythm_gui_on_option_intellectual_activate, chart);
-	biorhythm_gui_menubar_check_menu_item (sub_menu, _("_Total"), biorhythm_gui_on_option_total_activate, chart);
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Physical"), _biorhythm_app_option_physical_activate, chart);
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Emotional"), _biorhythm_app_option_emotional_activate, chart);
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Intellectual"), _biorhythm_app_option_intellectual_activate, chart);
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Total"), _biorhythm_app_option_total_activate, chart);
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Console"), biorhythm_gui_on_console_activate, cli);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Console"), _biorhythm_app_console_activate, cli);
 
 	/* HELP MENU */
-	sub_menu = biorhythm_gui_menubar_sub_menu (menu, _("_Help"));
+	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Help"));
 
-	biorhythm_gui_menubar_mnemonic_menu_item (sub_menu, _("_Info"), biorhythm_gui_on_help_info_activate, NULL);
+	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_About"), _biorhythm_app_about_activated, NULL);
 }
 
 static void
-biorhythm_app_activate (GApplication *application)
+_biorhythm_app_activate (GApplication *application)
 {
 	GtkWidget *window;
 	GtkMenuBar *menu;
@@ -292,23 +295,23 @@ biorhythm_app_activate (GApplication *application)
 
 	calendar = gtk_calendar_new ();
 	gtk_calendar_set_display_options (GTK_CALENDAR (calendar), GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
-	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (biorhythm_gui_on_calendar_changed_chart), chart);
-	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (biorhythm_gui_on_calendar_changed_cli), cli);
+	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_chart), chart);
+	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_cli), cli);
 
 	file_view = biorhythm_file_view_new ();
-	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (biorhythm_gui_on_file_view_birthday_changed_chart), chart);
-	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (biorhythm_gui_on_file_view_birthday_changed_cli), cli);
-	g_signal_connect (G_OBJECT (file_view), "name-changed", G_CALLBACK (biorhythm_gui_on_file_view_name_changed_chart), chart);
+	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_chart), chart);
+	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_cli), cli);
+	g_signal_connect (G_OBJECT (file_view), "name-changed", G_CALLBACK (_biorhythm_app_file_view_name_changed_chart), chart);
 	GtkWidget *file_view_scrolled_window = gtk_scrolled_window_new (NULL, NULL);
 	gtk_container_add (GTK_CONTAINER (file_view_scrolled_window), GTK_WIDGET (file_view));
 
 	window = gtk_application_window_new (GTK_APPLICATION (application));
 	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-	g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (biorhythm_gui_on_window_destroy), GTK_APPLICATION (application));
+	g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (_biorhythm_app_window_destroy), GTK_APPLICATION (application));
 
 	/* Init Menu */
-	biorhythm_gui_menubar_init (GTK_APPLICATION (application), GTK_WINDOW (window), menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
+	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
 
 	/* Paned */
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
@@ -336,7 +339,7 @@ biorhythm_app_class_init (BiorhythmAppClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
 
-	app_class->activate = biorhythm_app_activate;
+	app_class->activate = _biorhythm_app_activate;
 }
 
 static void
