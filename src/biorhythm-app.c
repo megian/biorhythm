@@ -30,6 +30,32 @@ typedef struct
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
 
+GtkMenuBar *
+_biorhythm_app_get_menu_bar (BiorhythmApp *app)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	return priv->menu;
+}
+
+GtkMenuBar *
+_biorhythm_app_set_menu_bar (BiorhythmApp *app, GtkMenuBar *menu)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+	g_return_val_if_fail (GTK_IS_MENU_BAR (menu), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	priv->menu = menu;
+}
+
+
 void
 _biorhythm_app_file_new_activate (GtkWidget *widget, BiorhythmFileView *file_view)
 {

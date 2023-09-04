@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS
 
+GtkMenuBar      *_biorhythm_app_get_menu_bar            (BiorhythmApp *app);
+
+GtkMenuBar      *_biorhythm_app_set_menu_bar            (BiorhythmApp *app,
+                                                         GtkMenuBar *menu);
+
 void            _biorhythm_app_file_new_activate        (GtkWidget *widget,
                                                          BiorhythmFileView *file_view);
 
