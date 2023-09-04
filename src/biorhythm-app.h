@@ -1,7 +1,8 @@
 /* -*-coding: utf-8;-*- */
 
-/* Biorhythm
- * Copyright (C) 2003-2013, Gabriel Mainberger
+/* biorhythm-app.h
+ * This file is part of Biorhythm
+ * Copyright (C) 2003-2023, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -17,6 +18,9 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef BIORHYTHM_APP_H
+#define BIORHYTHM_APP_H
+
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
@@ -26,3 +30,20 @@
 #include "biorhythm-cli.h"
 #include "biorhythm-print.h"
 #include "config.h"
+
+G_BEGIN_DECLS
+
+#define BIORHYTHM_TYPE_APP (biorhythm_app_get_type())
+
+G_DECLARE_DERIVABLE_TYPE (BiorhythmApp, biorhythm_app, BIORHYTHM, APP, GtkApplication)
+
+struct _BiorhythmAppClass
+{
+	GtkApplicationClass parent_class;
+};
+
+G_END_DECLS
+
+#endif /* BIORHYTHM_APP_H */
+
+/* ex:set ts=8 noet: */
