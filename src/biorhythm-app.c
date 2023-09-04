@@ -339,7 +339,7 @@ biorhythm_app_class_init (BiorhythmAppClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
 
-	app_class->activate = _biorhythm_app_activate;
+	G_APPLICATION_CLASS (app_class)->activate = _biorhythm_app_activate;
 }
 
 static void
