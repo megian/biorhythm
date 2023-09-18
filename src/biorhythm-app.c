@@ -30,6 +30,11 @@ typedef struct
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
 
+static GActionEntry app_entries[] =
+{
+  { "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
+};
+
 GtkMenuBar *
 _biorhythm_app_get_menu_bar (BiorhythmApp *app)
 {
@@ -226,10 +231,10 @@ _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view, Bio
 	biorhythm_cli_set_birthday (cli, day, month, year);
 };
 
-void
-_biorhythm_app_window_destroy (GtkWidget *widget, gpointer user_data)
+static void
+_biorhythm_app_quit_activated (GSimpleAction *action, GVariant *param, gpointer app)
 {
-	g_application_quit (user_data);
+	g_application_quit (G_APPLICATION (app));
 }
 
 void
@@ -246,6 +251,14 @@ _biorhythm_app_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *
 {
 	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
 	g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (callback_function), object_pointer);
+	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
+}
+
+static void
+_biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu, gchar *caption, const char* action_name)
+{
+	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), "win.quit");
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 }
 
@@ -278,7 +291,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Close"), _biorhythm_app_window_destroy, app);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Close"), "win.quit");
 
 	/* OPTION MENU */
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Options"));
@@ -303,6 +316,7 @@ _biorhythm_app_activate (GApplication *application)
 {
 	GtkWidget *window;
 	GtkMenuBar *menu;
+	GActionGroup *actions;
 	BiorhythmCli *cli;
 	GtkWidget *chart;
 	GtkWidget *calendar;
@@ -334,10 +348,16 @@ _biorhythm_app_activate (GApplication *application)
 	window = gtk_application_window_new (GTK_APPLICATION (application));
 	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-	g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (_biorhythm_app_window_destroy), GTK_APPLICATION (application));
 
 	/* Init Menu */
 	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
+
+    /* Actions */
+    actions = (GActionGroup*)g_simple_action_group_new ();
+    g_action_map_add_action_entries (G_ACTION_MAP (actions),
+                                     app_entries, G_N_ELEMENTS (app_entries),
+                                     application);
+	gtk_widget_insert_action_group (window, "win", actions);
 
 	/* Paned */
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);

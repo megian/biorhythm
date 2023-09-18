@@ -74,8 +74,9 @@ void            _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *
 void            _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
                                                                BiorhythmCli *cli);
 
-void            _biorhythm_app_window_destroy           (GtkWidget *widget,
-                                                         gpointer user_data);
+static void     _biorhythm_app_quit_activated           (GSimpleAction *action,
+                                                         GVariant *param,
+                                                         gpointer app);
 
 void            _biorhythm_app_menubar_check_menu_item  (GtkMenu *menu,
                                                          gchar *caption,
@@ -86,6 +87,10 @@ void            _biorhythm_app_menubar_mnemonic_menu_item (GtkMenu *menu,
                                                            gchar *caption,
                                                            void *callback_function,
                                                            void *object_pointer);
+
+static void     _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu,
+                                                                      gchar *caption,
+                                                                      const char* action_name);
 
 GtkMenu         *_biorhythm_app_menubar_sub_menu        (GtkMenuBar *menu,
                                                          gchar *caption);
