@@ -56,7 +56,8 @@ void            _biorhythm_app_option_total_activate    (GtkCheckMenuItem *menu_
 void            _biorhythm_app_console_activate         (GtkMenuItem *menu_item,
                                                          BiorhythmCli *cli);
 
-void            _biorhythm_app_about_activated          (GtkMenuItem *menu_item,
+void            _biorhythm_app_about_activated          (GSimpleAction *action,
+                                                         GVariant *param,
                                                          gpointer user_data);
 
 void            _biorhythm_app_calendar_changed_chart   (GtkCalendar *calendar,
