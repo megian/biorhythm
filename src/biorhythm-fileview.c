@@ -162,10 +162,10 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	g_signal_connect (G_OBJECT(file_view), "cursor-changed", G_CALLBACK (biorhythm_file_view_on_date_changed), file_view);
 }
 
-GtkWidget*
+BiorhythmFileView*
 biorhythm_file_view_new ()
 {
-	return GTK_WIDGET (g_object_new (BIORHYTHM_TYPE_FILE_VIEW, NULL));
+	return g_object_new (BIORHYTHM_TYPE_FILE_VIEW, NULL);
 }
 
 /****************************************

@@ -38,7 +38,7 @@ struct _BiorhythmFileViewClass
 	void (* name_changed) (BiorhythmFileView *self);
 };
 
-GtkWidget* biorhythm_file_view_new ();
+BiorhythmFileView* biorhythm_file_view_new ();
 
 void biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *month, guint *year);
 gchar* biorhythm_file_view_get_name (BiorhythmFileView *file_view);
