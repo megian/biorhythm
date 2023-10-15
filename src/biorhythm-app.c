@@ -46,9 +46,9 @@ biorhthm_app_dispose (GObject *object)
 
 static GActionEntry app_entries[] =
 {
-  { "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
-  { "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
-  { "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
+	{ "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
+	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
+	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
 
 GtkMenuBar *
