@@ -36,7 +36,7 @@ struct _BiorhythmChartClass
 	GtkDrawingAreaClass parent_class;
 };
 
-GtkWidget* biorhythm_chart_new ();
+BiorhythmChart *biorhythm_chart_new ();
 
 void biorhythm_chart_set_birthday (BiorhythmChart *chart, gint day, gint month, gint year);
 void biorhythm_chart_set_active_date (BiorhythmChart *chart, gint day, gint month, gint year);

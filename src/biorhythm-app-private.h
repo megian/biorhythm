@@ -34,6 +34,16 @@ BiorhythmFileView *_biorhythm_app_get_file_view         (BiorhythmApp *app);
 BiorhythmFileView *_biorhythm_app_set_file_view         (BiorhythmApp *app,
                                                          BiorhythmFileView *file_view);
 
+BiorhythmChart *_biorhythm_app_get_chart                (BiorhythmApp *app);
+
+BiorhythmChart *_biorhythm_app_set_chart                (BiorhythmApp *app,
+                                                         BiorhythmChart *chart);
+
+BiorhythmCli    *_biorhythm_app_get_cli                 (BiorhythmApp *app);
+
+BiorhythmCli    *_biorhythm_app_set_cli                 (BiorhythmApp *app,
+                                                         BiorhythmCli *cli);
+
 void            _biorhythm_app_file_new_activated       (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
@@ -50,8 +60,9 @@ void            _biorhythm_app_file_save_as_activated   (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
-void            _biorhythm_app_print_activate           (GtkWidget *widget,
-                                                         BiorhythmChart *chart);
+static void     _biorhythm_app_print_activated          (GSimpleAction *action,
+                                                         GVariant *param,
+                                                         gpointer user_data);
 
 void            _biorhythm_app_option_physical_activate (GtkCheckMenuItem *menu_item,
                                                          BiorhythmChart *chart);
@@ -65,8 +76,9 @@ void            _biorhythm_app_option_intellectual_activate (GtkCheckMenuItem *m
 void            _biorhythm_app_option_total_activate    (GtkCheckMenuItem *menu_item,
                                                          BiorhythmChart *chart);
 
-void            _biorhythm_app_console_activate         (GtkMenuItem *menu_item,
-                                                         BiorhythmCli *cli);
+void            _biorhythm_app_console_activated        (GSimpleAction *action,
+                                                         GVariant *param,
+                                                        gpointer user_data);
 
 void            _biorhythm_app_about_activated          (GSimpleAction *action,
                                                          GVariant *param,
@@ -110,8 +122,7 @@ GtkMenu         *_biorhythm_app_menubar_sub_menu        (GtkMenuBar *menu,
 
 void            _biorhythm_gui_menubar_init             (GtkApplication *app,
                                                          GtkMenuBar *menu,
-                                                         BiorhythmChart *chart,
-                                                         BiorhythmCli *cli);
+                                                         BiorhythmChart *chart);
 
 static void     _biorhythm_app_activate                 (GApplication *application);
 
