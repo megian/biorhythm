@@ -27,6 +27,7 @@ typedef struct
 {
 	GtkMenuBar        *menu;
 	BiorhythmFileView *file_view;
+	BiorhythmCli	  *cli;
 } BiorhythmAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
@@ -40,6 +41,7 @@ biorhthm_app_dispose (GObject *object)
 
 	g_clear_object (&priv->menu);
 	g_clear_object (&priv->file_view);
+	g_clear_object (&priv->cli);
 
 	G_OBJECT_CLASS (biorhythm_app_parent_class)->dispose (object);
 }
@@ -50,6 +52,7 @@ static GActionEntry app_entries[] =
 	{ "open", _biorhythm_app_file_open_activated, NULL, NULL, NULL },
 	{ "save", _biorhythm_app_file_save_activated, NULL, NULL, NULL },
 	{ "save-as", _biorhythm_app_file_save_as_activated, NULL, NULL, NULL },
+	{ "cli", _biorhythm_app_console_activated, NULL, NULL, NULL },
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
@@ -102,6 +105,31 @@ _biorhythm_app_set_file_view (BiorhythmApp *app, BiorhythmFileView *file_view)
 	priv = biorhythm_app_get_instance_private (app);
 
 	priv->file_view = file_view;
+}
+
+BiorhythmCli *
+_biorhythm_app_get_cli (BiorhythmApp *app)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	return priv->cli;
+}
+
+BiorhythmCli *
+_biorhythm_app_set_cli (BiorhythmApp *app, BiorhythmCli *cli)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+	g_return_val_if_fail (BIORHYTHM_IS_CLI (cli), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	priv->cli = cli;
 }
 
 void
@@ -236,8 +264,13 @@ _biorhythm_app_option_total_activate (GtkCheckMenuItem *menu_item, BiorhythmChar
 }
 
 void
-_biorhythm_app_console_activate (GtkMenuItem *menu_item, BiorhythmCli *cli)
+_biorhythm_app_console_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
+	BiorhythmApp *app;
+	BiorhythmCli *cli;
+
+	app = BIORHYTHM_APP(user_data);
+	cli = _biorhythm_app_get_cli (app);
 	biorhythm_cli_output (cli);
 }
 
@@ -337,7 +370,7 @@ _biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 }
 
 void
-_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmCli *cli)
+_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart)
 {
 	GtkMenu *sub_menu;
 
@@ -367,7 +400,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Console"), _biorhythm_app_console_activate, cli);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Console"), "win.cli");
 
 	/* HELP MENU */
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Help"));
@@ -384,6 +417,7 @@ _biorhythm_app_startup (GApplication *application)
 
 	G_APPLICATION_CLASS (biorhythm_app_parent_class)->startup (application);
 	_biorhythm_app_set_file_view(BIORHYTHM_APP (application), biorhythm_file_view_new ());
+	_biorhythm_app_set_cli (BIORHYTHM_APP (application), biorhythm_cli_new ());
 }
 
 static void
@@ -404,7 +438,7 @@ _biorhythm_app_activate (GApplication *application)
 	/* Init Objects */
 	menu = g_object_new (GTK_TYPE_MENU_BAR, NULL);
 
-	cli = biorhythm_cli_new ();
+	cli = _biorhythm_app_get_cli(BIORHYTHM_APP (application));
 
 	chart = biorhythm_chart_new ();
 
@@ -425,7 +459,7 @@ _biorhythm_app_activate (GApplication *application)
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
 	/* Init Menu */
-	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart), cli);
+	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart));
 
     /* Actions */
     actions = (GActionGroup*)g_simple_action_group_new ();
