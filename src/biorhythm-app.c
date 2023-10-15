@@ -55,6 +55,10 @@ static GActionEntry app_entries[] =
 	{ "save", _biorhythm_app_file_save_activated, NULL, NULL, NULL },
 	{ "save-as", _biorhythm_app_file_save_as_activated, NULL, NULL, NULL },
 	{ "print", _biorhythm_app_print_activated, NULL, NULL, NULL },
+	{ "option-physical", NULL, NULL, "true", _biorhythm_app_option_physical_changed },
+	{ "option-emotional", NULL, NULL, "true", _biorhythm_app_option_emotional_changed },
+	{ "option-intellectual", NULL, NULL, "true", _biorhythm_app_option_intellectual_changed },
+	{ "option-total", NULL, NULL, "true", _biorhythm_app_option_total_changed },
 	{ "cli", _biorhythm_app_console_activated, NULL, NULL, NULL },
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
@@ -271,28 +275,56 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
 	}
 }
 
-void
-_biorhythm_app_option_physical_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+static void
+_biorhythm_app_option_physical_changed (GSimpleAction *action, GVariant *state, gpointer user_data)
 {
-	biorhythm_chart_set_option_physical (chart, gtk_check_menu_item_get_active (menu_item));
+	BiorhythmApp *app;
+	BiorhythmChart *chart;
+
+	g_simple_action_set_state (action, state);
+
+	app = BIORHYTHM_APP(user_data);
+	chart = _biorhythm_app_get_chart (app);
+	biorhythm_chart_set_option_physical (chart, g_variant_get_boolean (state));
 }
 
-void
-_biorhythm_app_option_emotional_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+static void
+_biorhythm_app_option_emotional_changed (GSimpleAction *action, GVariant *state, gpointer user_data)
 {
-	biorhythm_chart_set_option_emotional (chart, gtk_check_menu_item_get_active (menu_item));
+	BiorhythmApp *app;
+	BiorhythmChart *chart;
+
+	g_simple_action_set_state (action, state);
+
+	app = BIORHYTHM_APP(user_data);
+	chart = _biorhythm_app_get_chart (app);
+	biorhythm_chart_set_option_emotional (chart, g_variant_get_boolean (state));
 }
 
-void
-_biorhythm_app_option_intellectual_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+static void
+_biorhythm_app_option_intellectual_changed (GSimpleAction *action, GVariant *state, gpointer user_data)
 {
-	biorhythm_chart_set_option_intellectual (chart, gtk_check_menu_item_get_active (menu_item));
+	BiorhythmApp *app;
+	BiorhythmChart *chart;
+
+	g_simple_action_set_state (action, state);
+
+	app = BIORHYTHM_APP(user_data);
+	chart = _biorhythm_app_get_chart (app);
+	biorhythm_chart_set_option_intellectual (chart, g_variant_get_boolean (state));
 }
 
-void
-_biorhythm_app_option_total_activate (GtkCheckMenuItem *menu_item, BiorhythmChart *chart)
+static void
+_biorhythm_app_option_total_changed (GSimpleAction *action, GVariant *state, gpointer user_data)
 {
-	biorhythm_chart_set_option_total (chart, gtk_check_menu_item_get_active (menu_item));
+	BiorhythmApp *app;
+	BiorhythmChart *chart;
+
+	g_simple_action_set_state (action, state);
+
+	app = BIORHYTHM_APP(user_data);
+	chart = _biorhythm_app_get_chart (app);
+	biorhythm_chart_set_option_total (chart, g_variant_get_boolean (state));
 }
 
 void
@@ -367,11 +399,11 @@ _biorhythm_app_quit_activated (GSimpleAction *action, GVariant *param, gpointer 
 }
 
 void
-_biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
+_biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, const char* action_name)
 {
 	GtkWidget *menu_item = gtk_check_menu_item_new_with_mnemonic (_(caption));
 	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), TRUE);
-	g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (callback_function), object_pointer);
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), action_name);
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 }
 
@@ -402,7 +434,7 @@ _biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 }
 
 void
-_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart)
+_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu)
 {
 	GtkMenu *sub_menu;
 
@@ -425,10 +457,10 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 	/* OPTION MENU */
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Options"));
 
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Physical"), _biorhythm_app_option_physical_activate, chart);
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Emotional"), _biorhythm_app_option_emotional_activate, chart);
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Intellectual"), _biorhythm_app_option_intellectual_activate, chart);
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Total"), _biorhythm_app_option_total_activate, chart);
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Physical"), "win.option-physical");
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Emotional"), "win.option-emotional");
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Intellectual"), "win.option-intellectual");
+	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Total"), "win.option-total");
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
@@ -492,7 +524,7 @@ _biorhythm_app_activate (GApplication *application)
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
 	/* Init Menu */
-	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart));
+	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu);
 
     /* Actions */
     actions = (GActionGroup*)g_simple_action_group_new ();
