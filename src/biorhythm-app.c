@@ -164,7 +164,7 @@ _biorhythm_app_set_cli (BiorhythmApp *app, BiorhythmCli *cli)
 	priv->cli = cli;
 }
 
-void
+static void
 _biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
@@ -173,7 +173,7 @@ _biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpoin
 	biorhythm_file_view_new_file (_biorhythm_app_get_file_view (app));
 }
 
-void
+static void
 _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
@@ -202,7 +202,7 @@ _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpoi
 	gtk_widget_destroy (dialog);
 }
 
-void
+static void
 _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
@@ -211,7 +211,7 @@ _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpoi
 	biorhythm_file_view_save_to_file (_biorhythm_app_get_file_view (app));
 }
 
-void
+static void
 _biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
@@ -327,7 +327,7 @@ _biorhythm_app_option_total_changed (GSimpleAction *action, GVariant *state, gpo
 	biorhythm_chart_set_option_total (chart, g_variant_get_boolean (state));
 }
 
-void
+static void
 _biorhythm_app_console_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
@@ -338,7 +338,7 @@ _biorhythm_app_console_activated (GSimpleAction *action, GVariant *param, gpoint
 	biorhythm_cli_output (cli);
 }
 
-void
+static void
 _biorhythm_app_about_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
@@ -350,7 +350,7 @@ _biorhythm_app_about_activated (GSimpleAction *action, GVariant *param, gpointer
 	gtk_show_about_dialog (window, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", PACKAGE_VERSION, "copyright", "Copyright © 2003-2023 Gabriel Mainberger", NULL);
 }
 
-void
+static void
 _biorhythm_app_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *chart)
 {
 	guint year, month, day;
@@ -359,7 +359,7 @@ _biorhythm_app_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *ch
 	biorhythm_chart_set_active_date (chart, day, month+1, year);
 }
 
-void
+static void
 _biorhythm_app_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
 {
 	guint year, month, day;
@@ -368,7 +368,7 @@ _biorhythm_app_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
 	biorhythm_cli_set_active_date (cli, day, month+1, year);
 }
 
-void
+static void
 _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
 {
 	guint day, month, year;
@@ -377,13 +377,13 @@ _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view, B
 	biorhythm_chart_set_birthday (chart, day, month, year);
 }
 
-void
+static void
 _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
 {
 	biorhythm_chart_set_name (chart, biorhythm_file_view_get_name (file_view));
 }
 
-void
+static void
 _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
 	guint day, month, year;
@@ -398,7 +398,7 @@ _biorhythm_app_quit_activated (GSimpleAction *action, GVariant *param, gpointer 
 	g_application_quit (G_APPLICATION (app));
 }
 
-void
+static void
 _biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, const char* action_name)
 {
 	GtkWidget *menu_item = gtk_check_menu_item_new_with_mnemonic (_(caption));
@@ -425,7 +425,7 @@ _biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 	return (sub_menu);
 }
 
-void
+static void
 _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu)
 {
 	GtkMenu *sub_menu;
