@@ -111,11 +111,6 @@ void            _biorhythm_app_menubar_check_menu_item  (GtkMenu *menu,
                                                          gchar *caption,
                                                          const char* action_name);
 
-void            _biorhythm_app_menubar_mnemonic_menu_item (GtkMenu *menu,
-                                                           gchar *caption,
-                                                           void *callback_function,
-                                                           void *object_pointer);
-
 static void     _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu,
                                                                       gchar *caption,
                                                                       const char* action_name);
