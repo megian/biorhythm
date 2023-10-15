@@ -32,6 +32,7 @@ G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
 
 static GActionEntry app_entries[] =
 {
+  { "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
   { "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
 
@@ -183,10 +184,15 @@ _biorhythm_app_console_activate (GtkMenuItem *menu_item, BiorhythmCli *cli)
 }
 
 void
-_biorhythm_app_about_activated (GtkMenuItem *menu_item, gpointer user_data)
+_biorhythm_app_about_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
-	gtk_show_about_dialog (NULL, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", PACKAGE_VERSION, "copyright", "Copyright © 2003-2023 Gabriel Mainberger", NULL);
+	GtkApplication *app;
+	GtkWindow *window;
+
+	app = GTK_APPLICATION (user_data);
+	window = GTK_WINDOW (gtk_application_get_active_window (app));
+	gtk_show_about_dialog (window, "authors", authors, "program-name", "Biorhythm", "title", "Funny and useless :)", "version", PACKAGE_VERSION, "copyright", "Copyright © 2003-2023 Gabriel Mainberger", NULL);
 }
 
 void
@@ -308,7 +314,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 	/* HELP MENU */
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Help"));
 
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_About"), _biorhythm_app_about_activated, NULL);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_About"), "win.about");
 }
 
 static void
