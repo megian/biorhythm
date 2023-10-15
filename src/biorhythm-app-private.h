@@ -44,19 +44,19 @@ BiorhythmCli    *_biorhythm_app_get_cli                 (BiorhythmApp *app);
 BiorhythmCli    *_biorhythm_app_set_cli                 (BiorhythmApp *app,
                                                          BiorhythmCli *cli);
 
-void            _biorhythm_app_file_new_activated       (GSimpleAction *action,
+static void     _biorhythm_app_file_new_activated       (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
-void            _biorhythm_app_file_open_activated      (GSimpleAction *action,
+static void     _biorhythm_app_file_open_activated      (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
-void            _biorhythm_app_file_save_activated      (GSimpleAction *action,
+static void     _biorhythm_app_file_save_activated      (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
-void            _biorhythm_app_file_save_as_activated   (GSimpleAction *action,
+static void     _biorhythm_app_file_save_as_activated   (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
@@ -80,34 +80,34 @@ static void     _biorhythm_app_option_total_changed     (GSimpleAction *action,
                                                          GVariant *state,
                                                          gpointer user_data);
 
-void            _biorhythm_app_console_activated        (GSimpleAction *action,
+static void     _biorhythm_app_console_activated        (GSimpleAction *action,
                                                          GVariant *param,
                                                         gpointer user_data);
 
-void            _biorhythm_app_about_activated          (GSimpleAction *action,
+static void     _biorhythm_app_about_activated          (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
-void            _biorhythm_app_calendar_changed_chart   (GtkCalendar *calendar,
+static void     _biorhythm_app_calendar_changed_chart   (GtkCalendar *calendar,
                                                          BiorhythmChart *chart);
 
-void            _biorhythm_app_calendar_changed_cli     (GtkCalendar *calendar,
+static void     _biorhythm_app_calendar_changed_cli     (GtkCalendar *calendar,
                                                          BiorhythmCli *cli);
 
-void            _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view,
+static void     _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view,
                                                                  BiorhythmChart *chart);
 
-void            _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view,
+static void     _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view,
                                                              BiorhythmChart *chart);
 
-void            _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
+static void     _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
                                                                BiorhythmCli *cli);
 
 static void     _biorhythm_app_quit_activated           (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer app);
 
-void            _biorhythm_app_menubar_check_menu_item  (GtkMenu *menu,
+static void     _biorhythm_app_menubar_check_menu_item  (GtkMenu *menu,
                                                          gchar *caption,
                                                          const char* action_name);
 
@@ -118,7 +118,7 @@ static void     _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *m
 GtkMenu         *_biorhythm_app_menubar_sub_menu        (GtkMenuBar *menu,
                                                          gchar *caption);
 
-void            _biorhythm_gui_menubar_init             (GtkApplication *app,
+static void     _biorhythm_gui_menubar_init             (GtkApplication *app,
                                                          GtkMenuBar *menu);
 
 static void     _biorhythm_app_activate                 (GApplication *application);
