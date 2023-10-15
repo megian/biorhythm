@@ -407,14 +407,6 @@ _biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, const cha
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 }
 
-void
-_biorhythm_app_menubar_mnemonic_menu_item (GtkMenu *menu, gchar *caption, void *callback_function, void *object_pointer)
-{
-	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
-	g_signal_connect (G_OBJECT (menu_item), "activate", G_CALLBACK (callback_function), object_pointer);
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-}
-
 static void
 _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu, gchar *caption, const char* action_name)
 {
