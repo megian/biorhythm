@@ -258,7 +258,7 @@ static void
 _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu, gchar *caption, const char* action_name)
 {
 	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), "win.quit");
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), action_name);
 	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
 }
 
