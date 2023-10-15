@@ -26,12 +26,27 @@
 typedef struct
 {
 	GtkMenuBar        *menu;
+	BiorhythmFileView *file_view;
 } BiorhythmAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
 
+static void
+biorhthm_app_dispose (GObject *object)
+{
+	BiorhythmAppPrivate *priv;
+
+	priv = biorhythm_app_get_instance_private (BIORHYTHM_APP (object));
+
+	g_clear_object (&priv->menu);
+	g_clear_object (&priv->file_view);
+
+	G_OBJECT_CLASS (biorhythm_app_parent_class)->dispose (object);
+}
+
 static GActionEntry app_entries[] =
 {
+  { "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
   { "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
   { "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
@@ -61,11 +76,38 @@ _biorhythm_app_set_menu_bar (BiorhythmApp *app, GtkMenuBar *menu)
 	priv->menu = menu;
 }
 
+BiorhythmFileView *
+_biorhythm_app_get_file_view (BiorhythmApp *app)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	return priv->file_view;
+}
+
+BiorhythmFileView *
+_biorhythm_app_set_file_view (BiorhythmApp *app, BiorhythmFileView *file_view)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	priv->file_view = file_view;
+}
 
 void
-_biorhythm_app_file_new_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
-	biorhythm_file_view_new_file (file_view);
+	BiorhythmApp *app;
+
+	app = BIORHYTHM_APP(user_data);
+	biorhythm_file_view_new_file (_biorhythm_app_get_file_view (app));
 }
 
 void
@@ -286,7 +328,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 	/* FILE MENU */
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_File"));
 
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_New"), _biorhythm_app_file_new_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_New"), "win.new");
 	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Open"), _biorhythm_app_file_open_activate, file_view);
 	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save"), _biorhythm_app_file_save_activate, file_view);
 	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), _biorhythm_app_file_save_as_activate, file_view);
@@ -318,6 +360,17 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 }
 
 static void
+_biorhythm_app_startup (GApplication *application)
+{
+	BiorhythmAppPrivate *priv;
+
+	priv = biorhythm_app_get_instance_private (BIORHYTHM_APP (application));
+
+	G_APPLICATION_CLASS (biorhythm_app_parent_class)->startup (application);
+	_biorhythm_app_set_file_view(BIORHYTHM_APP (application), biorhythm_file_view_new ());
+}
+
+static void
 _biorhythm_app_activate (GApplication *application)
 {
 	GtkWidget *window;
@@ -326,7 +379,7 @@ _biorhythm_app_activate (GApplication *application)
 	BiorhythmCli *cli;
 	GtkWidget *chart;
 	GtkWidget *calendar;
-	GtkWidget *file_view;
+	BiorhythmFileView *file_view;
 
 	bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -344,7 +397,7 @@ _biorhythm_app_activate (GApplication *application)
 	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_chart), chart);
 	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_cli), cli);
 
-	file_view = biorhythm_file_view_new ();
+	file_view = _biorhythm_app_get_file_view(BIORHYTHM_APP (application));
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_chart), chart);
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_cli), cli);
 	g_signal_connect (G_OBJECT (file_view), "name-changed", G_CALLBACK (_biorhythm_app_file_view_name_changed_chart), chart);
@@ -391,6 +444,7 @@ biorhythm_app_class_init (BiorhythmAppClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GApplicationClass *app_class = G_APPLICATION_CLASS (klass);
 
+	G_APPLICATION_CLASS (app_class)->startup = _biorhythm_app_startup;
 	G_APPLICATION_CLASS (app_class)->activate = _biorhythm_app_activate;
 }
 
