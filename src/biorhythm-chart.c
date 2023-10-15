@@ -107,10 +107,10 @@ biorhythm_chart_init (BiorhythmChart *self)
 	biorhythm_chart_set_current_date (&priv->birthday);
 }
 
-GtkWidget*
+BiorhythmChart *
 biorhythm_chart_new ()
 {
-	return GTK_WIDGET (g_object_new (BIORHYTHM_TYPE_CHART, NULL));
+	return g_object_new (BIORHYTHM_TYPE_CHART, NULL);
 }
 
 /****************************************

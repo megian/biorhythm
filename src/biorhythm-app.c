@@ -27,6 +27,7 @@ typedef struct
 {
 	GtkMenuBar        *menu;
 	BiorhythmFileView *file_view;
+	BiorhythmChart    *chart;
 	BiorhythmCli	  *cli;
 } BiorhythmAppPrivate;
 
@@ -41,6 +42,7 @@ biorhthm_app_dispose (GObject *object)
 
 	g_clear_object (&priv->menu);
 	g_clear_object (&priv->file_view);
+	g_clear_object (&priv->chart);
 	g_clear_object (&priv->cli);
 
 	G_OBJECT_CLASS (biorhythm_app_parent_class)->dispose (object);
@@ -52,6 +54,7 @@ static GActionEntry app_entries[] =
 	{ "open", _biorhythm_app_file_open_activated, NULL, NULL, NULL },
 	{ "save", _biorhythm_app_file_save_activated, NULL, NULL, NULL },
 	{ "save-as", _biorhythm_app_file_save_as_activated, NULL, NULL, NULL },
+	{ "print", _biorhythm_app_print_activated, NULL, NULL, NULL },
 	{ "cli", _biorhythm_app_console_activated, NULL, NULL, NULL },
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
@@ -105,6 +108,31 @@ _biorhythm_app_set_file_view (BiorhythmApp *app, BiorhythmFileView *file_view)
 	priv = biorhythm_app_get_instance_private (app);
 
 	priv->file_view = file_view;
+}
+
+BiorhythmChart *
+_biorhythm_app_get_chart (BiorhythmApp *app)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	return priv->chart;
+}
+
+BiorhythmChart *
+_biorhythm_app_set_chart (BiorhythmApp *app, BiorhythmChart *chart)
+{
+	BiorhythmAppPrivate *priv;
+
+	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
+	g_return_val_if_fail (BIORHYTHM_IS_CHART (chart), NULL);
+
+	priv = biorhythm_app_get_instance_private (app);
+
+	priv->chart = chart;
 }
 
 BiorhythmCli *
@@ -212,14 +240,18 @@ _biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, g
 	gtk_widget_destroy (dialog);
 }
 
-void
-_biorhythm_app_print_activate (GtkWidget *widget, BiorhythmChart *chart)
+static void
+_biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
+	BiorhythmApp *app;
+	BiorhythmChart *chart;
 	GtkWidget *dialog;
 	GError *error = NULL;
 	GtkPrintOperation *print;
 	GtkPrintOperationResult res;
 
+	app = BIORHYTHM_APP(user_data);
+	chart = _biorhythm_app_get_chart (app);
 	print = biorhythm_print_operation_new (chart);
 
 	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, NULL, &error);
@@ -384,7 +416,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Print"), _biorhythm_app_print_activate, chart);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Print"), "win.print");
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
@@ -417,6 +449,7 @@ _biorhythm_app_startup (GApplication *application)
 
 	G_APPLICATION_CLASS (biorhythm_app_parent_class)->startup (application);
 	_biorhythm_app_set_file_view(BIORHYTHM_APP (application), biorhythm_file_view_new ());
+	_biorhythm_app_set_chart (BIORHYTHM_APP (application), biorhythm_chart_new ());
 	_biorhythm_app_set_cli (BIORHYTHM_APP (application), biorhythm_cli_new ());
 }
 
@@ -427,7 +460,7 @@ _biorhythm_app_activate (GApplication *application)
 	GtkMenuBar *menu;
 	GActionGroup *actions;
 	BiorhythmCli *cli;
-	GtkWidget *chart;
+	BiorhythmChart *chart;
 	GtkWidget *calendar;
 	BiorhythmFileView *file_view;
 
@@ -440,7 +473,7 @@ _biorhythm_app_activate (GApplication *application)
 
 	cli = _biorhythm_app_get_cli(BIORHYTHM_APP (application));
 
-	chart = biorhythm_chart_new ();
+	chart = _biorhythm_app_get_chart(BIORHYTHM_APP (application));
 
 	calendar = gtk_calendar_new ();
 	gtk_calendar_set_display_options (GTK_CALENDAR (calendar), GTK_CALENDAR_SHOW_HEADING|GTK_CALENDAR_SHOW_DAY_NAMES);
@@ -474,7 +507,7 @@ _biorhythm_app_activate (GApplication *application)
 	gtk_paned_pack2 (GTK_PANED (hpaned), file_view_scrolled_window, TRUE, TRUE);
 
 	GtkWidget *vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
-	gtk_paned_pack1 (GTK_PANED (vpaned), chart, TRUE, TRUE);
+	gtk_paned_pack1 (GTK_PANED (vpaned), GTK_WIDGET (chart), TRUE, TRUE);
 	gtk_paned_pack2 (GTK_PANED (vpaned), hpaned, FALSE, FALSE);
 
 	/* GUI Layout */
