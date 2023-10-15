@@ -115,12 +115,10 @@ void
 _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
-	GtkWindow *window;
 	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
 
 	app = BIORHYTHM_APP(user_data);
-	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	file_view = _biorhythm_app_get_file_view (app);
 
 	dialog = gtk_file_chooser_dialog_new (_("Open File"),
