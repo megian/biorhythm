@@ -29,8 +29,14 @@ GtkMenuBar      *_biorhythm_app_get_menu_bar            (BiorhythmApp *app);
 GtkMenuBar      *_biorhythm_app_set_menu_bar            (BiorhythmApp *app,
                                                          GtkMenuBar *menu);
 
-void            _biorhythm_app_file_new_activate        (GtkWidget *widget,
+BiorhythmFileView *_biorhythm_app_get_file_view         (BiorhythmApp *app);
+
+BiorhythmFileView *_biorhythm_app_set_file_view         (BiorhythmApp *app,
                                                          BiorhythmFileView *file_view);
+
+void            _biorhythm_app_file_new_activated       (GSimpleAction *action,
+                                                         GVariant *param,
+                                                         gpointer user_data);
 
 void            _biorhythm_app_file_save_activate       (GtkWidget *widget,
                                                          BiorhythmFileView *file_view);
@@ -103,6 +109,9 @@ void            _biorhythm_gui_menubar_init             (GtkApplication *app,
                                                          BiorhythmCli *cli);
 
 static void     _biorhythm_app_activate                 (GApplication *application);
+
+BiorhythmFileView *
+_biorhythm_app_get_file_view (BiorhythmApp *app);
 
 G_END_DECLS
 
