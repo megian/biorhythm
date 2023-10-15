@@ -38,6 +38,10 @@ void            _biorhythm_app_file_new_activated       (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer user_data);
 
+void            _biorhythm_app_file_open_activated      (GSimpleAction *action,
+                                                         GVariant *param,
+                                                         gpointer user_data);
+
 void            _biorhythm_app_file_save_activate       (GtkWidget *widget,
                                                          BiorhythmFileView *file_view);
 

@@ -47,6 +47,7 @@ biorhthm_app_dispose (GObject *object)
 static GActionEntry app_entries[] =
 {
 	{ "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
+	{ "open", _biorhythm_app_file_open_activated, NULL, NULL, NULL },
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
@@ -111,9 +112,16 @@ _biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpoin
 }
 
 void
-_biorhythm_app_file_open_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
+	BiorhythmApp *app;
+	GtkWindow *window;
+	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
+
+	app = BIORHYTHM_APP(user_data);
+	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
+	file_view = _biorhythm_app_get_file_view (app);
 
 	dialog = gtk_file_chooser_dialog_new (_("Open File"),
 						NULL,
@@ -329,7 +337,7 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_File"));
 
 	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_New"), "win.new");
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Open"), _biorhythm_app_file_open_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Open"), "win.open");
 	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save"), _biorhythm_app_file_save_activate, file_view);
 	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), _biorhythm_app_file_save_as_activate, file_view);
 
