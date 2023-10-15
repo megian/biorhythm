@@ -48,6 +48,8 @@ static GActionEntry app_entries[] =
 {
 	{ "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
 	{ "open", _biorhythm_app_file_open_activated, NULL, NULL, NULL },
+	{ "save", _biorhythm_app_file_save_activated, NULL, NULL, NULL },
+	{ "save-as", _biorhythm_app_file_save_as_activated, NULL, NULL, NULL },
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
@@ -141,16 +143,24 @@ _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpoi
 }
 
 void
-_biorhythm_app_file_save_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
-	biorhythm_file_view_save_to_file (file_view);
+	BiorhythmApp *app;
+
+	app = BIORHYTHM_APP(user_data);
+	biorhythm_file_view_save_to_file (_biorhythm_app_get_file_view (app));
 }
 
 void
-_biorhythm_app_file_save_as_activate (GtkWidget *widget, BiorhythmFileView *file_view)
+_biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
+	BiorhythmApp *app;
+	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
 	GtkFileChooser *chooser;
+
+	app = BIORHYTHM_APP(user_data);
+	file_view = _biorhythm_app_get_file_view (app);
 
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
 						NULL,
@@ -327,7 +337,7 @@ _biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
 }
 
 void
-_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmFileView *file_view, BiorhythmCli *cli)
+_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmChart *chart, BiorhythmCli *cli)
 {
 	GtkMenu *sub_menu;
 
@@ -336,8 +346,8 @@ _biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu, BiorhythmCha
 
 	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_New"), "win.new");
 	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Open"), "win.open");
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save"), _biorhythm_app_file_save_activate, file_view);
-	_biorhythm_app_menubar_mnemonic_menu_item (sub_menu, _("_Save as"), _biorhythm_app_file_save_as_activate, file_view);
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Save"), "win.save");
+	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Save as"), "win.save-as");
 
 	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
 
@@ -415,7 +425,7 @@ _biorhythm_app_activate (GApplication *application)
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
 	/* Init Menu */
-	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart), BIORHYTHM_FILE_VIEW (file_view), cli);
+	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu, BIORHYTHM_CHART (chart), cli);
 
     /* Actions */
     actions = (GActionGroup*)g_simple_action_group_new ();
