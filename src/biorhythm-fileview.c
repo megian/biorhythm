@@ -510,9 +510,12 @@ biorhythm_file_view_close_dialog ()
 					GTK_BUTTONS_YES_NO,
 					_("There are unsaved changes, do you like to continue?"));
 
-	result = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-	return result == GTK_RESPONSE_YES;
+	gtk_widget_show (dialog);
+
+	// TODO: Fix functionality
+	/*result = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_window_destroy (dialog);
+	return result == GTK_RESPONSE_YES;*/
 }
 
 gboolean

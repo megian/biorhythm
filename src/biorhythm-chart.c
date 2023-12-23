@@ -21,7 +21,7 @@
 #include "biorhythm-chart.h"
 
 void
-biorhythm_chart_draw (GtkWidget *widget, cairo_t *cr);
+biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cr, int width, int height, gpointer user_data);
 typedef struct
 {
 	GtkWidget *parent_widget;
@@ -66,11 +66,6 @@ G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmChart, biorhythm_chart, GTK_TYPE_DRAWING_AR
 static void
 biorhythm_chart_class_init (BiorhythmChartClass *klass)
 {
-	GtkWidgetClass *widget_class;
-
-	widget_class = GTK_WIDGET_CLASS (klass);
-
-	widget_class->draw = (void*)biorhythm_chart_draw;
 }
 
 void
@@ -105,6 +100,8 @@ biorhythm_chart_init (BiorhythmChart *self)
 
 	biorhythm_chart_set_current_date (&priv->active_date);
 	biorhythm_chart_set_current_date (&priv->birthday);
+
+	gtk_drawing_area_set_draw_func (GTK_DRAWING_AREA (self), biorhythm_chart_draw, NULL, NULL);
 }
 
 BiorhythmChart *
@@ -405,14 +402,9 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 }
 
 void
-biorhythm_chart_draw (GtkWidget *widget, cairo_t *cr)
+biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cr, int width, int height, gpointer user_data)
 {
-	gint full_height, full_width;
-
-	full_height = gtk_widget_get_allocated_height (widget);
-	full_width = gtk_widget_get_allocated_width (widget);
-
-	biorhythm_chart_draw_cairo (BIORHYTHM_CHART (widget), cr, full_height, full_width);
+	biorhythm_chart_draw_cairo (BIORHYTHM_CHART (area), cr, height, width);
 }
 
 /****************************************
