@@ -25,7 +25,6 @@
 
 typedef struct
 {
-	GtkMenuBar        *menu;
 	BiorhythmFileView *file_view;
 	BiorhythmChart    *chart;
 	BiorhythmCli	  *cli;
@@ -40,7 +39,6 @@ biorhthm_app_dispose (GObject *object)
 
 	priv = biorhythm_app_get_instance_private (BIORHYTHM_APP (object));
 
-	g_clear_object (&priv->menu);
 	g_clear_object (&priv->file_view);
 	g_clear_object (&priv->chart);
 	g_clear_object (&priv->cli);
@@ -63,31 +61,6 @@ static GActionEntry app_entries[] =
 	{ "about", _biorhythm_app_about_activated, NULL, NULL, NULL },
 	{ "quit", _biorhythm_app_quit_activated, NULL, NULL, NULL }
 };
-
-GtkMenuBar *
-_biorhythm_app_get_menu_bar (BiorhythmApp *app)
-{
-	BiorhythmAppPrivate *priv;
-
-	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
-
-	priv = biorhythm_app_get_instance_private (app);
-
-	return priv->menu;
-}
-
-GtkMenuBar *
-_biorhythm_app_set_menu_bar (BiorhythmApp *app, GtkMenuBar *menu)
-{
-	BiorhythmAppPrivate *priv;
-
-	g_return_val_if_fail (BIORHYTHM_IS_APP (app), NULL);
-	g_return_val_if_fail (GTK_IS_MENU_BAR (menu), NULL);
-
-	priv = biorhythm_app_get_instance_private (app);
-
-	priv->menu = menu;
-}
 
 BiorhythmFileView *
 _biorhythm_app_get_file_view (BiorhythmApp *app)
@@ -411,72 +384,6 @@ _biorhythm_app_quit_activated (GSimpleAction *action, GVariant *param, gpointer 
 }
 
 static void
-_biorhythm_app_menubar_check_menu_item (GtkMenu *menu, gchar *caption, const char* action_name)
-{
-	GtkWidget *menu_item = gtk_check_menu_item_new_with_mnemonic (_(caption));
-	gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menu_item), TRUE);
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), action_name);
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-}
-
-static void
-_biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu, gchar *caption, const char* action_name)
-{
-	GtkWidget *menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
-	gtk_actionable_set_action_name (GTK_ACTIONABLE (menu_item), action_name);
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-}
-
-GtkMenu*
-_biorhythm_app_menubar_sub_menu (GtkMenuBar *menu, gchar *caption)
-{
-	GtkMenu *sub_menu = g_object_new (GTK_TYPE_MENU, NULL);
-	GtkWidget *menu_item = menu_item = gtk_menu_item_new_with_mnemonic (_(caption));
-	gtk_menu_shell_append (GTK_MENU_SHELL (menu), menu_item);
-	gtk_menu_item_set_submenu (GTK_MENU_ITEM(menu_item), GTK_WIDGET (sub_menu));
-	return (sub_menu);
-}
-
-static void
-_biorhythm_gui_menubar_init (GtkApplication *app, GtkMenuBar *menu)
-{
-	GtkMenu *sub_menu;
-
-	/* FILE MENU */
-	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_File"));
-
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_New"), "win.new");
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Open"), "win.open");
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Save"), "win.save");
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Save as"), "win.save-as");
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
-
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Print"), "win.print");
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
-
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Close"), "win.quit");
-
-	/* OPTION MENU */
-	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Options"));
-
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Physical"), "win.option-physical");
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Emotional"), "win.option-emotional");
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Intellectual"), "win.option-intellectual");
-	_biorhythm_app_menubar_check_menu_item (sub_menu, _("_Total"), "win.option-total");
-
-	gtk_menu_shell_append (GTK_MENU_SHELL (sub_menu), gtk_separator_menu_item_new ());
-
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_Console"), "win.cli");
-
-	/* HELP MENU */
-	sub_menu = _biorhythm_app_menubar_sub_menu (menu, _("_Help"));
-
-	_biorhythm_app_menubar_mnemonic_menu_item_actionable (sub_menu, _("_About"), "win.about");
-}
-
-static void
 _biorhythm_app_startup (GApplication *application)
 {
 	BiorhythmAppPrivate *priv;
@@ -489,11 +396,132 @@ _biorhythm_app_startup (GApplication *application)
 	_biorhythm_app_set_cli (BIORHYTHM_APP (application), biorhythm_cli_new ());
 }
 
+/* Header bar */
+
+static GtkWidget *
+_biorhythm_app_create_open_dialog_button (void)
+{
+    GtkWidget *button;
+
+    button = gtk_button_new_with_mnemonic (_("_Open"));
+    gtk_widget_set_tooltip_text (button, _("Open a file"));
+    gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.open");
+
+    return button;
+}
+
+static void
+_biorhythm_app_add_new_button (GtkHeaderBar *bar)
+{
+	GtkWidget *button;
+
+	button = gtk_button_new_from_icon_name ("tab-new-symbolic", GTK_ICON_SIZE_BUTTON);
+	gtk_widget_set_tooltip_text (button, _("Create a new document"));
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.new");
+	gtk_widget_show (button);
+
+	gtk_header_bar_pack_start (GTK_HEADER_BAR (bar), button);
+}
+
+static void
+_biorhythm_app_add_save_button (GtkHeaderBar *bar)
+{
+	GtkWidget *button;
+
+	button = gtk_button_new_with_mnemonic (_("_Save"));
+	gtk_widget_set_tooltip_text (button, _("Save the current file"));
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.save");
+	gtk_widget_show (button);
+
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (bar), button);
+}
+
+static GtkWidget *
+_biorhythm_app_hamburger_create ()
+{
+	GtkWidget *button;
+	GIcon *icon;
+	GtkWidget *image;
+
+	button = gtk_menu_button_new ();
+	icon = g_themed_icon_new ("open-menu-symbolic");
+	image = gtk_image_new_from_gicon (icon, GTK_ICON_SIZE_BUTTON);
+	g_object_unref (icon);
+
+	gtk_container_add (GTK_CONTAINER (button), image);
+
+	return button;
+}
+
+
+static GMenu *
+_biorhythm_app_hamburger_create_section_main ()
+{
+	GMenu *menu = g_menu_new ();
+
+	g_menu_append (menu, _("_Save as"), "win.save-as");
+	g_menu_append (menu, _("_Print"), "win.print");
+	g_menu_append (menu, _("_Console"), "win.cli");
+
+	return menu;
+}
+
+static GMenu *
+_biorhythm_app_hamburger_create_section_options ()
+{
+	GMenu *menu = g_menu_new ();
+
+	g_menu_append (menu, _("_Physical"), "win.option-physical");
+	g_menu_append (menu, _("_Emotional"), "win.option-emotional");
+	g_menu_append (menu, _("_Intellectual"), "win.option-intellectual");
+	g_menu_append (menu, _("_Total"), "win.option-total");
+
+	return menu;
+}
+
+static GMenu *
+_biorhythm_app_hamburger_create_section_about ()
+{
+	GMenu *menu = g_menu_new ();
+
+	g_menu_append (menu, _("_About"), "win.about");
+
+	return menu;
+}
+
+static GtkWidget *
+_biorhythm_app_create_headerbar (GApplication *app, GtkWidget *window)
+{
+	GtkWidget *headerbar;
+	GtkWidget *hamburger_button;
+
+	headerbar = gtk_header_bar_new ();
+	gtk_header_bar_set_show_close_button (GTK_HEADER_BAR (headerbar), TRUE);
+	gtk_header_bar_set_title (GTK_HEADER_BAR (headerbar), "Biorhytm");
+	gtk_header_bar_set_has_subtitle (GTK_HEADER_BAR (headerbar), FALSE);
+
+	GMenu *menu = g_menu_new ();
+
+	g_menu_append_section (menu, NULL, G_MENU_MODEL (_biorhythm_app_hamburger_create_section_main ()));
+	g_menu_append_section (menu, NULL, G_MENU_MODEL (_biorhythm_app_hamburger_create_section_options ()));
+	g_menu_append_section (menu, NULL, G_MENU_MODEL (_biorhythm_app_hamburger_create_section_about ()));
+
+    hamburger_button = _biorhythm_app_hamburger_create ();
+	gtk_menu_button_set_menu_model (GTK_MENU_BUTTON (hamburger_button), G_MENU_MODEL (menu));
+
+	gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), _biorhythm_app_create_open_dialog_button ());
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), hamburger_button);
+
+	_biorhythm_app_add_new_button (GTK_HEADER_BAR (headerbar));
+	_biorhythm_app_add_save_button (GTK_HEADER_BAR (headerbar));
+
+	return headerbar;
+}
+
 static void
 _biorhythm_app_activate (GApplication *application)
 {
 	GtkWidget *window;
-	GtkMenuBar *menu;
 	GActionGroup *actions;
 	BiorhythmCli *cli;
 	BiorhythmChart *chart;
@@ -505,8 +533,6 @@ _biorhythm_app_activate (GApplication *application)
 	textdomain (GETTEXT_PACKAGE);
 
 	/* Init Objects */
-	menu = g_object_new (GTK_TYPE_MENU_BAR, NULL);
-
 	cli = _biorhythm_app_get_cli(BIORHYTHM_APP (application));
 
 	chart = _biorhythm_app_get_chart(BIORHYTHM_APP (application));
@@ -527,9 +553,6 @@ _biorhythm_app_activate (GApplication *application)
 	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
-	/* Init Menu */
-	_biorhythm_gui_menubar_init (GTK_APPLICATION (application), menu);
-
     /* Actions */
     actions = (GActionGroup*)g_simple_action_group_new ();
     g_action_map_add_action_entries (G_ACTION_MAP (actions),
@@ -545,15 +568,11 @@ _biorhythm_app_activate (GApplication *application)
 	GtkWidget *vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
 	gtk_paned_pack1 (GTK_PANED (vpaned), GTK_WIDGET (chart), TRUE, TRUE);
 	gtk_paned_pack2 (GTK_PANED (vpaned), hpaned, FALSE, FALSE);
+	gtk_container_add (GTK_CONTAINER (window), vpaned);
 
-	/* GUI Layout */
-	GtkWidget *grid = gtk_grid_new ();
-	gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (menu), 0, 0, 1, 1);
-	gtk_widget_set_hexpand (vpaned, TRUE);
-	gtk_widget_set_vexpand (vpaned, TRUE);
-	gtk_grid_attach (GTK_GRID (grid), GTK_WIDGET (vpaned), 0, 1, 1, 1);
+	/* Header Bar */
+	gtk_window_set_titlebar (GTK_WINDOW (window), _biorhythm_app_create_headerbar(application, window));
 
-	gtk_container_add (GTK_CONTAINER (window), grid);
 	gtk_widget_show_all (window);
 }
 
