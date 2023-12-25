@@ -208,9 +208,15 @@ static void
 _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
+	BiorhythmFileView *file_view;
 
 	app = BIORHYTHM_APP(user_data);
-	biorhythm_file_view_save_to_file (_biorhythm_app_get_file_view (app));
+	file_view = _biorhythm_app_get_file_view (app);
+
+	if (biorhythm_file_view_get_name (file_view) == NULL)
+	    _biorhythm_app_file_save_as_activated (action, param, user_data);
+	else
+		biorhythm_file_view_save_to_file (file_view);
 }
 
 static void
