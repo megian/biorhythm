@@ -213,7 +213,7 @@ _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpoi
 	app = BIORHYTHM_APP(user_data);
 	file_view = _biorhythm_app_get_file_view (app);
 
-	if (biorhythm_file_view_get_name (file_view) == NULL)
+	if (biorhythm_file_view_get_filename (file_view) == NULL)
 	    _biorhythm_app_file_save_as_activated (action, param, user_data);
 	else
 		biorhythm_file_view_save_to_file (file_view);
