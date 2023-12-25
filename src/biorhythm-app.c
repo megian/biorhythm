@@ -177,14 +177,16 @@ static void
 _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
+	GtkWindow *window;
 	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
 
 	app = BIORHYTHM_APP(user_data);
+	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	file_view = _biorhythm_app_get_file_view (app);
 
 	dialog = gtk_file_chooser_dialog_new (_("Open File"),
-						NULL,
+						window,
 						GTK_FILE_CHOOSER_ACTION_OPEN,
 						_("_Cancel"), GTK_RESPONSE_CANCEL,
 						_("_Open"), GTK_RESPONSE_ACCEPT,
@@ -215,15 +217,17 @@ static void
 _biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
+	GtkWindow *window;
 	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
 	GtkFileChooser *chooser;
 
 	app = BIORHYTHM_APP(user_data);
+	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	file_view = _biorhythm_app_get_file_view (app);
 
 	dialog = gtk_file_chooser_dialog_new (_("Save File"),
-						NULL,
+						window,
 						GTK_FILE_CHOOSER_ACTION_SAVE,
 						_("_Cancel"), GTK_RESPONSE_CANCEL,
 						_("_Save"), GTK_RESPONSE_ACCEPT,
@@ -248,6 +252,7 @@ static void
 _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
 	BiorhythmApp *app;
+	GtkWindow *window;
 	BiorhythmChart *chart;
 	GtkWidget *dialog;
 	GError *error = NULL;
@@ -255,14 +260,15 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
 	GtkPrintOperationResult res;
 
 	app = BIORHYTHM_APP(user_data);
+	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	chart = _biorhythm_app_get_chart (app);
 	print = biorhythm_print_operation_new (chart);
 
-	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, NULL, &error);
+	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, window, &error);
 
     if (res == GTK_PRINT_OPERATION_RESULT_ERROR)
 	{
-                dialog = gtk_message_dialog_new (NULL,
+                dialog = gtk_message_dialog_new (window,
                                                  GTK_DIALOG_DESTROY_WITH_PARENT,
                                                  GTK_MESSAGE_ERROR,
                                                  GTK_BUTTONS_CLOSE,
