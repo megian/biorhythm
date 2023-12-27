@@ -183,7 +183,7 @@ _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpoi
 						_("_Open"), GTK_RESPONSE_ACCEPT,
 						NULL);
 
-	gtk_window_present (GTK_WIDGET (dialog));
+	gtk_window_present (GTK_WINDOW (dialog));
 
 	g_signal_connect (dialog, "response",
                     G_CALLBACK (_biorhythm_app_file_open_response),
@@ -278,7 +278,7 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
                                                  error->message);
                 g_signal_connect (dialog, "response",
                                   G_CALLBACK (gtk_window_destroy), NULL);
-                gtk_window_present (GTK_WIDGET (dialog));
+                gtk_window_present (GTK_WINDOW (dialog));
                 g_error_free (error);
 	}
 }
@@ -503,10 +503,10 @@ _biorhythm_app_hamburger_create_section_about ()
 }
 
 static GtkWidget *
-_biorhythm_app_create_headerbar (GApplication *app, GtkWidget *window)
+_biorhythm_app_create_headerbar (GApplication *app, GtkWindow *window)
 {
 	GtkWidget *headerbar;
-	GtkWidget *hamburger_button;
+	GtkMenuButton *hamburger_button;
 
 	headerbar = gtk_header_bar_new ();
 
@@ -516,12 +516,12 @@ _biorhythm_app_create_headerbar (GApplication *app, GtkWidget *window)
 	g_menu_append_section (menu, NULL, G_MENU_MODEL (_biorhythm_app_hamburger_create_section_options ()));
 	g_menu_append_section (menu, NULL, G_MENU_MODEL (_biorhythm_app_hamburger_create_section_about ()));
 
-	hamburger_button = gtk_menu_button_new();
+	hamburger_button = GTK_MENU_BUTTON (gtk_menu_button_new ());
 	gtk_menu_button_set_icon_name (hamburger_button, "open-menu-symbolic");
 	gtk_menu_button_set_menu_model (hamburger_button, G_MENU_MODEL (menu));
 
 	gtk_header_bar_pack_start (GTK_HEADER_BAR (headerbar), _biorhythm_app_create_open_dialog_button ());
-	gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), hamburger_button);
+	gtk_header_bar_pack_end (GTK_HEADER_BAR (headerbar), GTK_WIDGET (hamburger_button));
 
 	_biorhythm_app_add_new_button (GTK_HEADER_BAR (headerbar));
 	_biorhythm_app_add_save_button (GTK_HEADER_BAR (headerbar));
@@ -544,7 +544,7 @@ _biorhythm_app_activate (GApplication *application)
 	textdomain (GETTEXT_PACKAGE);
 
     /* Window */
-	window = gtk_application_window_new (GTK_APPLICATION (application));
+	window = GTK_WINDOW (gtk_application_window_new (GTK_APPLICATION (application)));
 	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
@@ -582,7 +582,7 @@ _biorhythm_app_activate (GApplication *application)
     g_action_map_add_action_entries (G_ACTION_MAP (actions),
                                      app_entries, G_N_ELEMENTS (app_entries),
                                      application);
-	gtk_widget_insert_action_group (window, "win", actions);
+	gtk_widget_insert_action_group (GTK_WIDGET (window), "win", actions);
 
 	gtk_window_set_child (window, vpaned);
 	gtk_window_present (window);
