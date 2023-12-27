@@ -41,6 +41,7 @@ struct _BiorhythmFileViewClass
 BiorhythmFileView* biorhythm_file_view_new ();
 
 void biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *month, guint *year);
+gchar* biorhythm_file_view_get_filename (BiorhythmFileView *file_view);
 gchar* biorhythm_file_view_get_name (BiorhythmFileView *file_view);
 gboolean biorhythm_file_view_new_file (BiorhythmFileView *file_view);
 gboolean biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename);
