@@ -24,11 +24,6 @@
 
 G_BEGIN_DECLS
 
-GtkMenuBar      *_biorhythm_app_get_menu_bar            (BiorhythmApp *app);
-
-GtkMenuBar      *_biorhythm_app_set_menu_bar            (BiorhythmApp *app,
-                                                         GtkMenuBar *menu);
-
 BiorhythmFileView *_biorhythm_app_get_file_view         (BiorhythmApp *app);
 
 BiorhythmFileView *_biorhythm_app_set_file_view         (BiorhythmApp *app,
@@ -103,23 +98,31 @@ static void     _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *
 static void     _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
                                                                BiorhythmCli *cli);
 
+static void     _biorhythm_app_quit_activated (GSimpleAction *action,
+                                               GVariant *param,
+                                               gpointer app);
+
+static void     _biorhythm_app_startup (GApplication *application);
+
+static GtkWidget *_biorhythm_app_create_open_dialog_button (void);
+
+static void     _biorhythm_app_add_new_button (GtkHeaderBar *bar);
+
+static void     _biorhythm_app_add_save_button (GtkHeaderBar *bar);
+
+static GtkWidget *_biorhythm_app_hamburger_create ();
+
+static GMenu *_biorhythm_app_hamburger_create_section_main ();
+
+static GMenu *_biorhythm_app_hamburger_create_section_options ();
+
+static GMenu *_biorhythm_app_hamburger_create_section_about ();
+
+static GtkWidget *_biorhythm_app_create_headerbar (GApplication *app, GtkWidget *window);
+
 static void     _biorhythm_app_quit_activated           (GSimpleAction *action,
                                                          GVariant *param,
                                                          gpointer app);
-
-static void     _biorhythm_app_menubar_check_menu_item  (GtkMenu *menu,
-                                                         gchar *caption,
-                                                         const char* action_name);
-
-static void     _biorhythm_app_menubar_mnemonic_menu_item_actionable (GtkMenu *menu,
-                                                                      gchar *caption,
-                                                                      const char* action_name);
-
-GtkMenu         *_biorhythm_app_menubar_sub_menu        (GtkMenuBar *menu,
-                                                         gchar *caption);
-
-static void     _biorhythm_gui_menubar_init             (GtkApplication *app,
-                                                         GtkMenuBar *menu);
 
 static void     _biorhythm_app_activate                 (GApplication *application);
 
