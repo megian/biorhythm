@@ -111,6 +111,8 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 
 	file_view->priv = priv = biorhythm_file_view_get_instance_private (file_view);
 
+	priv->filename = NULL;
+
 	priv->name = NULL;
 
 	priv->saved = TRUE;
@@ -554,6 +556,16 @@ biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *m
 
 	if (year)
 		*year = priv->year;
+}
+
+gchar *
+biorhythm_file_view_get_filename (BiorhythmFileView *file_view)
+{
+	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
+
+	BiorhythmFileViewPrivate *priv = file_view->priv;
+
+	return priv->filename;
 }
 
 gchar *
