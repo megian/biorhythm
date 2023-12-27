@@ -118,7 +118,8 @@ static GMenu *_biorhythm_app_hamburger_create_section_options ();
 
 static GMenu *_biorhythm_app_hamburger_create_section_about ();
 
-static GtkWidget *_biorhythm_app_create_headerbar (GApplication *app, GtkWidget *window);
+static GtkWidget *_biorhythm_app_create_headerbar (GApplication *app,
+                                                   GtkWindow *window);
 
 static void     _biorhythm_app_quit_activated           (GSimpleAction *action,
                                                          GVariant *param,
