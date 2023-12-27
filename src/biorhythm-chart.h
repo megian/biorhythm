@@ -51,7 +51,7 @@ gboolean biorhythm_chart_get_option_intellectual (BiorhythmChart *chart);
 void biorhythm_chart_set_option_total (BiorhythmChart *chart, gboolean state);
 gboolean biorhythm_chart_get_option_total (BiorhythmChart *chart);
 
-void biorhythm_chart_draw_cairo (BiorhythmChart *widget, cairo_t *cr, gint full_height, gint full_width);
+void biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height, gint full_width);
 
 G_END_DECLS
 
