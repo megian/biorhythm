@@ -10,7 +10,7 @@ find_library(M_LIB m)
 # and to the linker where to look for libraries
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
-    ${GTK4_INCLUDE_DIRS}
+	${GTK4_INCLUDE_DIRS}
 	${JSON-GLIB_INCLUDE_DIRS}
 	)
 
