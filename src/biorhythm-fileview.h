@@ -21,32 +21,35 @@
 #ifndef __BIORHYTHM_FILE_VIEW_H__
 #define __BIORHYTHM_FILE_VIEW_H__
 
-#include <gtk/gtk.h>
+#include "biorhythm-person.h"
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 #include <json-glib/json-glib.h>
 
 G_BEGIN_DECLS
 
-#define BIORHYTHM_TYPE_FILE_VIEW		(biorhythm_file_view_get_type ())
-G_DECLARE_FINAL_TYPE (BiorhythmFileView, biorhythm_file_view, BIORHYTHM, FILE_VIEW, GtkTreeView)
+#define BIORHYTHM_TYPE_FILE_VIEW (biorhythm_file_view_get_type ())
+// Custom widgets in GTK 4 – Layout – GTK Development Blog
+// https://blog.gtk.org/2020/04/27/custom-widgets-in-gtk-4-layout/
+G_DECLARE_FINAL_TYPE (BiorhythmFileView, biorhythm_file_view, BIORHYTHM, FILE_VIEW, GtkWidget)
 
 struct _BiorhythmFileViewClass
 {
-	GtkTreeViewClass parent_class;
+	GtkWidgetClass parent_class;
 
-	void (* date_changed) (BiorhythmFileView *self);
-	void (* name_changed) (BiorhythmFileView *self);
+	void (*date_changed) (BiorhythmFileView *self);
+	void (*name_changed) (BiorhythmFileView *self);
 };
 
-BiorhythmFileView* biorhythm_file_view_new ();
+BiorhythmFileView *biorhythm_file_view_new ();
 
 void biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *month, guint *year);
-gchar* biorhythm_file_view_get_filename (BiorhythmFileView *file_view);
-gchar* biorhythm_file_view_get_name (BiorhythmFileView *file_view);
-gboolean biorhythm_file_view_new_file (BiorhythmFileView *file_view);
-gboolean biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename);
-gboolean biorhythm_file_view_save_to_file (BiorhythmFileView *file_view);
-gboolean biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, gchar *filename);
+gchar *biorhythm_file_view_get_filename (BiorhythmFileView *file_view);
+gchar *biorhythm_file_view_get_name (BiorhythmFileView *file_view);
+void biorhythm_file_view_new_file (BiorhythmFileView *file_view);
+void biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename);
+void biorhythm_file_view_save_to_file (BiorhythmFileView *file_view);
+void biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, gchar *filename);
 
 G_END_DECLS
 
