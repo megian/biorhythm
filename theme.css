@@ -1,0 +1,15 @@
+GtkWindow {
+  font-size: 12pt;
+}
+
+columnview.column-separators listview row cell {
+  padding: 2px;
+}
+
+columnview.column-separators listview row:last-child {
+  background-color: lightgreen;
+}
+
+.error {
+  color: red;
+}

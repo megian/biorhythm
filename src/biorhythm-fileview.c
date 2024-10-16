@@ -2,7 +2,7 @@
 
 /* biorhythm-fileview.c
  * This file is part of Biorhythm
- * Copyright (C) 2003-2013, Gabriel Mainberger
+ * Copyright (C) 2003-2024, Gabriel Mainberger
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published
@@ -20,37 +20,13 @@
 
 #include "biorhythm-fileview.h"
 
-void biorhythm_file_view_list_store_clear (GtkListStore *list_store);
-void biorhythm_file_view_list_store_add_empty_row (GtkListStore *list_store);
-void biorhythm_file_view_read_file_each_element (JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data);
-int biorhythm_file_view_read_file (BiorhythmFileView *file_view);
-void biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GtkListStore *list_store);
-gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view);
-void biorhythm_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmFileView *file_view);
-gboolean biorhythm_file_view_check_other_cells_empty (GtkListStore *list_store, GtkTreeIter *iter, gint except_column);
-void biorhythm_file_view_add_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
-gboolean biorhythm_file_view_delete_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
-void biorhythm_file_view_change_cell_text (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text);
-void biorhythm_file_view_textrenderer_callback_update_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
-void biorhythm_file_view_textrenderer_callback_name_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
-void biorhythm_file_view_textrenderer_callback_birthday_edited_list (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
-void biorhythm_file_view_textrenderer_callback_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data);
-void biorhythm_file_view_textrenderer_mark_empty_cell_green (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter);
-void biorhythm_file_view_textrenderer_mark_date_cell_if_invalid_date (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter);
-void biorhythm_file_view_textrenderer_callback_name (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data);
-void biorhythm_file_view_textrenderer_callback_date (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data);
-gboolean biorhythm_file_view_close_dialog ();
-gboolean biorhythm_file_view_close_file_dialog (BiorhythmFileView *file_view);
-
 typedef struct
 {
 	GtkWidget *parent_widget;
 
-	GtkListStore *list_store;
+	GtkWidget *columnview;
+	GListStore *liststore;
 	gchar *filename;
-
-	GtkCellRenderer *text_renderer_name;
-	GtkCellRenderer *text_renderer_birthday;
 
 	gint month;
 	gint year;
@@ -62,27 +38,49 @@ typedef struct
 
 struct _BiorhythmFileView
 {
-	GtkTreeView parent_instance;
+	GtkWidget parent_instance;
 
 	BiorhythmFileViewPrivate *priv;
 };
 
 enum
 {
-    VIEW_COLUMN_NAME = 0,
-	VIEW_COLUMN_BIRTHDAY,
-	VIEW_COLUMN_NUM_COLS
-};
-
-enum {
-    DATE_CHANGED,
+	DATE_CHANGED,
 	NAME_CHANGED,
 	LAST_SIGNAL
 };
 
+typedef struct
+{
+	GListStore *liststore;
+	GtkListItem *listitem;
+} RemoveRowCallbackData;
+
 static guint biorhythm_file_view_signals[LAST_SIGNAL] = { 0 };
 
-G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TREE_VIEW)
+static void biorhythm_file_view_dispose (GObject *object);
+static void biorhythm_file_view_list_store_clear (GListStore *liststore);
+static void biorhythm_file_view_list_store_add_empty_row (GListStore *liststore);
+static void biorhythm_file_view_add_new_row_if_required (GtkText *self, GListStore *liststore);
+static void biorhythm_file_view_remove_row (GtkText *self, RemoveRowCallbackData *data);
+static void biorhythm_file_view_setup_column_binding (GtkSignalListItemFactory *factory, GtkListItem *listitem);
+static void biorhythm_file_view_bind_name_column_binding (GtkSignalListItemFactory *factory, GtkListItem *listitem, BiorhythmFileView *file_view);
+static void biorhythm_file_view_bind_birthday_column_binding (GtkSignalListItemFactory *factory, GtkListItem *listitem, BiorhythmFileView *file_view);
+static void biorhythm_file_view_unbind_column_binding (GtkListItemFactory *factory, GtkListItem *listitem);
+static void biorhythm_file_view_append_person (GListStore *liststore, const char *name, const char *birthday);
+static void biorhythm_file_view_on_date_changed (GtkColumnView *self, guint position, BiorhythmFileView *file_view);
+static void biorhythm_file_view_text_callback_update_view (GtkText *self, BiorhythmFileView *file_view);
+static void biorhythm_file_view_text_callback_changed (GtkText *self, BiorhythmFileView *file_view);
+static void biorhythm_file_view_mark_date_cell_if_invalid_date (GtkText *self);
+static void biorhythm_file_view_read_file_each_element (JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data);
+static int biorhythm_file_view_read_file (BiorhythmFileView *file_view);
+static void biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GListStore *liststore);
+static gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view);
+static GtkWidget *biorhythm_file_view_close_dialog ();
+static void biorhythm_file_view_new_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
+static void biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
+
+G_DEFINE_TYPE_WITH_CODE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_WIDGET, G_ADD_PRIVATE (BiorhythmFileView))
 
 /****************************************
  *                 Class                *
@@ -91,137 +89,362 @@ G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_TRE
 static void
 biorhythm_file_view_class_init (BiorhythmFileViewClass *klass)
 {
-	biorhythm_file_view_signals[DATE_CHANGED] =
-				g_signal_new ("date-changed", G_TYPE_FROM_CLASS (klass),
-				G_SIGNAL_RUN_FIRST,
-				0,
-				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (klass);
 
-	biorhythm_file_view_signals[NAME_CHANGED] =
-				g_signal_new ("name-changed", G_TYPE_FROM_CLASS (klass),
-				G_SIGNAL_RUN_FIRST,
-				0,
-				NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	object_class->dispose = biorhythm_file_view_dispose;
+
+	// https://blog.gtk.org/2020/04/27/custom-widgets-in-gtk-4-layout/
+	gtk_widget_class_set_layout_manager_type (widget_class, GTK_TYPE_BOX_LAYOUT);
+
+	biorhythm_file_view_signals[DATE_CHANGED] = g_signal_new ("date-changed", G_TYPE_FROM_CLASS (klass),
+															  G_SIGNAL_RUN_FIRST,
+															  0,
+															  NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+
+	biorhythm_file_view_signals[NAME_CHANGED] = g_signal_new ("name-changed", G_TYPE_FROM_CLASS (klass),
+															  G_SIGNAL_RUN_FIRST,
+															  0,
+															  NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+}
+
+static void
+biorhythm_file_view_dispose (GObject *object)
+{
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (BIORHYTHM_FILE_VIEW (object));
+
+	g_clear_pointer (&priv->columnview, gtk_widget_unparent);
 }
 
 static void
 biorhythm_file_view_init (BiorhythmFileView *file_view)
 {
-	BiorhythmFileViewPrivate *priv;
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	file_view->priv = priv = biorhythm_file_view_get_instance_private (file_view);
-
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 	priv->filename = NULL;
-
 	priv->name = NULL;
-
 	priv->saved = TRUE;
 
-	priv->list_store = gtk_list_store_new (VIEW_COLUMN_NUM_COLS, G_TYPE_STRING, G_TYPE_STRING);
+	priv->columnview = gtk_column_view_new (NULL);
+	gtk_widget_set_parent (priv->columnview, GTK_WIDGET (file_view));
+	gtk_column_view_set_single_click_activate (GTK_COLUMN_VIEW (priv->columnview), TRUE);
+	gtk_column_view_set_show_column_separators (GTK_COLUMN_VIEW (priv->columnview), TRUE);
+	g_signal_connect (priv->columnview, "activate", G_CALLBACK (biorhythm_file_view_on_date_changed), file_view);
 
-	biorhythm_file_view_list_store_clear (priv->list_store);
-	biorhythm_file_view_list_store_add_empty_row (priv->list_store);
+	priv->liststore = g_list_store_new (BIORHYTHM_TYPE_PERSON);
+	biorhythm_file_view_list_store_clear (priv->liststore);
+	biorhythm_file_view_list_store_add_empty_row (priv->liststore);
 
-	g_object_set (GTK_TREE_VIEW (file_view), "model", priv->list_store,
-										"headers-clickable", TRUE,
-										"reorderable", TRUE,
-										"enable-search", TRUE,
-										"search-column", 0,
-										"enable-grid-lines", GTK_TREE_VIEW_GRID_LINES_BOTH,
-										"rubber-banding", FALSE,
-										NULL);
+	GtkSorter *sorter = g_object_ref (gtk_column_view_get_sorter (GTK_COLUMN_VIEW (priv->columnview)));
+	GtkSortListModel *model = gtk_sort_list_model_new (G_LIST_MODEL (priv->liststore), sorter);
+	GtkSingleSelection *selection = gtk_single_selection_new (G_LIST_MODEL (model));
+	gtk_single_selection_set_autoselect (selection, TRUE);
+	gtk_column_view_set_model (GTK_COLUMN_VIEW (priv->columnview), GTK_SELECTION_MODEL (selection));
 
-	priv->text_renderer_name = gtk_cell_renderer_text_new ();
-	g_object_set (priv->text_renderer_name, "editable", TRUE, NULL);
-	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_name_edited), priv->list_store);
-	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
-	g_signal_connect (G_OBJECT (priv->text_renderer_name), "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
-	GtkTreeViewColumn *column_name = gtk_tree_view_column_new_with_attributes (_("Name"), priv->text_renderer_name,
-																				"text", VIEW_COLUMN_NAME,
-																				NULL);
-	g_object_set(column_name, "resizable", TRUE,
-							"clickable", TRUE,
-							"reorderable", TRUE,
-							NULL);
-	gtk_tree_view_column_set_cell_data_func (column_name, priv->text_renderer_name, biorhythm_file_view_textrenderer_callback_name, NULL, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (file_view), column_name);
+	// Factory setup and bind for column Name
+	GtkListItemFactory *factory = gtk_signal_list_item_factory_new ();
+	g_signal_connect (factory, "setup", G_CALLBACK (biorhythm_file_view_setup_column_binding), NULL);
+	g_signal_connect (factory, "bind", G_CALLBACK (biorhythm_file_view_bind_name_column_binding), file_view);
+	g_signal_connect (factory, "unbind", G_CALLBACK (biorhythm_file_view_unbind_column_binding), NULL);
+	GtkColumnViewColumn *column = gtk_column_view_column_new ("Name", factory);
+	gtk_column_view_append_column (GTK_COLUMN_VIEW (priv->columnview), column);
 
-	priv->text_renderer_birthday = gtk_cell_renderer_text_new ();
-	g_object_set (priv->text_renderer_birthday, "editable", TRUE, NULL);
-	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_birthday_edited_list), priv->list_store);
-	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_edited), file_view);
-	g_signal_connect (priv->text_renderer_birthday, "edited", G_CALLBACK (biorhythm_file_view_textrenderer_callback_update_view), file_view);
-	GtkTreeViewColumn *column_birthday = gtk_tree_view_column_new_with_attributes (_("Birthday"), priv->text_renderer_birthday,
-																					"text", VIEW_COLUMN_BIRTHDAY,
-																					NULL);
-	g_object_set (column_birthday, "resizable", TRUE,
-									"clickable", TRUE,
-									"reorderable", TRUE,
-									NULL);
-	gtk_tree_view_column_set_cell_data_func (column_birthday, priv->text_renderer_birthday, biorhythm_file_view_textrenderer_callback_date, NULL, NULL);
-	gtk_tree_view_append_column (GTK_TREE_VIEW (file_view), column_birthday);
+	// Factory setup and bind for column Birthday
+	factory = gtk_signal_list_item_factory_new ();
+	g_signal_connect (factory, "setup", G_CALLBACK (biorhythm_file_view_setup_column_binding), NULL);
+	g_signal_connect (factory, "bind", G_CALLBACK (biorhythm_file_view_bind_birthday_column_binding), file_view);
+	g_signal_connect (factory, "unbind", G_CALLBACK (biorhythm_file_view_unbind_column_binding), NULL);
+	column = gtk_column_view_column_new ("Birthday", factory);
+	gtk_column_view_column_set_expand (GTK_COLUMN_VIEW_COLUMN (column), TRUE);
+	gtk_column_view_append_column (GTK_COLUMN_VIEW (priv->columnview), column);
 
-	g_signal_connect (G_OBJECT(file_view), "cursor-changed", G_CALLBACK (biorhythm_file_view_on_date_changed), file_view);
+	GtkCssProvider *cssProvider = gtk_css_provider_new ();
+	gtk_css_provider_load_from_path (cssProvider, "theme.css");
+	gtk_style_context_add_provider_for_display (gdk_display_get_default (), GTK_STYLE_PROVIDER (cssProvider), GTK_STYLE_PROVIDER_PRIORITY_USER);
 }
 
-BiorhythmFileView*
+BiorhythmFileView *
 biorhythm_file_view_new ()
 {
 	return g_object_new (BIORHYTHM_TYPE_FILE_VIEW, NULL);
 }
 
-/****************************************
- *           Private Functions          *
- ****************************************/
-
-void
-biorhythm_file_view_list_store_clear (GtkListStore *list_store)
+static void
+biorhythm_file_view_list_store_clear (GListStore *liststore)
 {
-	gtk_list_store_clear (list_store);
+	g_return_if_fail (G_IS_LIST_STORE (liststore));
+
+	g_list_store_remove_all (liststore);
 }
 
-void
-biorhythm_file_view_list_store_add_empty_row (GtkListStore *list_store)
+static void
+biorhythm_file_view_list_store_add_empty_row (GListStore *liststore)
 {
-	GtkTreeIter iter;
+	g_return_if_fail (G_IS_LIST_STORE (liststore));
 
-	gtk_list_store_append (list_store, &iter);
-	gtk_list_store_set (list_store, &iter, VIEW_COLUMN_NAME, "", VIEW_COLUMN_BIRTHDAY, "", -1);
+	g_list_store_append (liststore, biorhythm_person_new ("", ""));
 }
 
-void
+static void
+biorhythm_file_view_add_new_row_if_required (GtkText *self, GListStore *liststore)
+{
+	guint n_items = g_list_model_get_n_items (G_LIST_MODEL (liststore));
+	if (n_items == 0)
+	{
+		return;
+	}
+
+	BiorhythmPerson *item = g_list_model_get_item (G_LIST_MODEL (liststore), n_items - 1);
+
+	g_return_if_fail (item != NULL);
+
+	if (((g_strcmp0 (item->name, "") != 0) || (g_strcmp0 (item->birthday, "") != 0)))
+	{
+		g_list_store_append (liststore, biorhythm_person_new ("", ""));
+	}
+}
+
+static void
+biorhythm_file_view_remove_row (GtkText *self, RemoveRowCallbackData *data)
+{
+	guint position = gtk_list_item_get_position (GTK_LIST_ITEM (data->listitem));
+	guint n_items = g_list_model_get_n_items (G_LIST_MODEL (data->liststore));
+	if (n_items <= 1)
+	{
+		return;
+	}
+
+	if (position == GTK_INVALID_LIST_POSITION)
+	{
+		g_print ("biorhythm_file_view_remove_row: GTK_INVALID_LIST_POSITION\n");
+		return;
+	}
+
+	BiorhythmPerson *item = g_list_model_get_item (G_LIST_MODEL (data->liststore), position);
+	if (((g_strcmp0 (item->name, "") == 0) && (g_strcmp0 (item->birthday, "") == 0)))
+	{
+		// g_print ("Release: %i %p %s %s\n", position, item, item->name, item->birthday);
+		g_list_store_remove (data->liststore, position);
+	}
+}
+
+static void
+biorhythm_file_view_setup_column_binding (GtkSignalListItemFactory *factory, GtkListItem *listitem)
+{
+	GtkWidget *text = gtk_text_new ();
+	gtk_list_item_set_child (GTK_LIST_ITEM (listitem), GTK_WIDGET (text));
+	gtk_editable_set_alignment (GTK_EDITABLE (text), 0.0);
+}
+
+static void
+biorhythm_file_view_bind_name_column_binding (GtkSignalListItemFactory *factory,
+											  GtkListItem *listitem,
+											  BiorhythmFileView *file_view)
+{
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	GtkWidget *text = gtk_list_item_get_child (listitem);
+	GtkEntryBuffer *buffer = gtk_text_get_buffer (GTK_TEXT (text));
+	BiorhythmPerson *item = BIORHYTHM_PERSON (gtk_list_item_get_item (GTK_LIST_ITEM (listitem)));
+	GBinding *bind;
+
+	// g_print ("%i\n", gtk_list_item_get_position (GTK_LIST_ITEM (listitem)));
+
+	gtk_editable_set_text (GTK_EDITABLE (text), item->name);
+	gtk_editable_set_position (GTK_EDITABLE (text), 0);
+
+	bind = g_object_bind_property (buffer, "text", item, "name", G_BINDING_DEFAULT);
+	g_object_set_data (G_OBJECT (listitem), "bind", bind);
+
+	RemoveRowCallbackData *data_for_biorhythm_file_view_remove_row = g_new0 (RemoveRowCallbackData, 1);
+	data_for_biorhythm_file_view_remove_row->liststore = priv->liststore;
+	data_for_biorhythm_file_view_remove_row->listitem = listitem;
+
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_remove_row), data_for_biorhythm_file_view_remove_row);
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_add_new_row_if_required), priv->liststore);
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_text_callback_changed), file_view);
+	// TODO: It works but it's executed to to often unneccessary
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_text_callback_update_view), file_view);
+
+	// TODO: Free the variable without a segfault
+	// g_free (data_for_biorhythm_file_view_remove_row);
+}
+
+static void
+biorhythm_file_view_bind_birthday_column_binding (GtkSignalListItemFactory *factory,
+												  GtkListItem *listitem,
+												  BiorhythmFileView *file_view)
+{
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	GtkWidget *text = gtk_list_item_get_child (listitem);
+	GtkEntryBuffer *buffer = gtk_text_get_buffer (GTK_TEXT (text));
+	BiorhythmPerson *item = BIORHYTHM_PERSON (gtk_list_item_get_item (GTK_LIST_ITEM (listitem)));
+	GBinding *bind;
+
+	gtk_editable_set_text (GTK_EDITABLE (text), item->birthday);
+	gtk_editable_set_position (GTK_EDITABLE (text), 0);
+
+	bind = g_object_bind_property (buffer, "text", item, "birthday",
+								   G_BINDING_DEFAULT);
+	g_object_set_data (G_OBJECT (listitem), "bind", bind);
+
+	RemoveRowCallbackData *data_for_biorhythm_file_view_remove_row = g_new0 (RemoveRowCallbackData, 1);
+	data_for_biorhythm_file_view_remove_row->liststore = priv->liststore;
+	data_for_biorhythm_file_view_remove_row->listitem = listitem;
+
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_remove_row), data_for_biorhythm_file_view_remove_row);
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_add_new_row_if_required), priv->liststore);
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_mark_date_cell_if_invalid_date), NULL);
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_text_callback_changed), file_view);
+	// TODO: It works but it's executed to to often unneccessary
+	g_signal_connect (text, "changed", G_CALLBACK (biorhythm_file_view_text_callback_update_view), file_view);
+
+	// TODO: Free the variable without a segfault
+	// g_free (data_for_biorhythm_file_view_remove_row);
+}
+
+static void
+biorhythm_file_view_unbind_column_binding (GtkListItemFactory *factory, GtkListItem *listitem)
+{
+	GBinding *bind = G_BINDING (g_object_get_data (G_OBJECT (listitem), "bind"));
+
+	if (bind)
+	{
+		g_binding_unbind (bind);
+	}
+	g_object_set_data (G_OBJECT (listitem), "bind", NULL);
+}
+
+static void
+biorhythm_file_view_append_person (GListStore *liststore, const char *name, const char *birthday)
+{
+	g_return_if_fail (G_IS_LIST_STORE (liststore));
+
+	guint n_items = g_list_model_get_n_items (G_LIST_MODEL (liststore));
+
+	g_list_store_insert (liststore, n_items,
+						 biorhythm_person_new (name, birthday));
+}
+
+static void
+biorhythm_file_view_on_date_changed (GtkColumnView *self, guint position, BiorhythmFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+
+	GtkSelectionModel *selection = gtk_column_view_get_model (self);
+	BiorhythmPerson *item = gtk_single_selection_get_selected_item (GTK_SINGLE_SELECTION (selection));
+	gchar *str_name;
+	gchar *str_birthday;
+	GDate *date;
+
+	if (selection == NULL)
+	{
+		return;
+	}
+
+	date = g_date_new ();
+	g_date_set_parse (date, item->birthday);
+
+	if (g_date_valid (date))
+	{
+		priv->day = g_date_get_day (date);
+		priv->month = g_date_get_month (date);
+		priv->year = g_date_get_year (date);
+
+		priv->name = g_strdup (item->name);
+
+		g_signal_emit_by_name (G_OBJECT (file_view), "date-changed", NULL);
+		g_signal_emit_by_name (G_OBJECT (file_view), "name-changed", NULL);
+	}
+
+	g_date_free (date);
+}
+
+static void
+biorhythm_file_view_text_callback_update_view (GtkText *self, BiorhythmFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+
+	g_signal_emit_by_name (G_OBJECT (priv->columnview), "activate");
+}
+
+static void
+biorhythm_file_view_text_callback_changed (GtkText *self, BiorhythmFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+
+	priv->saved = FALSE;
+}
+
+static void
+biorhythm_file_view_mark_date_cell_if_invalid_date (GtkText *self)
+{
+	GDate *date;
+	GtkEntryBuffer *buffer = gtk_text_get_buffer (GTK_TEXT (self));
+
+	date = g_date_new ();
+	g_date_set_parse (date, gtk_entry_buffer_get_text (buffer));
+
+	if (g_date_valid (date))
+	{
+		gtk_widget_remove_css_class (GTK_WIDGET (self), "error");
+	}
+	else
+	{
+		gtk_widget_add_css_class (GTK_WIDGET (self), "error");
+	}
+
+	g_date_free (date);
+}
+
+static void
 biorhythm_file_view_read_file_each_element (JsonArray *array, guint index_, JsonNode *element_node, gpointer user_data)
 {
+	g_return_if_fail (G_IS_LIST_STORE (user_data));
+
 	JsonObject *element;
-	JsonNode *name, *birthday;
-	GtkTreeIter iter;
-	GtkListStore *list_store = (GtkListStore*)user_data;
+	JsonNode *name;
+	JsonNode *birthday;
+	GListStore *liststore = G_LIST_STORE (user_data);
 
 	element = json_node_get_object (element_node);
 	name = json_object_get_member (element, "Name");
 	birthday = json_object_get_member (element, "Birthday");
 
-	gtk_list_store_append (list_store, &iter);
-	gtk_list_store_set (list_store, &iter, VIEW_COLUMN_NAME, json_node_dup_string(name), VIEW_COLUMN_BIRTHDAY, json_node_dup_string(birthday), -1);
+	biorhythm_file_view_append_person (liststore, json_node_dup_string (name), json_node_dup_string (birthday));
 }
 
-int
+static int
 biorhythm_file_view_read_file (BiorhythmFileView *file_view)
 {
+	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), 0);
+
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 	JsonParser *parser;
-	JsonNode *root, *result;
+	JsonNode *root;
+	JsonNode *result;
 	JsonObject *element;
 	GError *error;
 	JsonArray *array;
 
 	parser = json_parser_new ();
 	error = NULL;
-	json_parser_load_from_file (parser, file_view->priv->filename, &error);
+	json_parser_load_from_file (parser, priv->filename, &error);
 	if (error)
 	{
-		g_print ("Unable to parse `%s': %s\n", file_view->priv->filename, error->message);
+		g_print ("Unable to parse `%s': %s\n", priv->filename, error->message);
 		g_error_free (error);
-    		g_object_unref (parser);
+		g_object_unref (parser);
 		return 1;
 	}
 
@@ -229,51 +452,51 @@ biorhythm_file_view_read_file (BiorhythmFileView *file_view)
 	element = json_node_get_object (root);
 	result = json_object_get_member (element, "Persons");
 	array = json_node_get_array (result);
-	json_array_foreach_element (array, biorhythm_file_view_read_file_each_element, file_view->priv->list_store);
+	json_array_foreach_element (array, biorhythm_file_view_read_file_each_element, priv->liststore);
 
 	g_object_unref (parser);
 
 	return 0;
 }
 
-void
-biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GtkListStore *list_store)
+static void
+biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GListStore *liststore)
 {
-	gboolean valid;
-	GtkTreeIter iter;
-	gchar *cell_text_name, *cell_text_birthday;
+	guint n_items = g_list_model_get_n_items (G_LIST_MODEL (liststore));
+	guint position;
+	BiorhythmPerson *item;
 
-	valid = gtk_tree_model_get_iter_first (GTK_TREE_MODEL(list_store), &iter);
-	while ( valid )
+	for (position = 0; position < n_items; position++)
 	{
-		gtk_tree_model_get (GTK_TREE_MODEL(list_store), &iter, VIEW_COLUMN_NAME, &cell_text_name, VIEW_COLUMN_BIRTHDAY, &cell_text_birthday, -1);
+		item = g_list_model_get_item (G_LIST_MODEL (liststore), position);
 
-		if((g_strcmp0(cell_text_name, "") != 0) && (g_strcmp0(cell_text_birthday, "") != 0))
+		if ((g_strcmp0 (item->name, "") != 0) && (g_strcmp0 (item->birthday, "") != 0))
 		{
 			json_builder_begin_object (builder);
 			json_builder_set_member_name (builder, "Name");
-			json_builder_add_string_value (builder, cell_text_name);
+			json_builder_add_string_value (builder, item->name);
 			json_builder_set_member_name (builder, "Birthday");
-			json_builder_add_string_value (builder, cell_text_birthday);
+			json_builder_add_string_value (builder, item->birthday);
 			json_builder_end_object (builder);
 		}
-
-		valid = gtk_tree_model_iter_next (GTK_TREE_MODEL(list_store), &iter);
 	}
 }
 
-gboolean
+static gboolean
 biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 {
-	GError *error;
+	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), FALSE);
 
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	GError *error;
 	JsonBuilder *builder = json_builder_new ();
+
 	json_builder_begin_object (builder);
 
 	json_builder_set_member_name (builder, "Persons");
 
 	json_builder_begin_array (builder);
-	biorhythm_file_view_write_file_each_person (builder, file_view->priv->list_store);
+	biorhythm_file_view_write_file_each_person (builder, priv->liststore);
 	json_builder_end_array (builder);
 
 	json_builder_end_object (builder);
@@ -283,7 +506,7 @@ biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 	json_generator_set_root (gen, root);
 
 	error = NULL;
-	json_generator_to_file (gen, file_view->priv->filename, &error);
+	json_generator_to_file (gen, priv->filename, &error);
 
 	json_node_free (root);
 	g_object_unref (gen);
@@ -291,245 +514,13 @@ biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 
 	if (error)
 	{
-		g_print ("Unable to write `%s': %s\n", file_view->priv->filename, error->message);
+		g_print ("Unable to write `%s': %s\n", priv->filename, error->message);
 		g_error_free (error);
 		return FALSE;
 	}
 
 	return TRUE;
 }
-
-void
-biorhythm_file_view_on_date_changed (GtkTreeView *tree_view, BiorhythmFileView *file_view)
-{
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
-	GtkTreeIter iter;
-	gchar *str_name, *str_birthday;
-	GDate *date;
-
-	selection = gtk_tree_view_get_selection (tree_view);
-	if (selection == NULL)
-		return;
-
-	if (gtk_tree_selection_get_selected (selection, &model, &iter))
-	{
-		gtk_tree_model_get (model, &iter, VIEW_COLUMN_NAME, &str_name, VIEW_COLUMN_BIRTHDAY, &str_birthday, -1);
-
-		date = g_date_new ();
-		g_date_set_parse (date, str_birthday);
-
-		if (g_date_valid (date))
-		{
-			file_view->priv->day = g_date_get_day (date);
-			file_view->priv->month = g_date_get_month (date);
-			file_view->priv->year = g_date_get_year (date);
-
-			file_view->priv->name = g_strdup (str_name);
-
-			g_signal_emit_by_name(G_OBJECT (file_view), "date-changed", date); //FIXME: Shouln't it be NULL?
-			g_signal_emit_by_name(G_OBJECT (file_view), "name-changed", NULL);
-		}
-
-		g_free (str_name);
-		g_free (str_birthday);
-		g_date_free (date);
-	}
-}
-
-gboolean
-biorhythm_file_view_check_other_cells_empty (GtkListStore *list_store, GtkTreeIter *iter, gint except_column)
-{
-	gint i;
-	gchar *cell_text;
-	gboolean status=FALSE;
-
-	for (i = 0 ; i < VIEW_COLUMN_NUM_COLS ; i++)
-	{
-		if (i != except_column)
-		{
-			gtk_tree_model_get(GTK_TREE_MODEL(list_store), iter, i, &cell_text, -1);
-
-			if (cell_text != NULL)
-			{
-				if (g_strcmp0(cell_text, "") == 0)
-					status = status || TRUE;
-			}
-		}
-	}
-	return (status);
-}
-
-void
-biorhythm_file_view_add_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
-{
-	GtkTreeIter iter;
-	gchar *cell_text;
-
-	if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL(list_store), &iter, path_string))
-	{
-		gtk_tree_model_get (GTK_TREE_MODEL(list_store), &iter, list_store_column, &cell_text, -1);
-
-		if (cell_text != NULL)
-		{
-			// Check if the new text is not "" and the old was empty
-			if ((g_strcmp0(new_text, "") != 0) && (g_strcmp0(cell_text, "") == 0))
-			{
-				if (biorhythm_file_view_check_other_cells_empty (list_store, &iter, list_store_column))
-					biorhythm_file_view_list_store_add_empty_row (list_store);
-			}
-		}
-	}
-}
-
-gboolean
-biorhythm_file_view_delete_row_if_needed (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
-{
-	GtkTreeIter iter;
-	gchar *cell_text;
-
-	if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL(list_store), &iter, path_string))
-	{
-		gtk_tree_model_get (GTK_TREE_MODEL(list_store), &iter, list_store_column, &cell_text, -1);
-
-		if (cell_text != NULL)
-		{
-			// Check if the new text is "" and the old was not empty
-			if ((g_strcmp0(new_text, "") == 0) && (g_strcmp0(cell_text, "") != 0))
-			{
-				if (biorhythm_file_view_check_other_cells_empty (list_store, &iter, list_store_column))
-				{
-					gtk_list_store_remove(GTK_LIST_STORE(list_store), &iter);
-					return TRUE;
-				}
-			}
-		}
-	}
-	return FALSE;
-}
-
-void
-biorhythm_file_view_change_cell_text (GtkListStore *list_store, gchar *path_string, gint list_store_column, gchar *new_text)
-{
-	GtkTreeIter iter;
-
-	if (gtk_tree_model_get_iter_from_string (GTK_TREE_MODEL(list_store), &iter, path_string) == TRUE)
-		gtk_list_store_set (GTK_LIST_STORE(list_store), &iter, list_store_column, new_text, -1);
-}
-
-void
-biorhythm_file_view_textrenderer_callback_name_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
-{
-	biorhythm_file_view_add_row_if_needed (user_data, path_string, VIEW_COLUMN_NAME, new_text);
-
-	if (biorhythm_file_view_delete_row_if_needed (user_data, path_string, VIEW_COLUMN_NAME, new_text) == FALSE)
-		biorhythm_file_view_change_cell_text (user_data, path_string, VIEW_COLUMN_NAME, new_text);
-}
-
-void
-biorhythm_file_view_textrenderer_callback_birthday_edited_list (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
-{
-	biorhythm_file_view_add_row_if_needed (user_data, path_string, VIEW_COLUMN_NAME, new_text);
-
-	if (biorhythm_file_view_delete_row_if_needed (user_data, path_string, VIEW_COLUMN_BIRTHDAY, new_text) == FALSE)
-		biorhythm_file_view_change_cell_text (user_data, path_string, VIEW_COLUMN_BIRTHDAY, new_text);
-}
-
-void
-biorhythm_file_view_textrenderer_callback_update_view (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
-{
-	g_signal_emit_by_name (G_OBJECT(user_data), "cursor-changed");
-}
-
-void
-biorhythm_file_view_textrenderer_callback_edited (GtkCellRendererText *cell, gchar *path_string, gchar *new_text, gpointer user_data)
-{
-	BiorhythmFileView *file_view = user_data;
-
-	file_view->priv->saved = FALSE;
-}
-
-void
-biorhythm_file_view_textrenderer_mark_empty_cell_green (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter)
-{
-	gchar *str;
-
-	gtk_tree_model_get (tree_model, iter, VIEW_COLUMN_NAME, &str, -1);
-
-	// Is cell empty? Mark it light green!
-	if (g_strcmp0 (str, "") == 0)
-		g_object_set (cell, "background", "lightgreen", "background-set", TRUE, NULL);
-	else
-		g_object_set (cell, "background-set", FALSE, NULL); /* print this normal */
-
-	g_free(str);
-}
-
-void
-biorhythm_file_view_textrenderer_mark_date_cell_if_invalid_date (GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter)
-{
-	gchar *str;
-	GDate *date;
-
-	gtk_tree_model_get (tree_model, iter, VIEW_COLUMN_BIRTHDAY, &str, -1);
-
-	// Is the date valid?
-	date = g_date_new ();
-	g_date_set_parse (date, str);
-	if (g_date_valid (date))
- 		g_object_set (cell, "foreground-set", FALSE, NULL); /* print this normal */
-	else
-    	g_object_set (cell, "foreground", "red", "foreground-set", TRUE, NULL);
-
-	g_free (str);
-	g_date_free (date);
-}
-
-void
-biorhythm_file_view_textrenderer_callback_name (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
-{
-	biorhythm_file_view_textrenderer_mark_empty_cell_green (cell, tree_model, iter);
-}
-
-void
-biorhythm_file_view_textrenderer_callback_date (GtkTreeViewColumn *tree_column, GtkCellRenderer *cell, GtkTreeModel *tree_model, GtkTreeIter *iter, gpointer data)
-{
-	biorhythm_file_view_textrenderer_mark_empty_cell_green (cell, tree_model, iter);
-	biorhythm_file_view_textrenderer_mark_date_cell_if_invalid_date (cell, tree_model, iter);
-}
-
-gboolean
-biorhythm_file_view_close_dialog ()
-{
-	GtkWidget *dialog;
-	int result;
-
-	dialog = gtk_message_dialog_new (NULL,
-					GTK_DIALOG_DESTROY_WITH_PARENT,
-					GTK_MESSAGE_QUESTION,
-					GTK_BUTTONS_YES_NO,
-					_("There are unsaved changes, do you like to continue?"));
-
-	gtk_window_present (GTK_WINDOW (dialog));
-
-	// TODO: Fix functionality
-	/*result = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_window_destroy (dialog);
-	return result == GTK_RESPONSE_YES;*/
-}
-
-gboolean
-biorhythm_file_view_close_file_dialog (BiorhythmFileView *file_view)
-{
-	if (file_view->priv->saved == FALSE)
-		return biorhythm_file_view_close_dialog ();
-	else
-		return TRUE;
-}
-
-/****************************************
- *              Public API              *
- ****************************************/
 
 /**
  * biorhythm_file_view_get_date:
@@ -542,23 +533,29 @@ biorhythm_file_view_close_file_dialog (BiorhythmFileView *file_view)
  *     1 and 31), or %NULL
  *
  * Obtains the selected date from a #GtkCalendar.
-*/
+ */
 
 void
 biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *month, guint *year)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	BiorhythmFileViewPrivate *priv = file_view->priv;
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	if (day)
+	if (day != NULL)
+	{
 		*day = priv->day;
+	}
 
-	if (month)
+	if (month != NULL)
+	{
 		*month = priv->month;
+	}
 
-	if (year)
+	if (year != NULL)
+	{
 		*year = priv->year;
+	}
 }
 
 gchar *
@@ -566,7 +563,7 @@ biorhythm_file_view_get_filename (BiorhythmFileView *file_view)
 {
 	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
 
-	BiorhythmFileViewPrivate *priv = file_view->priv;
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
 	return priv->filename;
 }
@@ -576,70 +573,114 @@ biorhythm_file_view_get_name (BiorhythmFileView *file_view)
 {
 	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
 
-	BiorhythmFileViewPrivate *priv = file_view->priv;
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
 	return priv->name;
 }
 
-gboolean
+static GtkWidget *
+biorhythm_file_view_close_dialog ()
+{
+	GtkWidget *dialog;
+
+	dialog = gtk_message_dialog_new (NULL,
+									 GTK_DIALOG_DESTROY_WITH_PARENT,
+									 GTK_MESSAGE_QUESTION,
+									 GTK_BUTTONS_YES_NO,
+									 _ ("There are unsaved changes, do you like to continue?"));
+
+	gtk_window_present (GTK_WINDOW (dialog));
+
+	return dialog;
+}
+
+static void
+biorhythm_file_view_new_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+
+	if (response_id == GTK_RESPONSE_YES)
+	{
+		biorhythm_file_view_list_store_clear (priv->liststore);
+		biorhythm_file_view_list_store_add_empty_row (priv->liststore);
+		priv->saved = FALSE;
+	}
+
+	gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+void
 biorhythm_file_view_new_file (BiorhythmFileView *file_view)
 {
-	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), FALSE);
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	if (biorhythm_file_view_close_file_dialog (file_view) == TRUE)
-	{
-		biorhythm_file_view_list_store_clear (file_view->priv->list_store);
-		biorhythm_file_view_list_store_add_empty_row (file_view->priv->list_store);
-		file_view->priv->saved = TRUE;
-	}
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	return TRUE;
+	GtkWidget *dialog = biorhythm_file_view_close_dialog ();
+
+	g_signal_connect (dialog, "response",
+					  G_CALLBACK (biorhythm_file_view_new_file_on_response),
+					  file_view);
 }
 
-gboolean
+static void
+biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view)
+{
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+
+	int result;
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+
+	if (response_id == GTK_RESPONSE_YES)
+	{
+		biorhythm_file_view_list_store_clear (priv->liststore);
+		result = biorhythm_file_view_read_file (file_view);
+		biorhythm_file_view_list_store_add_empty_row (priv->liststore);
+		priv->saved = result;
+	}
+
+	gtk_window_destroy (GTK_WINDOW (dialog));
+}
+
+void
 biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename)
 {
-	gboolean result = FALSE;
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), FALSE);
+	priv->filename = g_strdup (filename);
 
-	file_view->priv->filename = g_strdup (filename);
+	GtkWidget *dialog = biorhythm_file_view_close_dialog ();
 
-	if (biorhythm_file_view_close_file_dialog (file_view) == TRUE)
-	{
-		biorhythm_file_view_list_store_clear (file_view->priv->list_store);
-		result = biorhythm_file_view_read_file (file_view);
-		biorhythm_file_view_list_store_add_empty_row (file_view->priv->list_store);
-		file_view->priv->saved = TRUE;
-	}
-
-	return result;
+	g_signal_connect (dialog, "response",
+					  G_CALLBACK (biorhythm_file_view_load_from_file_on_response),
+					  file_view);
 }
 
-gboolean
+void
 biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, gchar *filename)
 {
-	gboolean result;
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), FALSE);
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	file_view->priv->filename = g_strdup (filename);
+	priv->filename = g_strdup (filename);
 
-	result = biorhythm_file_view_write_file (file_view);
-	file_view->priv->saved = result;
-	return result;
+	gboolean result = biorhythm_file_view_write_file (file_view);
+	priv->saved = result;
 }
 
-gboolean
+void
 biorhythm_file_view_save_to_file (BiorhythmFileView *file_view)
 {
-	gboolean result;
+	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), FALSE);
+	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	result = biorhythm_file_view_write_file (file_view);
-	file_view->priv->saved = result;
-	return result;
+	gboolean result = biorhythm_file_view_write_file (file_view);
+	priv->saved = result;
 }
 
 /* ex:set ts=4 noet: */
