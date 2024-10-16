@@ -24,91 +24,91 @@
 
 G_BEGIN_DECLS
 
-BiorhythmFileView *_biorhythm_app_get_file_view         (BiorhythmApp *app);
+BiorhythmFileView *_biorhythm_app_get_file_view (BiorhythmApp *app);
 
-BiorhythmFileView *_biorhythm_app_set_file_view         (BiorhythmApp *app,
-                                                         BiorhythmFileView *file_view);
+BiorhythmFileView *_biorhythm_app_set_file_view (BiorhythmApp *app,
+												 BiorhythmFileView *file_view);
 
-BiorhythmChart *_biorhythm_app_get_chart                (BiorhythmApp *app);
+BiorhythmChart *_biorhythm_app_get_chart (BiorhythmApp *app);
 
-BiorhythmChart *_biorhythm_app_set_chart                (BiorhythmApp *app,
-                                                         BiorhythmChart *chart);
+BiorhythmChart *_biorhythm_app_set_chart (BiorhythmApp *app,
+										  BiorhythmChart *chart);
 
-BiorhythmCli    *_biorhythm_app_get_cli                 (BiorhythmApp *app);
+BiorhythmCli *_biorhythm_app_get_cli (BiorhythmApp *app);
 
-BiorhythmCli    *_biorhythm_app_set_cli                 (BiorhythmApp *app,
-                                                         BiorhythmCli *cli);
+BiorhythmCli *_biorhythm_app_set_cli (BiorhythmApp *app,
+									  BiorhythmCli *cli);
 
-static void     _biorhythm_app_file_new_activated       (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_file_new_activated (GSimpleAction *action,
+											   GVariant *param,
+											   gpointer user_data);
 
-static void     _biorhythm_app_file_open_activated      (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_file_open_activated (GSimpleAction *action,
+												GVariant *param,
+												gpointer user_data);
 
-static void     _biorhythm_app_file_save_activated      (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_file_save_activated (GSimpleAction *action,
+												GVariant *param,
+												gpointer user_data);
 
-static void     _biorhythm_app_file_save_as_activated   (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_file_save_as_activated (GSimpleAction *action,
+												   GVariant *param,
+												   gpointer user_data);
 
-static void     _biorhythm_app_print_activated          (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_print_activated (GSimpleAction *action,
+											GVariant *param,
+											gpointer user_data);
 
-static void     _biorhythm_app_option_physical_changed     (GSimpleAction *action,
-                                                         GVariant *state,
-                                                         gpointer user_data);
+static void _biorhythm_app_option_physical_changed (GSimpleAction *action,
+													GVariant *state,
+													gpointer user_data);
 
-static void     _biorhythm_app_option_emotional_changed     (GSimpleAction *action,
-                                                         GVariant *state,
-                                                         gpointer user_data);
+static void _biorhythm_app_option_emotional_changed (GSimpleAction *action,
+													 GVariant *state,
+													 gpointer user_data);
 
-static void     _biorhythm_app_option_intellectual_changed     (GSimpleAction *action,
-                                                         GVariant *state,
-                                                         gpointer user_data);
+static void _biorhythm_app_option_intellectual_changed (GSimpleAction *action,
+														GVariant *state,
+														gpointer user_data);
 
-static void     _biorhythm_app_option_total_changed     (GSimpleAction *action,
-                                                         GVariant *state,
-                                                         gpointer user_data);
+static void _biorhythm_app_option_total_changed (GSimpleAction *action,
+												 GVariant *state,
+												 gpointer user_data);
 
-static void     _biorhythm_app_console_activated        (GSimpleAction *action,
-                                                         GVariant *param,
-                                                        gpointer user_data);
+static void _biorhythm_app_console_activated (GSimpleAction *action,
+											  GVariant *param,
+											  gpointer user_data);
 
-static void     _biorhythm_app_about_activated          (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer user_data);
+static void _biorhythm_app_about_activated (GSimpleAction *action,
+											GVariant *param,
+											gpointer user_data);
 
-static void     _biorhythm_app_calendar_changed_chart   (GtkCalendar *calendar,
-                                                         BiorhythmChart *chart);
+static void _biorhythm_app_calendar_changed_chart (GtkCalendar *calendar,
+												   BiorhythmChart *chart);
 
-static void     _biorhythm_app_calendar_changed_cli     (GtkCalendar *calendar,
-                                                         BiorhythmCli *cli);
+static void _biorhythm_app_calendar_changed_cli (GtkCalendar *calendar,
+												 BiorhythmCli *cli);
 
-static void     _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view,
-                                                                 BiorhythmChart *chart);
+static void _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view,
+															 BiorhythmChart *chart);
 
-static void     _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view,
-                                                             BiorhythmChart *chart);
+static void _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view,
+														 BiorhythmChart *chart);
 
-static void     _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
-                                                               BiorhythmCli *cli);
+static void _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view,
+														   BiorhythmCli *cli);
 
-static void     _biorhythm_app_quit_activated (GSimpleAction *action,
-                                               GVariant *param,
-                                               gpointer app);
+static void _biorhythm_app_quit_activated (GSimpleAction *action,
+										   GVariant *param,
+										   gpointer app);
 
-static void     _biorhythm_app_startup (GApplication *application);
+static void _biorhythm_app_startup (GApplication *application);
 
 static GtkWidget *_biorhythm_app_create_open_dialog_button (void);
 
-static void     _biorhythm_app_add_new_button (GtkHeaderBar *bar);
+static void _biorhythm_app_add_new_button (GtkHeaderBar *bar);
 
-static void     _biorhythm_app_add_save_button (GtkHeaderBar *bar);
+static void _biorhythm_app_add_save_button (GtkHeaderBar *bar);
 
 static GtkWidget *_biorhythm_app_hamburger_create ();
 
@@ -119,13 +119,13 @@ static GMenu *_biorhythm_app_hamburger_create_section_options ();
 static GMenu *_biorhythm_app_hamburger_create_section_about ();
 
 static GtkWidget *_biorhythm_app_create_headerbar (GApplication *app,
-                                                   GtkWindow *window);
+												   GtkWindow *window);
 
-static void     _biorhythm_app_quit_activated           (GSimpleAction *action,
-                                                         GVariant *param,
-                                                         gpointer app);
+static void _biorhythm_app_quit_activated (GSimpleAction *action,
+										   GVariant *param,
+										   gpointer app);
 
-static void     _biorhythm_app_activate                 (GApplication *application);
+static void _biorhythm_app_activate (GApplication *application);
 
 BiorhythmFileView *
 _biorhythm_app_get_file_view (BiorhythmApp *app);
