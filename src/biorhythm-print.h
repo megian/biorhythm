@@ -21,12 +21,12 @@
 #ifndef __BIORHYTHM_PRINT_H__
 #define __BIORHYTHM_PRINT_H__
 
-#include <gtk/gtk.h>
 #include "biorhythm-chart.h"
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
-GtkPrintOperation* biorhythm_print_operation_new ();
+GtkPrintOperation *biorhythm_print_operation_new ();
 
 G_END_DECLS
 
