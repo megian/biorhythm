@@ -20,14 +20,14 @@
 
 #include "config.h"
 
-#include "biorhythm-app.h"
 #include "biorhythm-app-private.h"
+#include "biorhythm-app.h"
 
 typedef struct
 {
 	BiorhythmFileView *file_view;
-	BiorhythmChart    *chart;
-	BiorhythmCli	  *cli;
+	BiorhythmChart *chart;
+	BiorhythmCli *cli;
 } BiorhythmAppPrivate;
 
 G_DEFINE_TYPE_WITH_PRIVATE (BiorhythmApp, biorhythm_app, GTK_TYPE_APPLICATION)
@@ -46,8 +46,7 @@ biorhthm_app_dispose (GObject *object)
 	G_OBJECT_CLASS (biorhythm_app_parent_class)->dispose (object);
 }
 
-static GActionEntry app_entries[] =
-{
+static GActionEntry app_entries[] = {
 	{ "new", _biorhythm_app_file_new_activated, NULL, NULL, NULL },
 	{ "open", _biorhythm_app_file_open_activated, NULL, NULL, NULL },
 	{ "save", _biorhythm_app_file_save_activated, NULL, NULL, NULL },
@@ -142,7 +141,7 @@ _biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpoin
 {
 	BiorhythmApp *app;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	biorhythm_file_view_new_file (_biorhythm_app_get_file_view (app));
 }
 
@@ -157,8 +156,8 @@ _biorhythm_app_file_open_response (GtkDialog *dialog, int response, gpointer use
 	{
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
 
-		g_autoptr(GFile) file = gtk_file_chooser_get_file (chooser);
-		biorhythm_file_view_load_from_file(file_view, g_file_get_parse_name (file));
+		g_autoptr (GFile) file = gtk_file_chooser_get_file (chooser);
+		biorhythm_file_view_load_from_file (file_view, g_file_get_parse_name (file));
 	}
 
 	gtk_window_destroy (GTK_WINDOW (dialog));
@@ -172,22 +171,22 @@ _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpoi
 	BiorhythmFileView *file_view;
 	GtkWidget *dialog;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	file_view = _biorhythm_app_get_file_view (app);
 
-	dialog = gtk_file_chooser_dialog_new (_("Open File"),
-						window,
-						GTK_FILE_CHOOSER_ACTION_OPEN,
-						_("_Cancel"), GTK_RESPONSE_CANCEL,
-						_("_Open"), GTK_RESPONSE_ACCEPT,
-						NULL);
+	dialog = gtk_file_chooser_dialog_new (_ ("Open File"),
+										  window,
+										  GTK_FILE_CHOOSER_ACTION_OPEN,
+										  _ ("_Cancel"), GTK_RESPONSE_CANCEL,
+										  _ ("_Open"), GTK_RESPONSE_ACCEPT,
+										  NULL);
 
 	gtk_window_present (GTK_WINDOW (dialog));
 
 	g_signal_connect (dialog, "response",
-                    G_CALLBACK (_biorhythm_app_file_open_response),
-                    file_view);
+					  G_CALLBACK (_biorhythm_app_file_open_response),
+					  file_view);
 }
 
 static void
@@ -196,13 +195,17 @@ _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpoi
 	BiorhythmApp *app;
 	BiorhythmFileView *file_view;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	file_view = _biorhythm_app_get_file_view (app);
 
 	if (biorhythm_file_view_get_filename (file_view) == NULL)
-	    _biorhythm_app_file_save_as_activated (action, param, user_data);
+	{
+		_biorhythm_app_file_save_as_activated (action, param, user_data);
+	}
 	else
+	{
 		biorhythm_file_view_save_to_file (file_view);
+	}
 }
 
 static void
@@ -216,9 +219,9 @@ _biorhythm_app_file_save_as_response (GtkDialog *dialog, int response, gpointer 
 	{
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
 
-		g_autoptr(GFile) file = gtk_file_chooser_get_file (chooser);
+		g_autoptr (GFile) file = gtk_file_chooser_get_file (chooser);
 		biorhythm_file_view_save_to_new_file (file_view, g_file_get_parse_name (file));
-    }
+	}
 
 	gtk_window_destroy (GTK_WINDOW (dialog));
 }
@@ -232,22 +235,22 @@ _biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, g
 	GtkWidget *dialog;
 	GtkFileChooser *chooser;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	file_view = _biorhythm_app_get_file_view (app);
 
-	dialog = gtk_file_chooser_dialog_new (_("Save File"),
-						window,
-						GTK_FILE_CHOOSER_ACTION_SAVE,
-						_("_Cancel"), GTK_RESPONSE_CANCEL,
-						_("_Save"), GTK_RESPONSE_ACCEPT,
-						NULL);
+	dialog = gtk_file_chooser_dialog_new (_ ("Save File"),
+										  window,
+										  GTK_FILE_CHOOSER_ACTION_SAVE,
+										  _ ("_Cancel"), GTK_RESPONSE_CANCEL,
+										  _ ("_Save"), GTK_RESPONSE_ACCEPT,
+										  NULL);
 
 	gtk_window_present (GTK_WINDOW (dialog));
 
 	g_signal_connect (dialog, "response",
-                    G_CALLBACK (_biorhythm_app_file_save_as_response),
-                    file_view);
+					  G_CALLBACK (_biorhythm_app_file_save_as_response),
+					  file_view);
 }
 
 static void
@@ -261,25 +264,25 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
 	GtkPrintOperation *print;
 	GtkPrintOperationResult res;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
 	chart = _biorhythm_app_get_chart (app);
 	print = biorhythm_print_operation_new (chart);
 
 	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, window, &error);
 
-    if (res == GTK_PRINT_OPERATION_RESULT_ERROR)
+	if (res == GTK_PRINT_OPERATION_RESULT_ERROR)
 	{
-                dialog = gtk_message_dialog_new (window,
-                                                 GTK_DIALOG_DESTROY_WITH_PARENT,
-                                                 GTK_MESSAGE_ERROR,
-                                                 GTK_BUTTONS_CLOSE,
-                                                 _("Error printing file:\n%s"),
-                                                 error->message);
-                g_signal_connect (dialog, "response",
-                                  G_CALLBACK (gtk_window_destroy), NULL);
-                gtk_window_present (GTK_WINDOW (dialog));
-                g_error_free (error);
+		dialog = gtk_message_dialog_new (window,
+										 GTK_DIALOG_DESTROY_WITH_PARENT,
+										 GTK_MESSAGE_ERROR,
+										 GTK_BUTTONS_CLOSE,
+										 _ ("Error printing file:\n%s"),
+										 error->message);
+		g_signal_connect (dialog, "response",
+						  G_CALLBACK (gtk_window_destroy), NULL);
+		gtk_window_present (GTK_WINDOW (dialog));
+		g_error_free (error);
 	}
 }
 
@@ -291,7 +294,7 @@ _biorhythm_app_option_physical_changed (GSimpleAction *action, GVariant *state, 
 
 	g_simple_action_set_state (action, state);
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	chart = _biorhythm_app_get_chart (app);
 	biorhythm_chart_set_option_physical (chart, g_variant_get_boolean (state));
 }
@@ -304,7 +307,7 @@ _biorhythm_app_option_emotional_changed (GSimpleAction *action, GVariant *state,
 
 	g_simple_action_set_state (action, state);
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	chart = _biorhythm_app_get_chart (app);
 	biorhythm_chart_set_option_emotional (chart, g_variant_get_boolean (state));
 }
@@ -317,7 +320,7 @@ _biorhythm_app_option_intellectual_changed (GSimpleAction *action, GVariant *sta
 
 	g_simple_action_set_state (action, state);
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	chart = _biorhythm_app_get_chart (app);
 	biorhythm_chart_set_option_intellectual (chart, g_variant_get_boolean (state));
 }
@@ -330,7 +333,7 @@ _biorhythm_app_option_total_changed (GSimpleAction *action, GVariant *state, gpo
 
 	g_simple_action_set_state (action, state);
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	chart = _biorhythm_app_get_chart (app);
 	biorhythm_chart_set_option_total (chart, g_variant_get_boolean (state));
 }
@@ -341,7 +344,7 @@ _biorhythm_app_console_activated (GSimpleAction *action, GVariant *param, gpoint
 	BiorhythmApp *app;
 	BiorhythmCli *cli;
 
-	app = BIORHYTHM_APP(user_data);
+	app = BIORHYTHM_APP (user_data);
 	cli = _biorhythm_app_get_cli (app);
 	biorhythm_cli_output (cli);
 }
@@ -349,7 +352,7 @@ _biorhythm_app_console_activated (GSimpleAction *action, GVariant *param, gpoint
 static void
 _biorhythm_app_about_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
-	static const gchar *authors[] = {"Gabriel Mainberger <gabisoft@freesurf.ch>", NULL};
+	static const gchar *authors[] = { "Gabriel Mainberger <gabisoft@freesurf.ch>", NULL };
 	GtkApplication *app;
 	GtkWindow *window;
 
@@ -361,35 +364,41 @@ _biorhythm_app_about_activated (GSimpleAction *action, GVariant *param, gpointer
 static void
 _biorhythm_app_calendar_changed_chart (GtkCalendar *calendar, BiorhythmChart *chart)
 {
-	gint year, month, day;
-	GDateTime *t;
+	gint year;
+	gint month;
+	gint day;
+	GDateTime *time;
 
-	t = gtk_calendar_get_date (calendar);
-	day = g_date_time_get_day_of_month(t);
-	month = g_date_time_get_month(t);
-	year = g_date_time_get_year(t);
+	time = gtk_calendar_get_date (calendar);
+	day = g_date_time_get_day_of_month (time);
+	month = g_date_time_get_month (time);
+	year = g_date_time_get_year (time);
 
-	biorhythm_chart_set_active_date (chart, day, month+1, year);
+	biorhythm_chart_set_active_date (chart, day, month + 1, year);
 }
 
 static void
 _biorhythm_app_calendar_changed_cli (GtkCalendar *calendar, BiorhythmCli *cli)
 {
-	gint year, month, day;
-	GDateTime *t;
+	gint year;
+	gint month;
+	gint day;
+	GDateTime *time;
 
-	t = gtk_calendar_get_date (calendar);
-	day = g_date_time_get_day_of_month(t);
-	month = g_date_time_get_month(t);
-	year = g_date_time_get_year(t);
+	time = gtk_calendar_get_date (calendar);
+	day = g_date_time_get_day_of_month (time);
+	month = g_date_time_get_month (time);
+	year = g_date_time_get_year (time);
 
-	biorhythm_cli_set_active_date (cli, day, month+1, year);
+	biorhythm_cli_set_active_date (cli, day, month + 1, year);
 }
 
 static void
 _biorhythm_app_file_view_birthday_changed_chart (BiorhythmFileView *file_view, BiorhythmChart *chart)
 {
-	guint day, month, year;
+	guint day;
+	guint month;
+	guint year;
 
 	biorhythm_file_view_get_date (file_view, &day, &month, &year);
 	biorhythm_chart_set_birthday (chart, day, month, year);
@@ -424,7 +433,7 @@ _biorhythm_app_startup (GApplication *application)
 	priv = biorhythm_app_get_instance_private (BIORHYTHM_APP (application));
 
 	G_APPLICATION_CLASS (biorhythm_app_parent_class)->startup (application);
-	_biorhythm_app_set_file_view(BIORHYTHM_APP (application), biorhythm_file_view_new ());
+	_biorhythm_app_set_file_view (BIORHYTHM_APP (application), biorhythm_file_view_new ());
 	_biorhythm_app_set_chart (BIORHYTHM_APP (application), biorhythm_chart_new ());
 	_biorhythm_app_set_cli (BIORHYTHM_APP (application), biorhythm_cli_new ());
 }
@@ -434,13 +443,13 @@ _biorhythm_app_startup (GApplication *application)
 static GtkWidget *
 _biorhythm_app_create_open_dialog_button (void)
 {
-    GtkWidget *button;
+	GtkWidget *button;
 
-    button = gtk_button_new_with_mnemonic (_("_Open"));
-    gtk_widget_set_tooltip_text (button, _("Open a file"));
-    gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.open");
+	button = gtk_button_new_with_mnemonic (_ ("_Open"));
+	gtk_widget_set_tooltip_text (button, _ ("Open a file"));
+	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.open");
 
-    return button;
+	return button;
 }
 
 static void
@@ -449,7 +458,7 @@ _biorhythm_app_add_new_button (GtkHeaderBar *bar)
 	GtkWidget *button;
 
 	button = gtk_button_new_from_icon_name ("tab-new-symbolic");
-	gtk_widget_set_tooltip_text (button, _("Create a new document"));
+	gtk_widget_set_tooltip_text (button, _ ("Create a new document"));
 	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.new");
 
 	gtk_header_bar_pack_start (GTK_HEADER_BAR (bar), button);
@@ -460,8 +469,8 @@ _biorhythm_app_add_save_button (GtkHeaderBar *bar)
 {
 	GtkWidget *button;
 
-	button = gtk_button_new_with_mnemonic (_("_Save"));
-	gtk_widget_set_tooltip_text (button, _("Save the current file"));
+	button = gtk_button_new_with_mnemonic (_ ("_Save"));
+	gtk_widget_set_tooltip_text (button, _ ("Save the current file"));
 	gtk_actionable_set_action_name (GTK_ACTIONABLE (button), "win.save");
 
 	gtk_header_bar_pack_end (GTK_HEADER_BAR (bar), button);
@@ -472,9 +481,9 @@ _biorhythm_app_hamburger_create_section_main ()
 {
 	GMenu *menu = g_menu_new ();
 
-	g_menu_append (menu, _("_Save as"), "win.save-as");
-	g_menu_append (menu, _("_Print"), "win.print");
-	g_menu_append (menu, _("_Console"), "win.cli");
+	g_menu_append (menu, _ ("_Save as"), "win.save-as");
+	g_menu_append (menu, _ ("_Print"), "win.print");
+	g_menu_append (menu, _ ("_Console"), "win.cli");
 
 	return menu;
 }
@@ -484,10 +493,10 @@ _biorhythm_app_hamburger_create_section_options ()
 {
 	GMenu *menu = g_menu_new ();
 
-	g_menu_append (menu, _("_Physical"), "win.option-physical");
-	g_menu_append (menu, _("_Emotional"), "win.option-emotional");
-	g_menu_append (menu, _("_Intellectual"), "win.option-intellectual");
-	g_menu_append (menu, _("_Total"), "win.option-total");
+	g_menu_append (menu, _ ("_Physical"), "win.option-physical");
+	g_menu_append (menu, _ ("_Emotional"), "win.option-emotional");
+	g_menu_append (menu, _ ("_Intellectual"), "win.option-intellectual");
+	g_menu_append (menu, _ ("_Total"), "win.option-total");
 
 	return menu;
 }
@@ -497,7 +506,7 @@ _biorhythm_app_hamburger_create_section_about ()
 {
 	GMenu *menu = g_menu_new ();
 
-	g_menu_append (menu, _("_About"), "win.about");
+	g_menu_append (menu, _ ("_About"), "win.about");
 
 	return menu;
 }
@@ -543,25 +552,25 @@ _biorhythm_app_activate (GApplication *application)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-    /* Window */
+	/* Window */
 	window = GTK_WINDOW (gtk_application_window_new (GTK_APPLICATION (application)));
 	gtk_window_set_title (GTK_WINDOW (window), "Biorhythm");
 	gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
 
 	/* Header Bar */
-	gtk_window_set_titlebar (GTK_WINDOW (window), _biorhythm_app_create_headerbar(application, window));
+	gtk_window_set_titlebar (GTK_WINDOW (window), _biorhythm_app_create_headerbar (application, window));
 
 	/* Init Objects */
-	cli = _biorhythm_app_get_cli(BIORHYTHM_APP (application));
+	cli = _biorhythm_app_get_cli (BIORHYTHM_APP (application));
 
-	chart = _biorhythm_app_get_chart(BIORHYTHM_APP (application));
+	chart = _biorhythm_app_get_chart (BIORHYTHM_APP (application));
 	gtk_drawing_area_set_content_height (GTK_DRAWING_AREA (chart), 300);
 
 	calendar = gtk_calendar_new ();
 	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_chart), chart);
 	g_signal_connect (G_OBJECT (calendar), "day-selected", G_CALLBACK (_biorhythm_app_calendar_changed_cli), cli);
 
-	file_view = _biorhythm_app_get_file_view(BIORHYTHM_APP (application));
+	file_view = _biorhythm_app_get_file_view (BIORHYTHM_APP (application));
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_chart), chart);
 	g_signal_connect (G_OBJECT (file_view), "date-changed", G_CALLBACK (_biorhythm_app_file_view_birthday_changed_cli), cli);
 	g_signal_connect (G_OBJECT (file_view), "name-changed", G_CALLBACK (_biorhythm_app_file_view_name_changed_chart), chart);
@@ -571,17 +580,17 @@ _biorhythm_app_activate (GApplication *application)
 	/* Paned */
 	GtkWidget *hpaned = gtk_paned_new (GTK_ORIENTATION_HORIZONTAL);
 	gtk_paned_set_start_child (GTK_PANED (hpaned), calendar);
-	gtk_paned_set_end_child  (GTK_PANED (hpaned), file_view_scrolled_window);
+	gtk_paned_set_end_child (GTK_PANED (hpaned), file_view_scrolled_window);
 
 	GtkWidget *vpaned = gtk_paned_new (GTK_ORIENTATION_VERTICAL);
 	gtk_paned_set_start_child (GTK_PANED (vpaned), GTK_WIDGET (chart));
 	gtk_paned_set_end_child (GTK_PANED (vpaned), hpaned);
 
-    /* Actions */
-    actions = (GActionGroup*)g_simple_action_group_new ();
-    g_action_map_add_action_entries (G_ACTION_MAP (actions),
-                                     app_entries, G_N_ELEMENTS (app_entries),
-                                     application);
+	/* Actions */
+	actions = (GActionGroup *) g_simple_action_group_new ();
+	g_action_map_add_action_entries (G_ACTION_MAP (actions),
+									 app_entries, G_N_ELEMENTS (app_entries),
+									 application);
 	gtk_widget_insert_action_group (GTK_WIDGET (window), "win", actions);
 
 	gtk_window_set_child (window, vpaned);

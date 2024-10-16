@@ -21,19 +21,19 @@
 #ifndef BIORHYTHM_APP_H
 #define BIORHYTHM_APP_H
 
-#include <gtk/gtk.h>
 #include <glib/gi18n.h>
+#include <gtk/gtk.h>
 
-#include "biorhythm-math.h"
 #include "biorhythm-chart.h"
-#include "biorhythm-fileview.h"
 #include "biorhythm-cli.h"
+#include "biorhythm-fileview.h"
+#include "biorhythm-math.h"
 #include "biorhythm-print.h"
 #include "config.h"
 
 G_BEGIN_DECLS
 
-#define BIORHYTHM_TYPE_APP (biorhythm_app_get_type())
+#define BIORHYTHM_TYPE_APP (biorhythm_app_get_type ())
 
 G_DECLARE_DERIVABLE_TYPE (BiorhythmApp, biorhythm_app, BIORHYTHM, APP, GtkApplication)
 

@@ -79,7 +79,7 @@ gint
 biorhythm_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix)
 {
 	gint result_physical, result_emotional, result_intellectual;
-	
+
 	result_physical = biorhythm_math_setpositivgraphic (biorhythm_math_bioday_graphic (x, days_of_life, BIORHYTHM_DAYS_PHYSICAL, half_height, day_pix), half_height);
 	result_emotional = biorhythm_math_setpositivgraphic (biorhythm_math_bioday_graphic (x, days_of_life, BIORHYTHM_DAYS_EMOTIONAL, half_height, day_pix), half_height);
 	result_intellectual = biorhythm_math_setpositivgraphic (biorhythm_math_bioday_graphic (x, days_of_life, BIORHYTHM_DAYS_INTELLECTUAL, half_height, day_pix), half_height);
