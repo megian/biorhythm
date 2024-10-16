@@ -1,8 +1,15 @@
-BasedOnStyle: GNU
+AllowShortIfStatementsOnASingleLine: true
 AlwaysBreakAfterDefinitionReturnType: All
-BreakBeforeBinaryOperators: None
+BasedOnStyle: GNU
 BinPackParameters: false
-SpaceAfterCStyleCast: true
-PointerAlignment: Right
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Allman
 ColumnLimit: 0
-MinimumVariableNameLength: 1  # Should be 3
+IndentCaseLabels: true
+PointerAlignment: Right
+SpaceAfterCStyleCast: true
+SpaceBeforeParens: Always
+
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4

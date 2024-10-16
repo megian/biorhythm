@@ -31,12 +31,12 @@ biorhythm_print_draw_page (GtkPrintOperation *operation, GtkPrintContext *contex
 	chart = (BiorhythmChart *) user_data;
 
 	page_setup = gtk_print_context_get_page_setup (context);
-	p_width =  gtk_page_setup_get_page_width (page_setup, GTK_UNIT_POINTS);
+	p_width = gtk_page_setup_get_page_width (page_setup, GTK_UNIT_POINTS);
 	p_height = gtk_page_setup_get_page_height (page_setup, GTK_UNIT_POINTS);
 
 	cr = gtk_print_context_get_cairo_context (context);
 
-  	biorhythm_chart_draw_cairo (chart, cr, p_height, p_width);
+	biorhythm_chart_draw_cairo (chart, cr, p_height, p_width);
 }
 
 GtkPrintOperation *

@@ -20,9 +20,9 @@
 
 #include "biorhythm-cli.h"
 
-#include <math.h>
-#include <glib/gi18n.h>
 #include "biorhythm-math.h"
+#include <glib/gi18n.h>
+#include <math.h>
 
 typedef struct
 {
@@ -75,7 +75,7 @@ biorhythm_cli_init (BiorhythmCli *cli)
 	biorhythm_cli_set_current_date (&priv->birthday);
 }
 
-BiorhythmCli*
+BiorhythmCli *
 biorhythm_cli_new ()
 {
 	return g_object_new (BIORHYTHM_TYPE_CLI, NULL);
@@ -90,11 +90,11 @@ biorhythm_cli_output (BiorhythmCli *cli)
 {
 	gint days_of_life = biorhythm_math_daysoflife (cli->priv->active_date, cli->priv->birthday);
 
-	g_print (_("Age in days: %i\n"), days_of_life);
-	g_print (_("Physical: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL));
-	g_print (_("Emotional: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL));
-	g_print (_("Intellectual: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL));
-	g_print (_("Total: %d\n"), biorhythm_math_bioday_total (days_of_life));
+	g_print (_ ("Age in days: %i\n"), days_of_life);
+	g_print (_ ("Physical: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL));
+	g_print (_ ("Emotional: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL));
+	g_print (_ ("Intellectual: %d\n"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL));
+	g_print (_ ("Total: %d\n"), biorhythm_math_bioday_total (days_of_life));
 }
 
 /****************************************
