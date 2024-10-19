@@ -24,6 +24,11 @@
 #ifndef __BIORHYTHM_MATH_H__
 #define __BIORHYTHM_MATH_H__
 
+#include <glib.h>
+#include <math.h>
+
+G_BEGIN_DECLS
+
 #define BIORHYTHM_DAYS_PHYSICAL 23
 #define BIORHYTHM_DAYS_EMOTIONAL 28
 #define BIORHYTHM_DAYS_INTELLECTUAL 33
@@ -45,6 +50,8 @@ gint biorhythm_math_bioday_graphic_total (gint x, gint days_of_life, gint half_h
 glong biorhythm_math_daysto (gint day, gint month, gint year);
 gint biorhythm_math_daysoflife (struct bio_date date_active, struct bio_date date_birthday);
 gint biorhythm_math_monthdayoffset (struct bio_date date_active, struct bio_date date_birthday);
+
+G_END_DECLS
 
 #endif /* __BIORHYTHM_MATH_H__ */
 

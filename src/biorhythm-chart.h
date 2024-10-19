@@ -21,10 +21,10 @@
 #ifndef __BIORHYTHM_CHART_H__
 #define __BIORHYTHM_CHART_H__
 
-#include <math.h>
-#include <gtk/gtk.h>
-#include <glib/gi18n.h>
 #include "biorhythm-math.h"
+#include <glib/gi18n.h>
+#include <gtk/gtk.h>
+#include <math.h>
 
 G_BEGIN_DECLS
 
