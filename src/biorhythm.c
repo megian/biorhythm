@@ -22,19 +22,19 @@
 int
 main (int argc, char **argv)
 {
-  BiorhythmApp *app;
-  int status;
+	BiorhythmApp *app;
+	int status;
 
-  app = g_object_new (BIORHYTHM_TYPE_APP,
-	                  "application-id", "org.gtk.biorhythm",
-	                  "flags", G_APPLICATION_DEFAULT_FLAGS,
-	                  NULL);
+	app = g_object_new (BIORHYTHM_TYPE_APP,
+						"application-id", "org.gtk.biorhythm",
+						"flags", G_APPLICATION_DEFAULT_FLAGS,
+						NULL);
 
-  status = g_application_run (G_APPLICATION (app), argc, argv);
+	status = g_application_run (G_APPLICATION (app), argc, argv);
 
-  g_object_unref (app);
+	g_object_unref (app);
 
-  return status;
+	return status;
 }
 
 /* ex:set ts=4 noet: */

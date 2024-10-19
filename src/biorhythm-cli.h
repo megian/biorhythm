@@ -25,7 +25,7 @@
 
 G_BEGIN_DECLS
 
-#define BIORHYTHM_TYPE_CLI		(biorhythm_cli_get_type ())
+#define BIORHYTHM_TYPE_CLI (biorhythm_cli_get_type ())
 G_DECLARE_FINAL_TYPE (BiorhythmCli, biorhythm_cli, BIORHYTHM, CLI, GObject)
 
 struct _BiorhythmCliClass
@@ -33,7 +33,7 @@ struct _BiorhythmCliClass
 	GObjectClass parent_class;
 };
 
-BiorhythmCli* biorhythm_cli_new ();
+BiorhythmCli *biorhythm_cli_new ();
 
 void biorhythm_cli_output (BiorhythmCli *cli);
 void biorhythm_cli_set_birthday (BiorhythmCli *cli, guint day, guint month, guint year);

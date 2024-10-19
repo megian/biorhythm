@@ -117,14 +117,14 @@ biorhythm_chart_new ()
 void
 biorhythm_chart_draw_curves_select_dash (cairo_t *cr, gint cycle_day)
 {
-	static const double dashed_physical[] = {2.0, 2.0};
+	static const double dashed_physical[] = { 2.0, 2.0 };
 	static int dashed_physical_length = sizeof (dashed_physical) / sizeof (dashed_physical[0]);
 
-	static const double dashed_intellectual[] = {10.0, 4.0};
-	static int dashed_intellectual_length  = sizeof (dashed_intellectual) / sizeof (dashed_intellectual[0]);
+	static const double dashed_intellectual[] = { 10.0, 4.0 };
+	static int dashed_intellectual_length = sizeof (dashed_intellectual) / sizeof (dashed_intellectual[0]);
 
-	static const double dashed_emotional[] = {2.0, 10.0};
-	static int dashed_emotional_length  = sizeof (dashed_emotional) / sizeof (dashed_intellectual[0]);
+	static const double dashed_emotional[] = { 2.0, 10.0 };
+	static int dashed_emotional_length = sizeof (dashed_emotional) / sizeof (dashed_intellectual[0]);
 
 	if (cycle_day == BIORHYTHM_DAYS_PHYSICAL)
 		cairo_set_dash (cr, dashed_physical, dashed_physical_length, 0);
@@ -193,7 +193,7 @@ biorhythm_chart_draw_lines (cairo_t *cr, BiorhythmChartDivision *division, gint 
 }
 
 void
-biorhythm_chart_draw_current_day_line(cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint current_day)
+biorhythm_chart_draw_current_day_line (cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint current_day)
 {
 	cairo_set_source_rgb (cr, 0, 0, 0);
 	cairo_set_line_width (cr, 0.5);
@@ -203,14 +203,14 @@ biorhythm_chart_draw_current_day_line(cairo_t *cr, BiorhythmChartDivision *divis
 }
 
 void
-biorhythm_chart_draw_day_lines(cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
+biorhythm_chart_draw_day_lines (cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
 	gint i, h100, half_height;
 	gchar *s;
 
-	h100 = (gint)(floor (division->height / 100) + 1);
+	h100 = (gint) (floor (division->height / 100) + 1);
 	half_height = division->height / 2;
-	for (i = 0;i < days_in_month;i++)
+	for (i = 0; i < days_in_month; i++)
 	{
 		s = g_strdup_printf ("%d", i + 1);
 		cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
@@ -264,12 +264,12 @@ biorhythm_chart_caption_option (cairo_t *cr, char *s, gint cycle_day)
 	biorhythm_chart_caption_text (cr, s);
 }
 
-char*
+char *
 biorhythm_chart_caption_weekday (struct bio_date date)
 {
 	GDate *gdate;
 	char *s;
-	static char *weekdays[] = {"", N_("Mon"), N_("Tue"), N_("Wed"), N_("Thu"), N_("Fri"), N_("Sat"), N_("Sun")};
+	static char *weekdays[] = { "", N_ ("Mon"), N_ ("Tue"), N_ ("Wed"), N_ ("Thu"), N_ ("Fri"), N_ ("Sat"), N_ ("Sun") };
 
 	gdate = g_date_new_dmy (date.day, date.month, date.year);
 	s = weekdays[g_date_get_weekday (gdate)];
@@ -289,26 +289,26 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChar
 	cairo_set_font_size (cr, 11);
 	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
 
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_("Days: %d"), days_of_life));
+	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
+	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
+	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Days: %d"), days_of_life));
 
 	// Physical
 	if (priv->option_physical == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
+		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Emotional: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL)), BIORHYTHM_DAYS_EMOTIONAL);
+		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Emotional: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL)), BIORHYTHM_DAYS_EMOTIONAL);
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Intellectual: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL)),
-		BIORHYTHM_DAYS_INTELLECTUAL);
+		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Intellectual: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL)),
+										BIORHYTHM_DAYS_INTELLECTUAL);
 
 	// Total
 	if (priv->option_total == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
+		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
 
 	cairo_stroke (cr);
 }
@@ -323,9 +323,9 @@ biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartD
 	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
 
 	if (priv->name_of_person == NULL)
-		s = g_strdup_printf (_("Biorhythm for Unknown"));
+		s = g_strdup_printf (_ ("Biorhythm for Unknown"));
 	else
-		s = g_strdup_printf (_("Biorhythm for %s"), priv->name_of_person);
+		s = g_strdup_printf (_ ("Biorhythm for %s"), priv->name_of_person);
 
 	cairo_show_text (cr, s);
 	g_free (s);
@@ -338,9 +338,9 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 	gint month_day_offset, days_in_month, day_pix;
 
 	BiorhythmChartPrivate *priv = biorhythm_chart_get_instance_private (chart);
-	BiorhythmChartDivision *division_title = g_malloc (sizeof(BiorhythmChartDivision));
-	BiorhythmChartDivision *division_chart = g_malloc (sizeof(BiorhythmChartDivision));
-	BiorhythmChartDivision *division_caption = g_malloc (sizeof(BiorhythmChartDivision));
+	BiorhythmChartDivision *division_title = g_malloc (sizeof (BiorhythmChartDivision));
+	BiorhythmChartDivision *division_chart = g_malloc (sizeof (BiorhythmChartDivision));
+	BiorhythmChartDivision *division_caption = g_malloc (sizeof (BiorhythmChartDivision));
 
 	g_return_if_fail (priv != NULL);
 	g_return_if_fail (division_chart != NULL);
@@ -391,9 +391,9 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 	cairo_stroke (cr);
 
 	// Title
-    biorhythm_chart_title (priv, cr, division_title);
+	biorhythm_chart_title (priv, cr, division_title);
 
-    // Caption
+	// Caption
 	biorhythm_chart_caption (priv, cr, division_caption);
 
 	g_free (division_title);
@@ -445,7 +445,6 @@ biorhythm_chart_set_name (BiorhythmChart *chart, gchar *s)
 
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
 }
-
 
 void
 biorhythm_chart_set_option_physical (BiorhythmChart *chart, gboolean state)
