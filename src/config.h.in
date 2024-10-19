@@ -1,4 +1,4 @@
-#define PACKAGE_VERSION "0.50"
+#define PACKAGE_VERSION "0.51"
 #define PACKAGE_STRING "biorhythm ${PACKAGE_VERSION}"
 #define ENABLE_NLS
 #define PACKAGE "biorhythm"
