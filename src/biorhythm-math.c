@@ -20,26 +20,28 @@
 
 #include "biorhythm-math.h"
 
+#define DAYS_IN_A_REGULAR_YEAR 365
+#define LEAP_YEAR 1
+
 gint
 biorhythm_math_bioday (gint days_of_life, gint bio_cycle_days)
 {
 	gint rd;
-	gdouble pi2, result;
+	gdouble result;
 
-	pi2 = (gfloat) (6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
 	rd = (gint) (days_of_life - (bio_cycle_days * floor (days_of_life / bio_cycle_days)));
-	result = (gfloat) (sin (rd * pi2 / bio_cycle_days)); // calculate
+	result = (gfloat) (sin (rd * (M_PI * 2) / bio_cycle_days));
 	return ((gint) floor (100 * result + 0.5));
 }
 
 gint
 biorhythm_math_bioday_graphic (gint x, gint month_day_offset, gint bio_cycle_days, gint half_height, gint day_pix)
 {
-	gdouble pi2, calcsin, ri;
+	gdouble calcsin;
+	gdouble ri;
 
-	pi2 = (gfloat) (6.2831853); // 2 * (PI) 3.141592654 = 6.2831853
 	ri = month_day_offset - (bio_cycle_days * floor (month_day_offset / bio_cycle_days));
-	calcsin = sin ((x + (day_pix * ri)) * pi2 / (day_pix * bio_cycle_days));
+	calcsin = sin ((x + (day_pix * ri)) * (M_PI * 2) / (day_pix * bio_cycle_days));
 	return (gint) (floor (half_height - (half_height * calcsin) + 0.5));
 }
 
@@ -50,10 +52,8 @@ biorhythm_math_setpositiv (gint i)
 	{
 		return (i * -1);
 	}
-	else
-	{
-		return (i);
-	}
+
+	return (i);
 }
 
 gint
@@ -63,16 +63,16 @@ biorhythm_math_setpositivgraphic (gint i, gint half_height)
 	{
 		return (half_height - (i - half_height));
 	}
-	else
-	{
-		return (i);
-	}
+
+	return (i);
 }
 
 gint
 biorhythm_math_bioday_total (gint days_of_life)
 {
-	gint result_physical, result_emotional, result_intellectual;
+	gint result_physical;
+	gint result_emotional;
+	gint result_intellectual;
 
 	result_physical = biorhythm_math_setpositiv (biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL));
 	result_emotional = biorhythm_math_setpositiv (biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL));
@@ -84,7 +84,9 @@ biorhythm_math_bioday_total (gint days_of_life)
 gint
 biorhythm_math_bioday_graphic_total (gint x, gint days_of_life, gint half_height, gint day_pix)
 {
-	gint result_physical, result_emotional, result_intellectual;
+	gint result_physical;
+	gint result_emotional;
+	gint result_intellectual;
 
 	result_physical = biorhythm_math_setpositivgraphic (biorhythm_math_bioday_graphic (x, days_of_life, BIORHYTHM_DAYS_PHYSICAL, half_height, day_pix), half_height);
 	result_emotional = biorhythm_math_setpositivgraphic (biorhythm_math_bioday_graphic (x, days_of_life, BIORHYTHM_DAYS_EMOTIONAL, half_height, day_pix), half_height);
@@ -110,13 +112,11 @@ biorhythm_math_daysto (gint day, gint month, gint year)
 	// Years
 	while (year)
 	{
+		result += DAYS_IN_A_REGULAR_YEAR;
+
 		if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))
 		{
-			result += 366;
-		}
-		else
-		{
-			result += 365;
+			result += LEAP_YEAR;
 		}
 
 		year--;
