@@ -126,27 +126,30 @@ biorhythm_chart_draw_curves_select_dash (cairo_t *cairo_context, gint cycle_day)
 	static const double dashed_emotional[] = { 2.0, 10.0 };
 	static int dashed_emotional_length = sizeof (dashed_emotional) / sizeof (dashed_intellectual[0]);
 
-	if (cycle_day == BIORHYTHM_DAYS_PHYSICAL)
-		cairo_set_dash (cairo_context, dashed_physical, dashed_physical_length, 0);
-	else if (cycle_day == BIORHYTHM_DAYS_INTELLECTUAL)
-		cairo_set_dash (cairo_context, dashed_intellectual, dashed_intellectual_length, 1);
-	else if (cycle_day == BIORHYTHM_DAYS_EMOTIONAL)
-		cairo_set_dash (cairo_context, dashed_emotional, dashed_emotional_length, 1);
-	else
-		cairo_set_dash (cairo_context, NULL, 0, 0.0);
+	switch (cycle_day) {
+		case BIORHYTHM_DAYS_PHYSICAL:
+			cairo_set_dash (cairo_context, dashed_physical, dashed_physical_length, 0);
+			break;
+		case BIORHYTHM_DAYS_INTELLECTUAL:
+			cairo_set_dash (cairo_context, dashed_intellectual, dashed_intellectual_length, 1);
+			break;
+		case BIORHYTHM_DAYS_EMOTIONAL:
+			cairo_set_dash (cairo_context, dashed_emotional, dashed_emotional_length, 1);
+			break;
+		default:
+			cairo_set_dash (cairo_context, NULL, 0, 0.0);
+			break;
+	}
 }
 
 void
 biorhythm_chart_draw_curves_select_color (cairo_t *cairo_context, gint cycle_day)
 {
-	if (cycle_day == BIORHYTHM_DAYS_PHYSICAL)
-		cairo_set_source_rgb (cairo_context, 1.0, 0.0, 0.0);
-	else if (cycle_day == BIORHYTHM_DAYS_INTELLECTUAL)
-		cairo_set_source_rgb (cairo_context, 0.0, 1.0, 0.0);
-	else if (cycle_day == BIORHYTHM_DAYS_EMOTIONAL)
-		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 1.0);
-	else
-		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
+	cairo_set_source_rgb (cairo_context,
+		(cycle_day == BIORHYTHM_DAYS_PHYSICAL) * 1.0,
+		(cycle_day == BIORHYTHM_DAYS_INTELLECTUAL) * 1.0,
+		(cycle_day == BIORHYTHM_DAYS_EMOTIONAL) * 1.0
+	);
 }
 
 void
@@ -161,7 +164,9 @@ biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cairo_context
 		month_day_offset = (priv->birthday.day - 1) * -1;
 	}
 	else if (month_day_offset < 0)
+	{
 		return;
+	}
 
 	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
 	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
@@ -170,9 +175,13 @@ biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cairo_context
 	while (i <= ((days_in_month - 1) * day_pix))
 	{
 		if (cycle_day == BIORHYTHM_DAYS_TOTAL)
+		{
 			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic_total (i, month_day_offset, half_height, day_pix));
+		}
 		else
+		{
 			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic (i, month_day_offset, cycle_day, half_height, day_pix));
+		}
 
 		i++;
 	}
@@ -295,20 +304,28 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bi
 
 	// Physical
 	if (priv->option_physical == TRUE)
+	{
 		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
+	}
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
+	{
 		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Emotional: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL)), BIORHYTHM_DAYS_EMOTIONAL);
+	}
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
+	{
 		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Intellectual: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL)),
 										BIORHYTHM_DAYS_INTELLECTUAL);
+	}
 
 	// Total
 	if (priv->option_total == TRUE)
+	{
 		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
+	}
 
 	cairo_stroke (cairo_context);
 }
@@ -323,9 +340,13 @@ biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bior
 	cairo_move_to (cairo_context, division->margin_left, division->margin_top + (division->height / 2));
 
 	if (priv->name_of_person == NULL)
+	{
 		s = g_strdup_printf (_ ("Biorhythm for Unknown"));
+	}
 	else
+	{
 		s = g_strdup_printf (_ ("Biorhythm for %s"), priv->name_of_person);
+	}
 
 	cairo_show_text (cairo_context, s);
 	g_free (s);
@@ -374,19 +395,27 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cairo_context, gint 
 
 	// Physical
 	if (priv->option_physical == TRUE)
+	{
 		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_PHYSICAL);
+	}
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
+	{
 		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_EMOTIONAL);
+	}
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
+	{
 		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_INTELLECTUAL);
+	}
 
 	// Total
 	if (priv->option_total == TRUE)
+	{
 		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_TOTAL);
+	}
 
 	cairo_stroke (cairo_context);
 
