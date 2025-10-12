@@ -28,6 +28,10 @@
 
 G_BEGIN_DECLS
 
+#define BIORHYTHM_CHART_LINE_WIDTH_DEFAULT 0.5
+#define BIORHYTHM_CHART_LINE_WIDTH_DAY 0.5
+#define BIORHYTHM_CHART_LINE_WIDTH_CAPTION 0.2
+
 #define BIORHYTHM_TYPE_CHART (biorhythm_chart_get_type ())
 G_DECLARE_FINAL_TYPE (BiorhythmChart, biorhythm_chart, BIORHYTHM, CHART, GtkDrawingArea)
 

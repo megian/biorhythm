@@ -195,7 +195,7 @@ biorhythm_chart_draw_lines (cairo_t *cairo_context, BiorhythmChartDivision *divi
 	gint line_y = division->margin_top + (division->height / 2);
 
 	cairo_set_source_rgb (cairo_context, 0, 0, 0);
-	cairo_set_line_width (cairo_context, 0.5);
+	cairo_set_line_width (cairo_context, BIORHYTHM_CHART_LINE_WIDTH_DEFAULT);
 	cairo_move_to (cairo_context, division->margin_left, line_y);
 	cairo_line_to (cairo_context, division->margin_left + ((days_in_month - 1) * day_pix), line_y);
 	cairo_stroke (cairo_context);
@@ -205,7 +205,7 @@ void
 biorhythm_chart_draw_current_day_line (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint current_day)
 {
 	cairo_set_source_rgb (cairo_context, 0, 0, 0);
-	cairo_set_line_width (cairo_context, 0.5);
+	cairo_set_line_width (cairo_context, BIORHYTHM_CHART_LINE_WIDTH_DAY);
 	cairo_move_to (cairo_context, division->margin_left + (day_pix * (current_day - 1)), division->margin_top);
 	cairo_line_to (cairo_context, division->margin_left + (day_pix * (current_day - 1)), division->margin_top + division->height);
 	cairo_stroke (cairo_context);
@@ -260,7 +260,7 @@ biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 	cairo_get_current_point (cairo_context, &point_x, &point_y);
 	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
 	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
-	cairo_set_line_width (cairo_context, 0.2);
+	cairo_set_line_width (cairo_context, BIORHYTHM_CHART_LINE_WIDTH_CAPTION);
 	cairo_rel_move_to (cairo_context, 5.0, -4.0);
 	cairo_rel_line_to (cairo_context, 25.0, 0.0);
 	cairo_stroke (cairo_context);
