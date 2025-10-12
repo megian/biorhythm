@@ -217,19 +217,19 @@ biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *
 	gint i;
 	gint h100;
 	gint half_height;
-	gchar *s;
+	gchar *text;
 
 	h100 = (gint) (floor (division->height / 100) + 1);
 	half_height = division->height / 2;
 	for (i = 0; i < days_in_month; i++)
 	{
-		s = g_strdup_printf ("%d", i + 1);
+		text = g_strdup_printf ("%d", i + 1);
 		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 		cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 		cairo_set_font_size (cairo_context, 10);
 		cairo_move_to (cairo_context, division->margin_left + (i * day_pix) - 4, division->margin_top + half_height + h100 + 10);
-		cairo_show_text (cairo_context, s);
-		g_free (s);
+		cairo_show_text (cairo_context, text);
+		g_free (text);
 
 		cairo_set_source_rgb (cairo_context, 0, 0, 0);
 		cairo_move_to (cairo_context, division->margin_left + (i * day_pix), division->margin_top + half_height - h100);
@@ -239,13 +239,13 @@ biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *
 }
 
 void
-biorhythm_chart_caption_text (cairo_t *cairo_context, char *s)
+biorhythm_chart_caption_text (cairo_t *cairo_context, char *text)
 {
 	g_return_if_fail (cairo_context != NULL);
-	g_return_if_fail (s != NULL);
+	g_return_if_fail (text != NULL);
 
-	cairo_show_text (cairo_context, s);
-	g_free (s);
+	cairo_show_text (cairo_context, text);
+	g_free (text);
 
 	cairo_rel_move_to (cairo_context, 10, 0);
 }
@@ -269,25 +269,25 @@ biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 }
 
 void
-biorhythm_chart_caption_option (cairo_t *cairo_context, char *s, gint cycle_day)
+biorhythm_chart_caption_option (cairo_t *cairo_context, char *text, gint cycle_day)
 {
 	biorhythm_chart_caption_line (cairo_context, cycle_day);
 	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
-	biorhythm_chart_caption_text (cairo_context, s);
+	biorhythm_chart_caption_text (cairo_context, text);
 }
 
 char *
 biorhythm_chart_caption_weekday (struct bio_date date)
 {
 	GDate *gdate;
-	char *s;
+	char *text;
 	static char *weekdays[] = { "", N_ ("Mon"), N_ ("Tue"), N_ ("Wed"), N_ ("Thu"), N_ ("Fri"), N_ ("Sat"), N_ ("Sun") };
 
 	gdate = g_date_new_dmy (date.day, date.month, date.year);
-	s = weekdays[g_date_get_weekday (gdate)];
+	text = weekdays[g_date_get_weekday (gdate)];
 	g_date_free (gdate);
 
-	return s;
+	return text;
 }
 
 void
@@ -336,7 +336,7 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bi
 void
 biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division)
 {
-	gchar *s;
+	gchar *text;
 	cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 	cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 	cairo_set_font_size (cairo_context, 16);
@@ -344,15 +344,15 @@ biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bior
 
 	if (priv->name_of_person == NULL)
 	{
-		s = g_strdup_printf (_ ("Biorhythm for Unknown"));
+		text = g_strdup_printf (_ ("Biorhythm for Unknown"));
 	}
 	else
 	{
-		s = g_strdup_printf (_ ("Biorhythm for %s"), priv->name_of_person);
+		text = g_strdup_printf (_ ("Biorhythm for %s"), priv->name_of_person);
 	}
 
-	cairo_show_text (cairo_context, s);
-	g_free (s);
+	cairo_show_text (cairo_context, text);
+	g_free (text);
 	cairo_stroke (cairo_context);
 }
 
@@ -470,12 +470,12 @@ biorhythm_chart_set_active_date (BiorhythmChart *chart, gint day, gint month, gi
 }
 
 void
-biorhythm_chart_set_name (BiorhythmChart *chart, gchar *s)
+biorhythm_chart_set_name (BiorhythmChart *chart, gchar *name)
 {
 	g_return_if_fail (BIORHYTHM_IS_CHART (chart));
-	g_return_if_fail (s != NULL);
+	g_return_if_fail (name != NULL);
 
-	chart->priv->name_of_person = g_strdup (s);
+	chart->priv->name_of_person = g_strdup (name);
 
 	gtk_widget_queue_resize (GTK_WIDGET (chart));
 }
