@@ -265,7 +265,7 @@ biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 	cairo_rel_line_to (cairo_context, 25.0, 0.0);
 	cairo_stroke (cairo_context);
 
-	cairo_move_to (cairo_context, x + 25.0 + 10.0, y);
+	cairo_move_to (cairo_context, point_x + 25.0 + 10.0, point_y);
 }
 
 void
