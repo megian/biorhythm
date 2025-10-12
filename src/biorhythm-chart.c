@@ -155,12 +155,12 @@ biorhythm_chart_draw_curves_select_color (cairo_t *cairo_context, gint cycle_day
 void
 biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint month_day_offset, gint cycle_day)
 {
-	gint i = 0;
+	gint counter = 0;
 	gint half_height = division->height / 2;
 
 	if ((priv->birthday.month == priv->active_date.month) && (priv->birthday.year == priv->active_date.year))
 	{
-		i = (priv->birthday.day - 1) * day_pix;
+		counter = (priv->birthday.day - 1) * day_pix;
 		month_day_offset = (priv->birthday.day - 1) * -1;
 	}
 	else if (month_day_offset < 0)
@@ -172,18 +172,18 @@ biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cairo_context
 	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
 
 	// Draw curves
-	while (i <= ((days_in_month - 1) * day_pix))
+	while (counter <= ((days_in_month - 1) * day_pix))
 	{
 		if (cycle_day == BIORHYTHM_DAYS_TOTAL)
 		{
-			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic_total (i, month_day_offset, half_height, day_pix));
+			cairo_line_to (cairo_context, division->margin_left + counter, division->margin_top + biorhythm_math_bioday_graphic_total (counter, month_day_offset, half_height, day_pix));
 		}
 		else
 		{
-			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic (i, month_day_offset, cycle_day, half_height, day_pix));
+			cairo_line_to (cairo_context, division->margin_left + counter, division->margin_top + biorhythm_math_bioday_graphic (counter, month_day_offset, cycle_day, half_height, day_pix));
 		}
 
-		i++;
+		counter++;
 	}
 
 	cairo_stroke (cairo_context);
@@ -214,26 +214,26 @@ biorhythm_chart_draw_current_day_line (cairo_t *cairo_context, BiorhythmChartDiv
 void
 biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
-	gint i;
+	gint day_in_month;
 	gint h100;
 	gint half_height;
 	gchar *text;
 
 	h100 = (gint) (floor (division->height / 100) + 1);
 	half_height = division->height / 2;
-	for (i = 0; i < days_in_month; i++)
+	for (day_in_month = 0; day_in_month < days_in_month; day_in_month++)
 	{
-		text = g_strdup_printf ("%d", i + 1);
+		text = g_strdup_printf ("%d", day_in_month + 1);
 		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 		cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
 		cairo_set_font_size (cairo_context, 10);
-		cairo_move_to (cairo_context, division->margin_left + (i * day_pix) - 4, division->margin_top + half_height + h100 + 10);
+		cairo_move_to (cairo_context, division->margin_left + (day_in_month * day_pix) - 4, division->margin_top + half_height + h100 + 10);
 		cairo_show_text (cairo_context, text);
 		g_free (text);
 
 		cairo_set_source_rgb (cairo_context, 0, 0, 0);
-		cairo_move_to (cairo_context, division->margin_left + (i * day_pix), division->margin_top + half_height - h100);
-		cairo_line_to (cairo_context, division->margin_left + (i * day_pix), division->margin_top + half_height + h100);
+		cairo_move_to (cairo_context, division->margin_left + (day_in_month * day_pix), division->margin_top + half_height - h100);
+		cairo_line_to (cairo_context, division->margin_left + (day_in_month * day_pix), division->margin_top + half_height + h100);
 	}
 	cairo_stroke (cairo_context);
 }
