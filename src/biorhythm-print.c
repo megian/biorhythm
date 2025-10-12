@@ -23,7 +23,7 @@
 static void
 biorhythm_print_draw_page (GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, gpointer user_data)
 {
-	cairo_t *cr;
+	cairo_t *cairo_context;
 	gdouble p_width, p_height;
 	GtkPageSetup *page_setup;
 	BiorhythmChart *chart;
@@ -34,9 +34,9 @@ biorhythm_print_draw_page (GtkPrintOperation *operation, GtkPrintContext *contex
 	p_width = gtk_page_setup_get_page_width (page_setup, GTK_UNIT_POINTS);
 	p_height = gtk_page_setup_get_page_height (page_setup, GTK_UNIT_POINTS);
 
-	cr = gtk_print_context_get_cairo_context (context);
+	cairo_context = gtk_print_context_get_cairo_context (context);
 
-	biorhythm_chart_draw_cairo (chart, cr, p_height, p_width);
+	biorhythm_chart_draw_cairo (chart, cairo_context, p_height, p_width);
 }
 
 GtkPrintOperation *

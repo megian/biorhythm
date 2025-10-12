@@ -21,7 +21,7 @@
 #include "biorhythm-chart.h"
 
 void
-biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cr, int width, int height, gpointer user_data);
+biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cairo_context, int width, int height, gpointer user_data);
 typedef struct
 {
 	GtkWidget *parent_widget;
@@ -115,7 +115,7 @@ biorhythm_chart_new ()
  ****************************************/
 
 void
-biorhythm_chart_draw_curves_select_dash (cairo_t *cr, gint cycle_day)
+biorhythm_chart_draw_curves_select_dash (cairo_t *cairo_context, gint cycle_day)
 {
 	static const double dashed_physical[] = { 2.0, 2.0 };
 	static int dashed_physical_length = sizeof (dashed_physical) / sizeof (dashed_physical[0]);
@@ -127,30 +127,30 @@ biorhythm_chart_draw_curves_select_dash (cairo_t *cr, gint cycle_day)
 	static int dashed_emotional_length = sizeof (dashed_emotional) / sizeof (dashed_intellectual[0]);
 
 	if (cycle_day == BIORHYTHM_DAYS_PHYSICAL)
-		cairo_set_dash (cr, dashed_physical, dashed_physical_length, 0);
+		cairo_set_dash (cairo_context, dashed_physical, dashed_physical_length, 0);
 	else if (cycle_day == BIORHYTHM_DAYS_INTELLECTUAL)
-		cairo_set_dash (cr, dashed_intellectual, dashed_intellectual_length, 1);
+		cairo_set_dash (cairo_context, dashed_intellectual, dashed_intellectual_length, 1);
 	else if (cycle_day == BIORHYTHM_DAYS_EMOTIONAL)
-		cairo_set_dash (cr, dashed_emotional, dashed_emotional_length, 1);
+		cairo_set_dash (cairo_context, dashed_emotional, dashed_emotional_length, 1);
 	else
-		cairo_set_dash (cr, NULL, 0, 0.0);
+		cairo_set_dash (cairo_context, NULL, 0, 0.0);
 }
 
 void
-biorhythm_chart_draw_curves_select_color (cairo_t *cr, gint cycle_day)
+biorhythm_chart_draw_curves_select_color (cairo_t *cairo_context, gint cycle_day)
 {
 	if (cycle_day == BIORHYTHM_DAYS_PHYSICAL)
-		cairo_set_source_rgb (cr, 1.0, 0.0, 0.0);
+		cairo_set_source_rgb (cairo_context, 1.0, 0.0, 0.0);
 	else if (cycle_day == BIORHYTHM_DAYS_INTELLECTUAL)
-		cairo_set_source_rgb (cr, 0.0, 1.0, 0.0);
+		cairo_set_source_rgb (cairo_context, 0.0, 1.0, 0.0);
 	else if (cycle_day == BIORHYTHM_DAYS_EMOTIONAL)
-		cairo_set_source_rgb (cr, 0.0, 0.0, 1.0);
+		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 1.0);
 	else
-		cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 }
 
 void
-biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint month_day_offset, gint cycle_day)
+biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint month_day_offset, gint cycle_day)
 {
 	gint i = 0;
 	gint half_height = division->height / 2;
@@ -163,47 +163,47 @@ biorhythm_chart_draw_curves (BiorhythmChartPrivate *priv, cairo_t *cr, Biorhythm
 	else if (month_day_offset < 0)
 		return;
 
-	biorhythm_chart_draw_curves_select_color (cr, cycle_day);
-	biorhythm_chart_draw_curves_select_dash (cr, cycle_day);
+	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
+	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
 
 	// Draw curves
 	while (i <= ((days_in_month - 1) * day_pix))
 	{
 		if (cycle_day == BIORHYTHM_DAYS_TOTAL)
-			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic_total (i, month_day_offset, half_height, day_pix));
+			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic_total (i, month_day_offset, half_height, day_pix));
 		else
-			cairo_line_to (cr, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic (i, month_day_offset, cycle_day, half_height, day_pix));
+			cairo_line_to (cairo_context, division->margin_left + i, division->margin_top + biorhythm_math_bioday_graphic (i, month_day_offset, cycle_day, half_height, day_pix));
 
 		i++;
 	}
 
-	cairo_stroke (cr);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_draw_lines (cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
+biorhythm_chart_draw_lines (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
 	gint line_y = division->margin_top + (division->height / 2);
 
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_set_line_width (cr, 0.5);
-	cairo_move_to (cr, division->margin_left, line_y);
-	cairo_line_to (cr, division->margin_left + ((days_in_month - 1) * day_pix), line_y);
-	cairo_stroke (cr);
+	cairo_set_source_rgb (cairo_context, 0, 0, 0);
+	cairo_set_line_width (cairo_context, 0.5);
+	cairo_move_to (cairo_context, division->margin_left, line_y);
+	cairo_line_to (cairo_context, division->margin_left + ((days_in_month - 1) * day_pix), line_y);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_draw_current_day_line (cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint current_day)
+biorhythm_chart_draw_current_day_line (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix, gint current_day)
 {
-	cairo_set_source_rgb (cr, 0, 0, 0);
-	cairo_set_line_width (cr, 0.5);
-	cairo_move_to (cr, division->margin_left + (day_pix * (current_day - 1)), division->margin_top);
-	cairo_line_to (cr, division->margin_left + (day_pix * (current_day - 1)), division->margin_top + division->height);
-	cairo_stroke (cr);
+	cairo_set_source_rgb (cairo_context, 0, 0, 0);
+	cairo_set_line_width (cairo_context, 0.5);
+	cairo_move_to (cairo_context, division->margin_left + (day_pix * (current_day - 1)), division->margin_top);
+	cairo_line_to (cairo_context, division->margin_left + (day_pix * (current_day - 1)), division->margin_top + division->height);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_draw_day_lines (cairo_t *cr, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
+biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
 	gint i, h100, half_height;
 	gchar *s;
@@ -213,55 +213,55 @@ biorhythm_chart_draw_day_lines (cairo_t *cr, BiorhythmChartDivision *division, g
 	for (i = 0; i < days_in_month; i++)
 	{
 		s = g_strdup_printf ("%d", i + 1);
-		cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
-		cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-		cairo_set_font_size (cr, 10);
-		cairo_move_to (cr, division->margin_left + (i * day_pix) - 4, division->margin_top + half_height + h100 + 10);
-		cairo_show_text (cr, s);
+		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
+		cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+		cairo_set_font_size (cairo_context, 10);
+		cairo_move_to (cairo_context, division->margin_left + (i * day_pix) - 4, division->margin_top + half_height + h100 + 10);
+		cairo_show_text (cairo_context, s);
 		g_free (s);
 
-		cairo_set_source_rgb (cr, 0, 0, 0);
-		cairo_move_to (cr, division->margin_left + (i * day_pix), division->margin_top + half_height - h100);
-		cairo_line_to (cr, division->margin_left + (i * day_pix), division->margin_top + half_height + h100);
+		cairo_set_source_rgb (cairo_context, 0, 0, 0);
+		cairo_move_to (cairo_context, division->margin_left + (i * day_pix), division->margin_top + half_height - h100);
+		cairo_line_to (cairo_context, division->margin_left + (i * day_pix), division->margin_top + half_height + h100);
 	}
-	cairo_stroke (cr);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_caption_text (cairo_t *cr, char *s)
+biorhythm_chart_caption_text (cairo_t *cairo_context, char *s)
 {
-	g_return_if_fail (cr != NULL);
+	g_return_if_fail (cairo_context != NULL);
 	g_return_if_fail (s != NULL);
 
-	cairo_show_text (cr, s);
+	cairo_show_text (cairo_context, s);
 	g_free (s);
 
-	cairo_rel_move_to (cr, 10, 0);
+	cairo_rel_move_to (cairo_context, 10, 0);
 }
 
 void
-biorhythm_chart_caption_line (cairo_t *cr, gint cycle_day)
+biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 {
 	double x, y;
-	g_return_if_fail (cr != NULL);
+	g_return_if_fail (cairo_context != NULL);
 
-	cairo_get_current_point (cr, &x, &y);
-	biorhythm_chart_draw_curves_select_dash (cr, cycle_day);
-	biorhythm_chart_draw_curves_select_color (cr, cycle_day);
-	cairo_set_line_width (cr, 0.2);
-	cairo_rel_move_to (cr, 5.0, -4.0);
-	cairo_rel_line_to (cr, 25.0, 0.0);
-	cairo_stroke (cr);
+	cairo_get_current_point (cairo_context, &x, &y);
+	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
+	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
+	cairo_set_line_width (cairo_context, 0.2);
+	cairo_rel_move_to (cairo_context, 5.0, -4.0);
+	cairo_rel_line_to (cairo_context, 25.0, 0.0);
+	cairo_stroke (cairo_context);
 
-	cairo_move_to (cr, x + 25.0 + 10.0, y);
+	cairo_move_to (cairo_context, x + 25.0 + 10.0, y);
 }
 
 void
-biorhythm_chart_caption_option (cairo_t *cr, char *s, gint cycle_day)
+biorhythm_chart_caption_option (cairo_t *cairo_context, char *s, gint cycle_day)
 {
-	biorhythm_chart_caption_line (cr, cycle_day);
-	biorhythm_chart_draw_curves_select_color (cr, cycle_day);
-	biorhythm_chart_caption_text (cr, s);
+	biorhythm_chart_caption_line (cairo_context, cycle_day);
+	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
+	biorhythm_chart_caption_text (cairo_context, s);
 }
 
 char *
@@ -279,61 +279,61 @@ biorhythm_chart_caption_weekday (struct bio_date date)
 }
 
 void
-biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartDivision *division)
+biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division)
 {
 	gint days_of_life;
 
 	days_of_life = biorhythm_math_daysoflife (priv->active_date, priv->birthday);
 
-	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cr, 11);
-	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
+	cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cairo_context, 11);
+	cairo_move_to (cairo_context, division->margin_left, division->margin_top + (division->height / 2));
 
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
-	biorhythm_chart_caption_text (cr, g_strdup_printf (_ ("Days: %d"), days_of_life));
+	biorhythm_chart_caption_text (cairo_context, g_strdup_printf (_ ("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
+	biorhythm_chart_caption_text (cairo_context, g_strdup_printf (_ ("Birthday: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->birthday), priv->birthday.day, priv->birthday.month, priv->birthday.year));
+	biorhythm_chart_caption_text (cairo_context, g_strdup_printf (_ ("Days: %d"), days_of_life));
 
 	// Physical
 	if (priv->option_physical == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
+		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Physical: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_PHYSICAL)), BIORHYTHM_DAYS_PHYSICAL);
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Emotional: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL)), BIORHYTHM_DAYS_EMOTIONAL);
+		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Emotional: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_EMOTIONAL)), BIORHYTHM_DAYS_EMOTIONAL);
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Intellectual: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL)),
+		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Intellectual: %d"), biorhythm_math_bioday (days_of_life, BIORHYTHM_DAYS_INTELLECTUAL)),
 										BIORHYTHM_DAYS_INTELLECTUAL);
 
 	// Total
 	if (priv->option_total == TRUE)
-		biorhythm_chart_caption_option (cr, g_strdup_printf (_ ("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
+		biorhythm_chart_caption_option (cairo_context, g_strdup_printf (_ ("Total: %d"), biorhythm_math_bioday_total (days_of_life)), BIORHYTHM_DAYS_TOTAL);
 
-	cairo_stroke (cr);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cr, BiorhythmChartDivision *division)
+biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division)
 {
 	gchar *s;
-	cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
-	cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cr, 16);
-	cairo_move_to (cr, division->margin_left, division->margin_top + (division->height / 2));
+	cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
+	cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
+	cairo_set_font_size (cairo_context, 16);
+	cairo_move_to (cairo_context, division->margin_left, division->margin_top + (division->height / 2));
 
 	if (priv->name_of_person == NULL)
 		s = g_strdup_printf (_ ("Biorhythm for Unknown"));
 	else
 		s = g_strdup_printf (_ ("Biorhythm for %s"), priv->name_of_person);
 
-	cairo_show_text (cr, s);
+	cairo_show_text (cairo_context, s);
 	g_free (s);
-	cairo_stroke (cr);
+	cairo_stroke (cairo_context);
 }
 
 void
-biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height, gint full_width)
+biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cairo_context, gint full_height, gint full_width)
 {
 	gint month_day_offset, days_in_month, day_pix;
 
@@ -368,33 +368,33 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 	month_day_offset = biorhythm_math_monthdayoffset (priv->active_date, priv->birthday);
 	day_pix = division_chart->width / (days_in_month - 1);
 
-	biorhythm_chart_draw_lines (cr, division_chart, days_in_month, day_pix);
-	biorhythm_chart_draw_current_day_line (cr, division_chart, days_in_month, day_pix, priv->active_date.day);
-	biorhythm_chart_draw_day_lines (cr, division_chart, days_in_month, day_pix);
+	biorhythm_chart_draw_lines (cairo_context, division_chart, days_in_month, day_pix);
+	biorhythm_chart_draw_current_day_line (cairo_context, division_chart, days_in_month, day_pix, priv->active_date.day);
+	biorhythm_chart_draw_day_lines (cairo_context, division_chart, days_in_month, day_pix);
 
 	// Physical
 	if (priv->option_physical == TRUE)
-		biorhythm_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_PHYSICAL);
+		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_PHYSICAL);
 
 	// Emotional
 	if (priv->option_emotional == TRUE)
-		biorhythm_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_EMOTIONAL);
+		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_EMOTIONAL);
 
 	// Intellectual
 	if (priv->option_intellectual == TRUE)
-		biorhythm_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_INTELLECTUAL);
+		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_INTELLECTUAL);
 
 	// Total
 	if (priv->option_total == TRUE)
-		biorhythm_chart_draw_curves (priv, cr, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_TOTAL);
+		biorhythm_chart_draw_curves (priv, cairo_context, division_chart, days_in_month, day_pix, month_day_offset, BIORHYTHM_DAYS_TOTAL);
 
-	cairo_stroke (cr);
+	cairo_stroke (cairo_context);
 
 	// Title
-	biorhythm_chart_title (priv, cr, division_title);
+	biorhythm_chart_title (priv, cairo_context, division_title);
 
 	// Caption
-	biorhythm_chart_caption (priv, cr, division_caption);
+	biorhythm_chart_caption (priv, cairo_context, division_caption);
 
 	g_free (division_title);
 	g_free (division_chart);
@@ -402,9 +402,9 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cr, gint full_height
 }
 
 void
-biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cr, int width, int height, gpointer user_data)
+biorhythm_chart_draw (GtkDrawingArea *area, cairo_t *cairo_context, int width, int height, gpointer user_data)
 {
-	biorhythm_chart_draw_cairo (BIORHYTHM_CHART (area), cr, height, width);
+	biorhythm_chart_draw_cairo (BIORHYTHM_CHART (area), cairo_context, height, width);
 }
 
 /****************************************
