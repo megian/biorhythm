@@ -214,7 +214,9 @@ biorhythm_chart_draw_current_day_line (cairo_t *cairo_context, BiorhythmChartDiv
 void
 biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
-	gint i, h100, half_height;
+	gint i;
+	gint h100;
+	gint half_height;
 	gchar *s;
 
 	h100 = (gint) (floor (division->height / 100) + 1);
@@ -251,10 +253,11 @@ biorhythm_chart_caption_text (cairo_t *cairo_context, char *s)
 void
 biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 {
-	double x, y;
+	double point_x;
+	double point_y;
 	g_return_if_fail (cairo_context != NULL);
 
-	cairo_get_current_point (cairo_context, &x, &y);
+	cairo_get_current_point (cairo_context, &point_x, &point_y);
 	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
 	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
 	cairo_set_line_width (cairo_context, 0.2);
@@ -356,7 +359,9 @@ biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bior
 void
 biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cairo_context, gint full_height, gint full_width)
 {
-	gint month_day_offset, days_in_month, day_pix;
+	gint month_day_offset;
+	gint days_in_month;
+	gint day_pix;
 
 	BiorhythmChartPrivate *priv = biorhythm_chart_get_instance_private (chart);
 	BiorhythmChartDivision *division_title = g_malloc (sizeof (BiorhythmChartDivision));
