@@ -24,7 +24,8 @@ static void
 biorhythm_print_draw_page (GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, gpointer user_data)
 {
 	cairo_t *cairo_context;
-	gdouble p_width, p_height;
+	gdouble p_width;
+	gdouble p_height;
 	GtkPageSetup *page_setup;
 	BiorhythmChart *chart;
 

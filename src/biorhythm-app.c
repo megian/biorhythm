@@ -413,7 +413,9 @@ _biorhythm_app_file_view_name_changed_chart (BiorhythmFileView *file_view, Biorh
 static void
 _biorhythm_app_file_view_birthday_changed_cli (BiorhythmFileView *file_view, BiorhythmCli *cli)
 {
-	guint day, month, year;
+	guint day;
+	guint month;
+	guint year;
 
 	biorhythm_file_view_get_date (file_view, &day, &month, &year);
 	biorhythm_cli_set_birthday (cli, day, month, year);
