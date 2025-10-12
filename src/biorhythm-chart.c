@@ -214,6 +214,7 @@ biorhythm_chart_draw_current_day_line (cairo_t *cairo_context, BiorhythmChartDiv
 void
 biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *division, gint days_in_month, gint day_pix)
 {
+	const double font_size = BIORHYTHM_CHART_FONT_SIZE;
 	gint day_in_month;
 	gint h100;
 	gint half_height;
@@ -226,7 +227,7 @@ biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *
 		text = g_strdup_printf ("%d", day_in_month + 1);
 		cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 		cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-		cairo_set_font_size (cairo_context, 10);
+		cairo_set_font_size (cairo_context, font_size);
 		cairo_move_to (cairo_context, division->margin_left + (day_in_month * day_pix) - 4, division->margin_top + half_height + h100 + 10);
 		cairo_show_text (cairo_context, text);
 		g_free (text);
@@ -241,31 +242,38 @@ biorhythm_chart_draw_day_lines (cairo_t *cairo_context, BiorhythmChartDivision *
 void
 biorhythm_chart_caption_text (cairo_t *cairo_context, char *text)
 {
+	const double caption_text_margin_right = BIORHYTHM_CHART_CAPTION_TEXT_MARGIN_RIGHT;
 	g_return_if_fail (cairo_context != NULL);
 	g_return_if_fail (text != NULL);
 
 	cairo_show_text (cairo_context, text);
 	g_free (text);
 
-	cairo_rel_move_to (cairo_context, 10, 0);
+	cairo_rel_move_to (cairo_context, caption_text_margin_right, 0);
 }
 
 void
 biorhythm_chart_caption_line (cairo_t *cairo_context, gint cycle_day)
 {
-	double point_x;
-	double point_y;
+	const double caption_line_length = BIORHYTHM_CHART_CAPTION_LINE_LENGTH;
+	const double caption_line_margin_left = BIORHYTHM_CHART_CAPTION_LINE_MARGIN_LEFT;
+	const double caption_line_margin_right = BIORHYTHM_CHART_CAPTION_LINE_MARGIN_RIGHT;
+	const double caption_line_line_width = BIORHYTHM_CHART_CAPTION_LINE_LINE_WIDTH;
+	const double font_size = BIORHYTHM_CHART_FONT_SIZE;
+	const double half_font_size = font_size / 2;
+	double current_x;
+	double current_y;
 	g_return_if_fail (cairo_context != NULL);
 
-	cairo_get_current_point (cairo_context, &point_x, &point_y);
+	cairo_get_current_point (cairo_context, &current_x, &current_y);
 	biorhythm_chart_draw_curves_select_dash (cairo_context, cycle_day);
 	biorhythm_chart_draw_curves_select_color (cairo_context, cycle_day);
-	cairo_set_line_width (cairo_context, BIORHYTHM_CHART_LINE_WIDTH_CAPTION);
-	cairo_rel_move_to (cairo_context, 5.0, -4.0);
-	cairo_rel_line_to (cairo_context, 25.0, 0.0);
+	cairo_set_line_width (cairo_context, caption_line_line_width);
+	cairo_rel_move_to (cairo_context, caption_line_margin_left, half_font_size * -1);
+	cairo_rel_line_to (cairo_context, caption_line_length, 0.0);
 	cairo_stroke (cairo_context);
 
-	cairo_move_to (cairo_context, point_x + 25.0 + 10.0, point_y);
+	cairo_move_to (cairo_context, current_x + caption_line_length + caption_line_margin_right, current_y);
 }
 
 void
@@ -293,12 +301,13 @@ biorhythm_chart_caption_weekday (struct bio_date date)
 void
 biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division)
 {
+	const double font_size = BIORHYTHM_CHART_CAPTION_LINE_FONT_SIZE;
 	gint days_of_life;
 
 	days_of_life = biorhythm_math_daysoflife (priv->active_date, priv->birthday);
 
 	cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cairo_context, 11);
+	cairo_set_font_size (cairo_context, font_size);
 	cairo_move_to (cairo_context, division->margin_left, division->margin_top + (division->height / 2));
 
 	biorhythm_chart_caption_text (cairo_context, g_strdup_printf (_ ("Date: %s %d.%d.%d"), biorhythm_chart_caption_weekday (priv->active_date), priv->active_date.day, priv->active_date.month, priv->active_date.year));
@@ -336,10 +345,11 @@ biorhythm_chart_caption (BiorhythmChartPrivate *priv, cairo_t *cairo_context, Bi
 void
 biorhythm_chart_title (BiorhythmChartPrivate *priv, cairo_t *cairo_context, BiorhythmChartDivision *division)
 {
+	const double font_size = 16;
 	gchar *text;
 	cairo_set_source_rgb (cairo_context, 0.0, 0.0, 0.0);
 	cairo_select_font_face (cairo_context, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-	cairo_set_font_size (cairo_context, 16);
+	cairo_set_font_size (cairo_context, font_size);
 	cairo_move_to (cairo_context, division->margin_left, division->margin_top + (division->height / 2));
 
 	if (priv->name_of_person == NULL)
@@ -372,17 +382,17 @@ biorhythm_chart_draw_cairo (BiorhythmChart *chart, cairo_t *cairo_context, gint 
 	g_return_if_fail (division_chart != NULL);
 
 	// Inizialize
-	division_chart->margin_top = 60;
-	division_chart->margin_left = 25;
-	division_chart->margin_bottom = 40;
-	division_chart->margin_right = 25;
+	division_chart->margin_top = BIORHYTHM_CHART_DIVISION_CHART_MARGIN_TOP;
+	division_chart->margin_left = BIORHYTHM_CHART_DIVISION_CHART_MARGIN_LEFT;
+	division_chart->margin_bottom = BIORHYTHM_CHART_DIVISION_CHART_MARGIN_BOTTOM;
+	division_chart->margin_right = BIORHYTHM_CHART_DIVISION_CHART_MARGIN_RIGHT;
 
-	division_caption->margin_left = 25;
-	division_caption->height = 20;
+	division_caption->margin_left = BIORHYTHM_CHART_DIVISION_CAPTION_MARGIN_LEFT;
+	division_caption->height = BIORHYTHM_CHART_DIVISION_CAPTION_MARGIN_HIGHT;
 
-	division_title->margin_top = 15;
-	division_title->margin_left = 25;
-	division_title->height = 50;
+	division_title->margin_top = BIORHYTHM_CHART_DIVISION_TITLE_MARGIN_TOP;
+	division_title->margin_left = BIORHYTHM_CHART_DIVISION_TITLE_MARGIN_LEFT;
+	division_title->height = BIORHYTHM_CHART_DIVISION_TITLE_HEIGHT;
 
 	division_chart->height = full_height - division_chart->margin_top - division_chart->margin_bottom;
 	division_chart->width = full_width - division_chart->margin_left - division_chart->margin_right;
