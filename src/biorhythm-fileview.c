@@ -76,9 +76,9 @@ static void biorhythm_file_view_read_file_each_element (JsonArray *array, guint 
 static int biorhythm_file_view_read_file (BiorhythmFileView *file_view);
 static void biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GListStore *liststore);
 static gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view);
-static GtkWidget *biorhythm_file_view_close_dialog (BiorhythmFileView *file_view);
-static void biorhythm_file_view_new_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
-static void biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
+static void biorhythm_file_view_close_dialog (BiorhythmFileView *file_view, void *func);
+static void biorhythm_file_view_new_file_on_response (GObject *source_object, GAsyncResult *res, BiorhythmFileView *file_view);
+static void biorhythm_file_view_load_from_file_on_response (GObject *source_object, GAsyncResult *res, BiorhythmFileView *file_view);
 
 G_DEFINE_TYPE_WITH_CODE (BiorhythmFileView, biorhythm_file_view, GTK_TYPE_WIDGET, G_ADD_PRIVATE (BiorhythmFileView))
 
@@ -587,37 +587,52 @@ biorhythm_file_view_get_name (BiorhythmFileView *file_view)
 	return priv->name;
 }
 
-static GtkWidget *
-biorhythm_file_view_close_dialog (BiorhythmFileView *file_view)
-{
-	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
-
-	GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_root (GTK_WIDGET (file_view))),
-												GTK_DIALOG_DESTROY_WITH_PARENT,
-												GTK_MESSAGE_QUESTION,
-												GTK_BUTTONS_YES_NO,
-												_ ("There are unsaved changes, do you like to continue?"));
-
-	gtk_window_present (GTK_WINDOW (dialog));
-
-	return dialog;
-}
-
 static void
-biorhythm_file_view_new_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view)
+biorhythm_file_view_new_file_on_response (GObject *source_object, GAsyncResult *res, BiorhythmFileView *file_view)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	GtkAlertDialog *dialog = GTK_ALERT_DIALOG (source_object);
+	GError *err = NULL;
 
-	if (response_id == GTK_RESPONSE_YES)
+	int button = gtk_alert_dialog_choose_finish (dialog, res, &err);
+
+	if (err)
+	{
+		g_print ("An error occured!\n");
+		g_print ("Error Message: %s\n", err->message);
+		return;
+	}
+
+	if (button == 0)
+	{
+		g_print ("Cancelled!\n");
+	}
+	else if (button == 1)
 	{
 		biorhythm_file_view_list_store_clear (priv->liststore);
 		biorhythm_file_view_list_store_add_empty_row (priv->liststore);
 		priv->saved = FALSE;
 	}
+	else
+	{
+		g_assert_not_reached ();
+	}
+}
 
-	gtk_window_destroy (GTK_WINDOW (dialog));
+static void
+biorhythm_file_view_close_dialog (BiorhythmFileView *file_view, void *func)
+{
+	GtkWindow *win = GTK_WINDOW (gtk_widget_get_root (GTK_WIDGET (file_view)));
+	const char* buttons[] = {_("No"),  _("Yes")};
+
+	GtkAlertDialog *dialog = gtk_alert_dialog_new (_ ("Save?"));
+	gtk_alert_dialog_set_detail (dialog, _ ("There are unsaved changes, do you like to continue?"));
+	gtk_alert_dialog_set_buttons (dialog, buttons);
+
+	gtk_window_present (win);
+	gtk_alert_dialog_choose (dialog, win, NULL, func, file_view);
 }
 
 void
@@ -625,30 +640,43 @@ biorhythm_file_view_new_file (BiorhythmFileView *file_view)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	GtkWidget *dialog = biorhythm_file_view_close_dialog (file_view);
-
-	g_signal_connect (dialog, "response",
-					  G_CALLBACK (biorhythm_file_view_new_file_on_response),
-					  file_view);
+	biorhythm_file_view_close_dialog (file_view, biorhythm_file_view_new_file_on_response);
 }
 
 static void
-biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view)
+biorhythm_file_view_load_from_file_on_response (GObject *source_object, GAsyncResult *res, BiorhythmFileView *file_view)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	int result;
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	GtkAlertDialog *dialog = GTK_ALERT_DIALOG (source_object);
+	GError *err = NULL;
+	int result;
 
-	if (response_id == GTK_RESPONSE_YES)
+	int button = gtk_alert_dialog_choose_finish (dialog, res, &err);
+
+	if (err)
+	{
+		g_print ("An error occured!\n");
+		g_print ("Error Message: %s\n", err->message);
+		return;
+	}
+
+	if (button == 0)
+	{
+		g_print ("Cancelled!\n");
+	}
+	else if (button == 1)
 	{
 		biorhythm_file_view_list_store_clear (priv->liststore);
 		result = biorhythm_file_view_read_file (file_view);
 		biorhythm_file_view_list_store_add_empty_row (priv->liststore);
 		priv->saved = result;
 	}
-
-	gtk_window_destroy (GTK_WINDOW (dialog));
+	else
+	{
+		g_assert_not_reached ();
+	}
 }
 
 void
@@ -666,11 +694,7 @@ biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, GFile *file)
 	// Store the new file
 	priv->file = g_object_ref (file);
 
-	GtkWidget *dialog = biorhythm_file_view_close_dialog (file_view);
-
-	g_signal_connect (dialog, "response",
-					  G_CALLBACK (biorhythm_file_view_load_from_file_on_response),
-					  file_view);
+	biorhythm_file_view_close_dialog (file_view, biorhythm_file_view_load_from_file_on_response);
 }
 
 void
