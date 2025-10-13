@@ -44,12 +44,12 @@ struct _BiorhythmFileViewClass
 BiorhythmFileView *biorhythm_file_view_new ();
 
 void biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *month, guint *year);
-gchar *biorhythm_file_view_get_filename (BiorhythmFileView *file_view);
+GFile *biorhythm_file_view_get_file (BiorhythmFileView *file_view);
 gchar *biorhythm_file_view_get_name (BiorhythmFileView *file_view);
 void biorhythm_file_view_new_file (BiorhythmFileView *file_view);
-void biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename);
+void biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, GFile *file);
 void biorhythm_file_view_save_to_file (BiorhythmFileView *file_view);
-void biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, gchar *filename);
+void biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, GFile *file);
 
 G_END_DECLS
 

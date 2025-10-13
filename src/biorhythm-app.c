@@ -146,47 +146,32 @@ _biorhythm_app_file_new_activated (GSimpleAction *action, GVariant *param, gpoin
 }
 
 static void
-_biorhythm_app_file_open_response (GtkDialog *dialog, int response, gpointer user_data)
+_biorhythm_app_file_open_callback (GObject *source_object, GAsyncResult *result, gpointer user_data)
 {
 	BiorhythmFileView *file_view = user_data;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) file = gtk_file_dialog_open_finish (GTK_FILE_DIALOG (source_object), result, &error);
 
-	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
-
-	if (response == GTK_RESPONSE_ACCEPT)
+	if (file)
 	{
-		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-
-		g_autoptr (GFile) file = gtk_file_chooser_get_file (chooser);
-		biorhythm_file_view_load_from_file (file_view, g_file_get_parse_name (file));
+		biorhythm_file_view_load_from_file (file_view, file);
 	}
-
-	gtk_window_destroy (GTK_WINDOW (dialog));
+	else
+	{
+		g_warning ("Failed to open file: %s", error->message);
+	}
 }
 
 static void
 _biorhythm_app_file_open_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
-	BiorhythmApp *app;
-	GtkWindow *window;
-	BiorhythmFileView *file_view;
-	GtkWidget *dialog;
+	BiorhythmApp *app = BIORHYTHM_APP (user_data);
+	GtkWindow *window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
+	BiorhythmFileView *file_view = _biorhythm_app_get_file_view (app);
 
-	app = BIORHYTHM_APP (user_data);
-	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
-	file_view = _biorhythm_app_get_file_view (app);
-
-	dialog = gtk_file_chooser_dialog_new (_ ("Open File"),
-										  window,
-										  GTK_FILE_CHOOSER_ACTION_OPEN,
-										  _ ("_Cancel"), GTK_RESPONSE_CANCEL,
-										  _ ("_Open"), GTK_RESPONSE_ACCEPT,
-										  NULL);
-
-	gtk_window_present (GTK_WINDOW (dialog));
-
-	g_signal_connect (dialog, "response",
-					  G_CALLBACK (_biorhythm_app_file_open_response),
-					  file_view);
+	GtkFileDialog *dialog = gtk_file_dialog_new ();
+	gtk_file_dialog_open (dialog, GTK_WINDOW (gtk_widget_get_root (GTK_WIDGET (file_view))),
+						  NULL, _biorhythm_app_file_open_callback, file_view);
 }
 
 static void
@@ -198,7 +183,7 @@ _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpoi
 	app = BIORHYTHM_APP (user_data);
 	file_view = _biorhythm_app_get_file_view (app);
 
-	if (biorhythm_file_view_get_filename (file_view) == NULL)
+	if (biorhythm_file_view_get_file (file_view) == NULL)
 	{
 		_biorhythm_app_file_save_as_activated (action, param, user_data);
 	}
@@ -209,48 +194,31 @@ _biorhythm_app_file_save_activated (GSimpleAction *action, GVariant *param, gpoi
 }
 
 static void
-_biorhythm_app_file_save_as_response (GtkDialog *dialog, int response, gpointer user_data)
+_biorhythm_app_file_save_as_callback (GObject *source_object, GAsyncResult *result, gpointer user_data)
 {
 	BiorhythmFileView *file_view = user_data;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) file = gtk_file_dialog_save_finish (GTK_FILE_DIALOG (source_object), result, &error);
 
-	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
-
-	if (response == GTK_RESPONSE_ACCEPT)
+	if (file)
 	{
-		GtkFileChooser *chooser = GTK_FILE_CHOOSER (dialog);
-
-		g_autoptr (GFile) file = gtk_file_chooser_get_file (chooser);
-		biorhythm_file_view_save_to_new_file (file_view, g_file_get_parse_name (file));
+		biorhythm_file_view_save_to_new_file (file_view, file);
 	}
-
-	gtk_window_destroy (GTK_WINDOW (dialog));
+	else
+	{
+		g_warning ("Failed to save file: %s", error->message);
+	}
 }
 
 static void
 _biorhythm_app_file_save_as_activated (GSimpleAction *action, GVariant *param, gpointer user_data)
 {
-	BiorhythmApp *app;
-	GtkWindow *window;
-	BiorhythmFileView *file_view;
-	GtkWidget *dialog;
-	GtkFileChooser *chooser;
+	BiorhythmApp *app = BIORHYTHM_APP(user_data);
+	GtkWindow *window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION(app)));
+	BiorhythmFileView *file_view = _biorhythm_app_get_file_view(app);
 
-	app = BIORHYTHM_APP (user_data);
-	window = GTK_WINDOW (gtk_application_get_active_window (GTK_APPLICATION (app)));
-	file_view = _biorhythm_app_get_file_view (app);
-
-	dialog = gtk_file_chooser_dialog_new (_ ("Save File"),
-										  window,
-										  GTK_FILE_CHOOSER_ACTION_SAVE,
-										  _ ("_Cancel"), GTK_RESPONSE_CANCEL,
-										  _ ("_Save"), GTK_RESPONSE_ACCEPT,
-										  NULL);
-
-	gtk_window_present (GTK_WINDOW (dialog));
-
-	g_signal_connect (dialog, "response",
-					  G_CALLBACK (_biorhythm_app_file_save_as_response),
-					  file_view);
+	GtkFileDialog *dialog = gtk_file_dialog_new ();
+	gtk_file_dialog_save (dialog, window, NULL, _biorhythm_app_file_save_as_callback, file_view);
 }
 
 static void

@@ -26,7 +26,7 @@ typedef struct
 
 	GtkWidget *columnview;
 	GListStore *liststore;
-	gchar *filename;
+	GFile *file;
 
 	gint month;
 	gint year;
@@ -76,7 +76,7 @@ static void biorhythm_file_view_read_file_each_element (JsonArray *array, guint 
 static int biorhythm_file_view_read_file (BiorhythmFileView *file_view);
 static void biorhythm_file_view_write_file_each_person (JsonBuilder *builder, GListStore *liststore);
 static gboolean biorhythm_file_view_write_file (BiorhythmFileView *file_view);
-static GtkWidget *biorhythm_file_view_close_dialog ();
+static GtkWidget *biorhythm_file_view_close_dialog (BiorhythmFileView *file_view);
 static void biorhythm_file_view_new_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
 static void biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_id, BiorhythmFileView *file_view);
 
@@ -113,6 +113,12 @@ biorhythm_file_view_dispose (GObject *object)
 {
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (BIORHYTHM_FILE_VIEW (object));
 
+	if (priv->file != NULL)
+	{
+		g_object_unref (priv->file);
+		priv->file = NULL;
+	}
+
 	g_clear_pointer (&priv->columnview, gtk_widget_unparent);
 }
 
@@ -122,7 +128,7 @@ biorhythm_file_view_init (BiorhythmFileView *file_view)
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
-	priv->filename = NULL;
+	priv->file = NULL;
 	priv->name = NULL;
 	priv->saved = TRUE;
 
@@ -436,13 +442,14 @@ biorhythm_file_view_read_file (BiorhythmFileView *file_view)
 	JsonObject *element;
 	GError *error;
 	JsonArray *array;
+	g_autofree gchar *filename = g_file_get_parse_name (priv->file);
 
 	parser = json_parser_new ();
 	error = NULL;
-	json_parser_load_from_file (parser, priv->filename, &error);
+	json_parser_load_from_file (parser, filename, &error);
 	if (error)
 	{
-		g_print ("Unable to parse `%s': %s\n", priv->filename, error->message);
+		g_print ("Unable to parse `%s': %s\n", filename, error->message);
 		g_error_free (error);
 		g_object_unref (parser);
 		return 1;
@@ -490,6 +497,7 @@ biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 	GError *error;
 	JsonBuilder *builder = json_builder_new ();
+	g_autofree gchar *filename = g_file_get_parse_name (priv->file);
 
 	json_builder_begin_object (builder);
 
@@ -506,7 +514,7 @@ biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 	json_generator_set_root (gen, root);
 
 	error = NULL;
-	json_generator_to_file (gen, priv->filename, &error);
+	json_generator_to_file (gen, filename, &error);
 
 	json_node_free (root);
 	g_object_unref (gen);
@@ -514,7 +522,7 @@ biorhythm_file_view_write_file (BiorhythmFileView *file_view)
 
 	if (error)
 	{
-		g_print ("Unable to write `%s': %s\n", priv->filename, error->message);
+		g_print ("Unable to write `%s': %s\n", filename, error->message);
 		g_error_free (error);
 		return FALSE;
 	}
@@ -558,14 +566,15 @@ biorhythm_file_view_get_date (BiorhythmFileView *file_view, guint *day, guint *m
 	}
 }
 
-gchar *
-biorhythm_file_view_get_filename (BiorhythmFileView *file_view)
+GFile *
+biorhythm_file_view_get_file (BiorhythmFileView *file_view)
 {
 	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
 
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
+	g_autofree gchar *path = g_file_get_parse_name (priv->file);
 
-	return priv->filename;
+	return priv->file;
 }
 
 gchar *
@@ -579,15 +588,15 @@ biorhythm_file_view_get_name (BiorhythmFileView *file_view)
 }
 
 static GtkWidget *
-biorhythm_file_view_close_dialog ()
+biorhythm_file_view_close_dialog (BiorhythmFileView *file_view)
 {
-	GtkWidget *dialog;
+	g_return_val_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view), NULL);
 
-	dialog = gtk_message_dialog_new (NULL,
-									 GTK_DIALOG_DESTROY_WITH_PARENT,
-									 GTK_MESSAGE_QUESTION,
-									 GTK_BUTTONS_YES_NO,
-									 _ ("There are unsaved changes, do you like to continue?"));
+	GtkWidget *dialog = gtk_message_dialog_new (GTK_WINDOW (gtk_widget_get_root (GTK_WIDGET (file_view))),
+												GTK_DIALOG_DESTROY_WITH_PARENT,
+												GTK_MESSAGE_QUESTION,
+												GTK_BUTTONS_YES_NO,
+												_ ("There are unsaved changes, do you like to continue?"));
 
 	gtk_window_present (GTK_WINDOW (dialog));
 
@@ -616,9 +625,7 @@ biorhythm_file_view_new_file (BiorhythmFileView *file_view)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
-	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
-
-	GtkWidget *dialog = biorhythm_file_view_close_dialog ();
+	GtkWidget *dialog = biorhythm_file_view_close_dialog (file_view);
 
 	g_signal_connect (dialog, "response",
 					  G_CALLBACK (biorhythm_file_view_new_file_on_response),
@@ -645,14 +652,21 @@ biorhythm_file_view_load_from_file_on_response (GtkDialog *dialog, int response_
 }
 
 void
-biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filename)
+biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, GFile *file)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	priv->filename = g_strdup (filename);
+	// Clear previous file if any
+	if (priv->file != NULL)
+	{
+		g_object_unref (priv->file);
+	}
 
-	GtkWidget *dialog = biorhythm_file_view_close_dialog ();
+	// Store the new file
+	priv->file = g_object_ref (file);
+
+	GtkWidget *dialog = biorhythm_file_view_close_dialog (file_view);
 
 	g_signal_connect (dialog, "response",
 					  G_CALLBACK (biorhythm_file_view_load_from_file_on_response),
@@ -660,13 +674,20 @@ biorhythm_file_view_load_from_file (BiorhythmFileView *file_view, gchar *filenam
 }
 
 void
-biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, gchar *filename)
+biorhythm_file_view_save_to_new_file (BiorhythmFileView *file_view, GFile *file)
 {
 	g_return_if_fail (BIORHYTHM_IS_FILE_VIEW (file_view));
 
 	BiorhythmFileViewPrivate *priv = biorhythm_file_view_get_instance_private (file_view);
 
-	priv->filename = g_strdup (filename);
+	// Clear previous file if any
+	if (priv->file != NULL)
+	{
+		g_object_unref (priv->file);
+	}
+
+	// Store the new file
+	priv->file = g_object_ref (file);
 
 	gboolean result = biorhythm_file_view_write_file (file_view);
 	priv->saved = result;
