@@ -227,7 +227,6 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
 	BiorhythmApp *app;
 	GtkWindow *window;
 	BiorhythmChart *chart;
-	GtkWidget *dialog;
 	GError *error = NULL;
 	GtkPrintOperation *print;
 	GtkPrintOperationResult res;
@@ -239,17 +238,16 @@ _biorhythm_app_print_activated (GSimpleAction *action, GVariant *param, gpointer
 
 	res = gtk_print_operation_run (print, GTK_PRINT_OPERATION_ACTION_PRINT_DIALOG, window, &error);
 
-	if (res == GTK_PRINT_OPERATION_RESULT_ERROR)
+	if (res == GTK_PRINT_OPERATION_RESULT_ERROR) // error->message
 	{
-		dialog = gtk_message_dialog_new (window,
-										 GTK_DIALOG_DESTROY_WITH_PARENT,
-										 GTK_MESSAGE_ERROR,
-										 GTK_BUTTONS_CLOSE,
-										 _ ("Error printing file:\n%s"),
-										 error->message);
-		g_signal_connect (dialog, "response",
-						  G_CALLBACK (gtk_window_destroy), NULL);
-		gtk_window_present (GTK_WINDOW (dialog));
+		GtkAlertDialog *dialog = gtk_alert_dialog_new (_ ("Print error"));
+		gchar *message = g_strconcat(_ ("Error printing file:\n"), "myfile.txt", NULL);
+		gtk_alert_dialog_set_detail (dialog, message);
+
+		gtk_window_present (window);
+		gtk_alert_dialog_choose (dialog, window, NULL, NULL, NULL);
+
+		g_free (message);
 		g_error_free (error);
 	}
 }
